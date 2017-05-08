@@ -47,18 +47,18 @@ cd ${current}_parent
 #read pe_b
 
 # these are good run settings
-#tsteps=$(( 5000000 ))
-#dump_freq=$(( 1000 ))
-#x_a_spacer=$(( 10 ))
-#pe_a_spacer=$(( 10 ))
-#pe_b=$(( 150 ))
+tsteps=$(( 10000000 ))
+dump_freq=$(( 2000 ))
+x_a_spacer=$(( 10 ))
+pe_a_spacer=$(( 10 ))
+pe_b=$(( 150 ))
 
 # these are good debug settings
-tsteps=$(( 50000 ))
-dump_freq=$(( 10 ))
-x_a_spacer=$(( 50 ))
-pe_a_spacer=$(( 50 ))
-pe_b=$(( 150 ))
+#tsteps=$(( 50000 ))
+#dump_freq=$(( 10 ))
+#x_a_spacer=$(( 50 ))
+#pe_a_spacer=$(( 50 ))
+#pe_b=$(( 150 ))
 
 x_count=$(( 0 ))    # monodisperse species b
 x_max=$(( 100 ))    # monodisperse species a

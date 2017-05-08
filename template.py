@@ -52,10 +52,6 @@ part_a = part_num * part_frac_a         # get the total number of A particles
 part_b = part_num - part_a              # get the total number of B particles
 mid = int(part_a)                       # starting point for assigning B particles
 
-print(part_a)
-print(part_b)
-print(mid)
-
 if part_perc_a == 0:                    # take care of all b case
     mid = 0
     for i in range(mid,part_num):
@@ -92,7 +88,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         z = 0
         tuple = (x, y, z)
         activity_a.append(tuple)
-    print(len(activity_a))
     activity_b = []
     for i in range(mid,part_num):
         x = (np.cos(angle[i])) * pe_b
@@ -100,7 +95,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         z = 0
         tuple = (x, y, z)
         activity_b.append(tuple)
-    print(len(activity_b))
     hoomd.md.force.active(group=gA,
                           seed=123,
                           f_lst=activity_a,
