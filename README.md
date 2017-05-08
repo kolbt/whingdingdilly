@@ -1,8 +1,7 @@
 # whingdingdilly
 This is just some simple code to write, run and analyze input files for HOOMD using GSD and Freud.  Adding it to my profile so that I can update my local, laptop and cluster versions more easily.
 
-The objective of this directory is to locally write, run, and analyze simulations using HOOMD, GSD, and Freud
-This task is broken down accordingly:
+These tasks are broken down accordingly:
 
 Writing Files:
         Parameters:
