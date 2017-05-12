@@ -48,7 +48,7 @@ cd ${current}_parent
 
 # these are good run settings
 tsteps=$(( 10000000 ))
-dump_freq=$(( 2000 ))
+dump_freq=$(( 20000 ))
 x_a_spacer=$(( 10 ))
 pe_a_spacer=$(( 10 ))
 pe_b=$(( 150 ))
