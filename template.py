@@ -143,20 +143,20 @@ hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 #write dumps
 
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
-hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True)
+hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
 
-if part_perc_a != 0 and part_perc_a != 100:
-    name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A.gsd"
-    name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B.gsd"
-    hoomd.dump.gsd(name1, period=dump_freq, group=gA, overwrite=True)
-    hoomd.dump.gsd(name2, period=dump_freq, group=gB, overwrite=True)
-else:
-    if part_perc_a == 0:
-        name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B.gsd"
-        hoomd.dump.gsd(name2, period=dump_freq, group=gB, overwrite=True)
-    else:
-        name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A.gsd"
-        hoomd.dump.gsd(name1, period=dump_freq, group=gA, overwrite=True)
+#if part_perc_a != 0 and part_perc_a != 100:
+#    name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A.gsd"
+#    name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B.gsd"
+#    hoomd.dump.gsd(name1, period=dump_freq, group=gA, overwrite=True)
+#    hoomd.dump.gsd(name2, period=dump_freq, group=gB, overwrite=True)
+#else:
+#    if part_perc_a == 0:
+#        name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B.gsd"
+#        hoomd.dump.gsd(name2, period=dump_freq, group=gB, overwrite=True)
+#    else:
+#        name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A.gsd"
+#        hoomd.dump.gsd(name1, period=dump_freq, group=gA, overwrite=True)
 
 #run
 hoomd.run(tsteps)
