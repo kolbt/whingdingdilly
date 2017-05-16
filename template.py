@@ -137,7 +137,7 @@ else:
 hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
 hoomd.run(10000)
 
-hoomd.md.integrate.mode_standard(dt=0.00002)
+hoomd.md.integrate.mode_standard(dt=0.00001)
 hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 
 #write dumps
