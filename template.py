@@ -233,8 +233,8 @@ for j in range(0, dumps):
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
 
-if tot_num[j] > 0:
-    MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
+    if tot_num[j] > 0:
+        MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
     
     else:
@@ -281,8 +281,8 @@ for j in range(0, dumps):
             tot_size_A[j] += size_clusters[j][k]
             tot_num_A[j] += 1
 
-if tot_num_A[j] > 0:
-    MCS_A[j] = float(tot_size_A[j]/tot_num_A[j])/float(part_a)
+    if tot_num_A[j] > 0:
+        MCS_A[j] = float(tot_size_A[j]/tot_num_A[j])/float(part_a)
         GF_A[j] = float(part_a - tot_size_A[j]) / float(part_a)
     
     else:
@@ -327,8 +327,8 @@ for j in range(0, dumps):
             tot_size_B[j] += size_clusters[j][k]
             tot_num_B[j] += 1
 
-if tot_num_B[j] > 0:
-    MCS_B[j] = float(tot_size_B[j]/tot_num_B[j])/float(part_b)
+    if tot_num_B[j] > 0:
+        MCS_B[j] = float(tot_size_B[j]/tot_num_B[j])/float(part_b)
         GF_B[j] = float(part_b - tot_size_B[j]) / float(part_b)
     
     else:
