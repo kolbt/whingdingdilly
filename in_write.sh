@@ -22,6 +22,7 @@ else
     submit='sh'
 fi
 
+# This is my comment
 #This file is explicitly designed to:
 #    1.) Write infiles which vary
 #        a.) Particle fraction of species A
