@@ -1,15 +1,18 @@
 import sys
 
+#NOTE: YOUR CODE WOULD DEFINITELY BENEFIT FROM FORMATTING THE PLOTS A BIT BETTER
+
 hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
-tsteps = 500
-dump_freq = 1
-part_perc_a = 20
+#tsteps = 500
+#dump_freq = 1
+part_perc_a = 40
 part_frac_a = float(part_perc_a) / 100.0
-pe_a = 150
+pe_a = 140
 pe_b = 150
 gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
 
-dumps = tsteps/dump_freq
+#dumps = tsteps/dump_freq
+dumps = 5000
 part_num = 15000
 part_a = int(float(part_num) * part_frac_a)
 part_b = part_num - part_a
@@ -24,7 +27,7 @@ import numpy as np
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)
 box_data = np.zeros((1), dtype=np.ndarray)              # box dimensions
-myfile = "pa150_pb150_xa20.gsd"
+myfile = "gf_low.gsd"
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
@@ -39,29 +42,6 @@ pos_A = np.zeros((dumps), dtype=np.ndarray)
 pos_B = np.zeros((dumps), dtype=np.ndarray)
 tmpA = np.zeros((part_a, 3), dtype=np.float32)
 tmpB = np.zeros((part_b, 3), dtype=np.float32)
-
-print(tmpA.shape)
-print(tmpB.shape)
-
-for f in range(0, dumps):
-    countA = 0
-    countB = 0
-    for g in range(0, part_num):
-        if type_array[f][g] == 0:
-            tmpA[countA][0] = position_array[f][g][0]
-            tmpA[countA][1] = position_array[f][g][1]
-            tmpA[countA][2] = position_array[f][g][2]
-            countA += 1
-        else:
-            tmpB[countB][0] = position_array[f][g][0]
-            tmpB[countB][1] = position_array[f][g][1]
-            tmpB[countB][2] = position_array[f][g][2]
-            countB += 1
-
-    print(tmpA)
-    pos_A[f] = tmpA
-    pos_B[f] = tmpB
-
 
 from freud import parallel, box, density, cluster
 parallel.setNumThreads(1)                               # don't run multiple threads
@@ -127,14 +107,35 @@ for j in range(take_last, dumps):
 
 avg_sys_density[0] /= (dumps - take_last)
 
-# perform the same analysis on species A
+# analyze A and B particles individually
 
 tot_size_A = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
 tot_num_A = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
 MCS_A = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
 GF_A = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
 
+tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
+tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
+MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
+GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+
 for j in range(0, dumps):
+    countA = 0
+    countB = 0
+    for g in range(0, part_num):
+        if type_array[j][g] == 0:
+            tmpA[countA][0] = position_array[j][g][0]
+            tmpA[countA][1] = position_array[j][g][1]
+            tmpA[countA][2] = position_array[j][g][2]
+            countA += 1
+        else:
+            tmpB[countB][0] = position_array[j][g][0]
+            tmpB[countB][1] = position_array[j][g][1]
+            tmpB[countB][2] = position_array[j][g][2]
+            countB += 1
+
+    pos_A[j] = tmpA
+    pos_B[j] = tmpB
     
     l_pos = pos_A[j]
     my_clusters.computeClusters(l_pos)
@@ -157,29 +158,6 @@ for j in range(0, dumps):
         MCS_A[j] = 0
         GF_A[j] = 1
 
-def getDensityA(n):                                     # call this function as needed
-    l_pos = pos_A[n]                                    # get ith position array
-    my_density.compute(f_box,
-                       l_pos,
-                       l_pos)
-    return my_density.getDensity()
-
-avg_dense_A = np.zeros((1), dtype=np.ndarray)
-
-for j in range(take_last, dumps):
-    avg_dense_A[0] += getDensityA(j)
-
-avg_dense_A[0] /= (dumps - take_last)
-
-# perform the same analysis on species B
-
-tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
-tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
-MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
-GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
-
-for j in range(0, dumps):
-    
     l_pos = pos_B[j]
     my_clusters.computeClusters(l_pos)
     number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
@@ -201,7 +179,41 @@ for j in range(0, dumps):
         MCS_B[j] = 0
         GF_B[j] = 1
 
+
+
+def getDensityA(n):                                     # call this function as needed
+    countA = 0
+    for g in range(0, part_num):
+        if type_array[n][g] == 0:
+            tmpA[countA][0] = position_array[n][g][0]
+            tmpA[countA][1] = position_array[n][g][1]
+            tmpA[countA][2] = position_array[n][g][2]
+            countA += 1
+    pos_A[n] = tmpA
+    l_pos = pos_A[n]                                    # get ith position array
+    my_density.compute(f_box,
+                       l_pos,
+                       l_pos)
+    return my_density.getDensity()
+
+avg_dense_A = np.zeros((1), dtype=np.ndarray)
+
+for j in range(take_last, dumps):
+    avg_dense_A[0] += getDensityA(j)
+
+avg_dense_A[0] /= (dumps - take_last)
+
+
+
 def getDensityB(n):                                     # call this function as needed
+    countB = 0
+    for g in range(0, part_num):
+        if type_array[n][g] == 1:
+            tmpB[countB][0] = position_array[n][g][0]
+            tmpB[countB][1] = position_array[n][g][1]
+            tmpB[countB][2] = position_array[n][g][2]
+            countB += 1
+    pos_B[n] = tmpB
     l_pos = pos_B[n]                                    # get ith position array
     my_density.compute(f_box,
                        l_pos,
