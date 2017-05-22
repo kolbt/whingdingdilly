@@ -1,7 +1,7 @@
 #!/bin/sh
 
 pa=0
-pb=150
+pb=100
 
 while [ $pa -le 150 ]
 do
