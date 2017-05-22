@@ -6,9 +6,6 @@ comp = str(sys.argv[2])             # composite image name
 loc_x = int(sys.argv[3])            # x-coord for paste
 loc_y = int(sys.argv[4])            # y-coord for paste
 
-print(loc_x)
-print(loc_y)
-
 img = Image.open(file)              # read in final tstep image
 comp_img = Image.open(comp)
 

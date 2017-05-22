@@ -49,7 +49,9 @@ system.particles.types.add('B')
 snapshot = system.take_snapshot()
 
 part_a = part_num * part_frac_a         # get the total number of A particles
+part_a = int(part_a)
 part_b = part_num - part_a              # get the total number of B particles
+part_b = int(part_b)
 mid = int(part_a)                       # starting point for assigning B particles
 
 if part_perc_a == 0:                    # take care of all b case
@@ -174,25 +176,6 @@ pos_B = np.zeros((dumps), dtype=np.ndarray)             # type B positions
 tmpA = np.zeros((part_a, 3), dtype=np.float32)          # temporary storage arrays
 tmpB = np.zeros((part_b, 3), dtype=np.float32)
 
-for f in range(0, dumps):
-    countA = 0
-    countB = 0
-    for g in range(0, part_num):
-        if type_array[f][g] == 0:
-            tmpA[countA][0] = position_array[f][g][0]   # assign particle position, type A
-            tmpA[countA][1] = position_array[f][g][1]
-            tmpA[countA][2] = position_array[f][g][2]
-            countA += 1
-        else:
-            tmpB[countB][0] = position_array[f][g][0]   # assign particle position, type B
-            tmpB[countB][1] = position_array[f][g][1]
-            tmpB[countB][2] = position_array[f][g][2]
-            countB += 1
-
-    pos_A[f] = tmpA                                     # store in total position array
-    pos_B[f] = tmpB
-
-
 from freud import parallel, box, density, cluster
 parallel.setNumThreads(1)                               # don't run multiple threads
 
@@ -233,8 +216,8 @@ for j in range(0, dumps):
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
 
-    if tot_num[j] > 0:
-        MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
+if tot_num[j] > 0:
+    MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
     
     else:
@@ -257,16 +240,37 @@ for j in range(take_last, dumps):
 
 avg_sys_density[0] /= (dumps - take_last)
 
-##############################################
-### perform the same analysis on species A ###
-##############################################
+#########################################################################
+### perform the same analysis on species A and species B individually ###
+#########################################################################
 
 tot_size_A = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
 tot_num_A = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
 MCS_A = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
 GF_A = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
 
+tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
+tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
+MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
+GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+
 for j in range(0, dumps):
+    countA = 0
+    countB = 0
+    for g in range(0, part_num):
+        if type_array[j][g] == 0:
+            tmpA[countA][0] = position_array[j][g][0]
+            tmpA[countA][1] = position_array[j][g][1]
+            tmpA[countA][2] = position_array[j][g][2]
+            countA += 1
+        else:
+            tmpB[countB][0] = position_array[j][g][0]
+            tmpB[countB][1] = position_array[j][g][1]
+            tmpB[countB][2] = position_array[j][g][2]
+            countB += 1
+
+    pos_A[j] = tmpA
+    pos_B[j] = tmpB
     
     l_pos = pos_A[j]
     my_clusters.computeClusters(l_pos)
@@ -289,31 +293,6 @@ for j in range(0, dumps):
         MCS_A[j] = 0
         GF_A[j] = 1
 
-def getDensityA(n):                                     # call this function as needed
-    l_pos = pos_A[n]                                    # get ith position array
-    my_density.compute(f_box,
-                       l_pos,
-                       l_pos)
-    return my_density.getDensity()
-
-avg_dense_A = np.zeros((1), dtype=np.ndarray)
-
-for j in range(take_last, dumps):
-    avg_dense_A[0] += getDensityA(j)
-
-avg_dense_A[0] /= (dumps - take_last)
-
-##############################################
-### perform the same analysis on species B ###
-##############################################
-
-tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
-tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
-MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
-GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
-
-for j in range(0, dumps):
-    
     l_pos = pos_B[j]
     my_clusters.computeClusters(l_pos)
     number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
@@ -335,7 +314,39 @@ for j in range(0, dumps):
         MCS_B[j] = 0
         GF_B[j] = 1
 
+
+
+def getDensityA(n):                                     # call this function as needed
+    countA = 0
+    for g in range(0, part_num):
+        if type_array[n][g] == 0:
+            tmpA[countA][0] = position_array[n][g][0]
+            tmpA[countA][1] = position_array[n][g][1]
+            tmpA[countA][2] = position_array[n][g][2]
+            countA += 1
+    pos_A[n] = tmpA
+    l_pos = pos_A[n]                                    # get ith position array
+    my_density.compute(f_box,
+                       l_pos,
+                       l_pos)
+    return my_density.getDensity()
+
+avg_dense_A = np.zeros((1), dtype=np.ndarray)
+
+for j in range(take_last, dumps):
+    avg_dense_A[0] += getDensityA(j)
+
+avg_dense_A[0] /= (dumps - take_last)
+
 def getDensityB(n):                                     # call this function as needed
+    countB = 0
+    for g in range(0, part_num):
+        if type_array[n][g] == 1:
+            tmpB[countB][0] = position_array[n][g][0]
+            tmpB[countB][1] = position_array[n][g][1]
+            tmpB[countB][2] = position_array[n][g][2]
+            countB += 1
+    pos_B[n] = tmpB
     l_pos = pos_B[n]                                    # get ith position array
     my_density.compute(f_box,
                        l_pos,
@@ -378,11 +389,13 @@ plt.close()
 plt.plot(MCS)
 plt.plot(MCS_A)
 plt.plot(MCS_B)
+plt.ylim((0,1))
 plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
 plt.close()
 
 plt.plot(GF)
 plt.plot(GF_A)
 plt.plot(GF_B)
+plt.ylim((0,1))
 plt.savefig('GF_'+plt_name+'.png', dpi=1000)
 plt.close()
