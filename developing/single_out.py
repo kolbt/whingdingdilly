@@ -1,7 +1,5 @@
 import sys
 
-#NOTE: YOUR CODE WOULD DEFINITELY BENEFIT FROM FORMATTING THE PLOTS A BIT BETTER
-
 hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
 #tsteps = 500
 #dump_freq = 1
@@ -79,7 +77,7 @@ for j in range(0, dumps):
     
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 25 and size_clusters[j][k] < part_num:
+        if size_clusters[j][k] > 30 and size_clusters[j][k] < part_num:
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
 
@@ -252,11 +250,13 @@ plt.close()
 plt.plot(MCS)
 plt.plot(MCS_A)
 plt.plot(MCS_B)
+plt.ylim((0,1))
 plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
 plt.close()
 
 plt.plot(GF)
 plt.plot(GF_A)
 plt.plot(GF_B)
+plt.ylim((0,1))
 plt.savefig('GF_'+plt_name+'.png', dpi=1000)
 plt.close()
