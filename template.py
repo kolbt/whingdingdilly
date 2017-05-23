@@ -216,8 +216,8 @@ for j in range(0, dumps):
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
 
-if tot_num[j] > 0:
-    MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
+    if tot_num[j] > 0:
+        MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
     
     else:
