@@ -77,6 +77,15 @@ lj.pair_coeff.set('A', 'A', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('A', 'B', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 
+#integrator type
+hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
+hoomd.run(10000)
+
+#run simulation with current settings here
+hoomd.md.integrate.mode_standard(dt=0.00001)
+hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
+hoomd.run(100000)
+
 #set the activity of each type
 import numpy as np
 
@@ -134,13 +143,6 @@ else:
                               f_lst=activity_a,
                               rotation_diff=3.0,
                               orientation_link=False)
-
-#integrator type
-hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
-hoomd.run(10000)
-
-hoomd.md.integrate.mode_standard(dt=0.00001)
-hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 
 #write dumps
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
@@ -212,7 +214,7 @@ for j in range(0, dumps):
     
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 25 and size_clusters[j][k] < part_num:
+        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
 
@@ -281,7 +283,7 @@ for j in range(0, dumps):
     
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 25 and size_clusters[j][k] < part_num:
+        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
             tot_size_A[j] += size_clusters[j][k]
             tot_num_A[j] += 1
 
@@ -302,7 +304,7 @@ for j in range(0, dumps):
     
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 25 and size_clusters[j][k] < part_num:
+        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
             tot_size_B[j] += size_clusters[j][k]
             tot_num_B[j] += 1
 
@@ -374,28 +376,28 @@ plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
 plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
 plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
-sns.kdeplot(avg_sys_density[0], shade = True)
-sns.kdeplot(avg_dense_A[0], shade = True)
-sns.kdeplot(avg_dense_B[0], shade = True)
+sns.kdeplot(avg_sys_density[0], shade = True, color="g")
+sns.kdeplot(avg_dense_A[0], shade = True, color="r")
+sns.kdeplot(avg_dense_B[0], shade = True, color="b")
 plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
 plt.close()
 
-sns.kdeplot(getDensityPlease(last), shade = True)
-sns.kdeplot(getDensityA(last), shade = True)
-sns.kdeplot(getDensityB(last), shade = True)
+sns.kdeplot(getDensityPlease(last), shade = True, color="g")
+sns.kdeplot(getDensityA(last), shade = True, color="r")
+sns.kdeplot(getDensityB(last), shade = True, color="b")
 plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
 plt.close()
 
-plt.plot(MCS)
-plt.plot(MCS_A)
-plt.plot(MCS_B)
-plt.ylim((0,1))
+plt.plot(MCS, color="g")
+plt.plot(MCS_A, color="r")
+plt.plot(MCS_B, color="b")
+#plt.ylim((0,1))
 plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
 plt.close()
 
-plt.plot(GF)
-plt.plot(GF_A)
-plt.plot(GF_B)
+plt.plot(GF, color="g")
+plt.plot(GF_A, color="r")
+plt.plot(GF_B, color="b")
 plt.ylim((0,1))
 plt.savefig('GF_'+plt_name+'.png', dpi=1000)
 plt.close()
