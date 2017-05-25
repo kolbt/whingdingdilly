@@ -201,6 +201,9 @@ tot_size = np.zeros((dumps), dtype=np.ndarray)          # number of particles in
 tot_num = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
 MCS = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
 GF = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
+B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
+percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 
 # analyze all particles
 for j in range(0, dumps):
@@ -211,6 +214,35 @@ for j in range(0, dumps):
     ids = my_clusters.getClusterIdx()                   # get cluster ids
     cluster_props.computeProperties(l_pos, ids)
     size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
+    
+    how_many = my_clusters.getNumClusters()
+    
+    A_id_count = 0
+    B_id_count = 0
+    for h in range(0, part_num):
+        if type_array[j][h] == 0:
+            A_ids[A_id_count] = ids[h]                  # store the cluster ids for A type
+            A_id_count += 1                             # IMPROVE: sort while placing?
+        else:
+            B_ids[B_id_count] = ids[h]                  # store the cluster ids for B type
+            B_id_count += 1                             # could put ids in order ...
+
+    clust_dat = np.zeros((how_many), dtype = np.ndarray)
+    clust_dat_A = np.zeros((how_many), dtype = np.ndarray)
+    clust_dat_B = np.zeros((how_many), dtype = np.ndarray)
+    numerator_A = 0
+    denominator_tot = 0
+    
+    for m in range(0, how_many):
+        clust_dat_A[m] = (A_ids == m).sum()             # sum all A type particles in a cluster
+        clust_dat_B[m] = (B_ids == m).sum()
+        clust_dat[m] = clust_dat_A[m] + clust_dat_B[m]  # find total number of particles in cluster
+        if clust_dat[m] > 15:
+            numerator_A += clust_dat_A[m]
+            denominator_tot += clust_dat[m]
+    # get the total percent of A particles in all clusters
+    if denominator_tot != 0:
+        percent_A[j] =  float(numerator_A) / float(denominator_tot)
     
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
@@ -400,4 +432,9 @@ plt.plot(GF_A, color="r")
 plt.plot(GF_B, color="b")
 plt.ylim((0,1))
 plt.savefig('GF_'+plt_name+'.png', dpi=1000)
+plt.close()
+
+plt.plot(percent_A, color="r")
+#plt.ylim((0,1))
+plt.savefig('A_comp_'+plt_name+'.png', dpi=1000)
 plt.close()
