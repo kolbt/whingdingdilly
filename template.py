@@ -204,6 +204,7 @@ GF = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
 A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
 B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
+largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
 
 # analyze all particles
 for j in range(0, dumps):
@@ -243,12 +244,17 @@ for j in range(0, dumps):
     # get the total percent of A particles in all clusters
     if denominator_tot != 0:
         percent_A[j] =  float(numerator_A) / float(denominator_tot)
-    
+
+    l_clust = 0                                             # int size of largest cluster
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
         if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
+            if size_clusters[j][k] > l_clust:           # if larger cluster is found
+                l_clust = size_clusters[j][k]           # set l_clust to that size
+                    
+    largest[j] = l_clust                                # save largest cluster size for tstep
 
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
@@ -267,7 +273,7 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 500
+take_last = dumps - 50
 last = dumps - 1
 for j in range(take_last, dumps):
     avg_sys_density[0] += getDensityPlease(j)
@@ -437,4 +443,8 @@ plt.close()
 plt.plot(percent_A, color="r")
 #plt.ylim((0,1))
 plt.savefig('A_comp_'+plt_name+'.png', dpi=1000)
+plt.close()
+
+plt.plot(largest, color="g")
+plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
 plt.close()

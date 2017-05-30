@@ -16,11 +16,31 @@ if [ $answer == "y" ]; then
 else
     hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
-    script_path='/Users/kolbt/Desktop/whingdingdilly'
-    template='/Users/kolbt/Desktop/whingdingdilly/template.py'
+    script_path='/Users/kolbt/Desktop/compiled/whingdingdilly'
+    template='/Users/kolbt/Desktop/compiled/whingdingdilly/template.py'
     sedtype='gsed'
     submit='sh'
 fi
+
+##
+echo "Run debug (y/n)?"
+read debug
+
+if [ $debug == "y" ]; then
+    tsteps=$(( 50000 ))
+    dump_freq=$(( 1000 ))
+    x_a_spacer=$(( 50 ))
+    pe_a_spacer=$(( 50 ))
+    pe_b=$(( 150 ))
+
+else
+    tsteps=$(( 10000000 ))
+    dump_freq=$(( 20000 ))
+    x_a_spacer=$(( 10 ))
+    pe_a_spacer=$(( 10 ))
+    pe_b=$(( 150 ))
+fi
+##
 
 # This is my comment
 #This file is explicitly designed to:
@@ -48,11 +68,11 @@ cd ${current}_parent
 #read pe_b
 
 # these are good run settings
-tsteps=$(( 10000000 ))
-dump_freq=$(( 20000 ))
-x_a_spacer=$(( 10 ))
-pe_a_spacer=$(( 10 ))
-pe_b=$(( 150 ))
+#tsteps=$(( 10000000 ))
+#dump_freq=$(( 20000 ))
+#x_a_spacer=$(( 10 ))
+#pe_a_spacer=$(( 10 ))
+#pe_b=$(( 150 ))
 
 # these are good debug settings
 #tsteps=$(( 50000 ))
