@@ -273,7 +273,7 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 2
+take_last = dumps - 50
 last = dumps - 1
 for j in range(take_last, dumps):
     avg_sys_density[0] += getDensityPlease(j)
