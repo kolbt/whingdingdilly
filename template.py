@@ -266,7 +266,7 @@ for j in range(0, dumps):
         GF[j] = 1
 
 # let's start by getting the MSD for all particles (don't care about type)
-    if j != dumps:
+    if j != dumps - 1:
         MSD[j] = np.sqrt((position_array[j+1] - position_array[j])**2)
 
 def getDensityPlease(n):                                # call this function as needed
@@ -278,8 +278,9 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 50
+take_last = dumps - 5
 last = dumps - 1
+msd_last = dumps - 2
 for j in range(take_last, dumps):
     avg_sys_density[0] += getDensityPlease(j)
 
@@ -457,7 +458,7 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(MSD, color="g")
+    sns.kdeplot(MSD[msd_last], shade = True, color="g")
     plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()
 
@@ -483,6 +484,6 @@ else:                                                           # if monodispers
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(MSD, color="g")
+    sns.kdeplot(MSD[msd_last], shade = True, color="g")
     plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()
