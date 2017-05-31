@@ -273,7 +273,7 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 50
+take_last = dumps - 2
 last = dumps - 1
 for j in range(take_last, dumps):
     avg_sys_density[0] += getDensityPlease(j)
@@ -284,121 +284,123 @@ avg_sys_density[0] /= (dumps - take_last)
 ### perform the same analysis on species A and species B individually ###
 #########################################################################
 
-tot_size_A = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
-tot_num_A = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
-MCS_A = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
-GF_A = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+if part_perc_a != 0 and part_perc_a != 100:
 
-tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
-tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
-MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
-GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+    tot_size_A = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
+    tot_num_A = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
+    MCS_A = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
+    GF_A = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
 
-for j in range(0, dumps):
-    countA = 0
-    countB = 0
-    for g in range(0, part_num):
-        if type_array[j][g] == 0:
-            tmpA[countA][0] = position_array[j][g][0]
-            tmpA[countA][1] = position_array[j][g][1]
-            tmpA[countA][2] = position_array[j][g][2]
-            countA += 1
+    tot_size_B = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
+    tot_num_B = np.zeros((dumps), dtype=np.ndarray)           # total number of clusters
+    MCS_B = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
+    GF_B = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
+
+    for j in range(0, dumps):
+        countA = 0
+        countB = 0
+        for g in range(0, part_num):
+            if type_array[j][g] == 0:
+                tmpA[countA][0] = position_array[j][g][0]
+                tmpA[countA][1] = position_array[j][g][1]
+                tmpA[countA][2] = position_array[j][g][2]
+                countA += 1
+            else:
+                tmpB[countB][0] = position_array[j][g][0]
+                tmpB[countB][1] = position_array[j][g][1]
+                tmpB[countB][2] = position_array[j][g][2]
+                countB += 1
+
+        pos_A[j] = tmpA
+        pos_B[j] = tmpB
+        
+        l_pos = pos_A[j]
+        my_clusters.computeClusters(l_pos)
+        number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
+        ids = my_clusters.getClusterIdx()                   # get cluster ids
+        cluster_props.computeProperties(l_pos, ids)
+        size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
+        
+        for k in range(0, len(size_clusters[j])):
+            # the size minimum is a very important value to consider
+            if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
+                tot_size_A[j] += size_clusters[j][k]
+                tot_num_A[j] += 1
+
+        if tot_num_A[j] > 0:
+            MCS_A[j] = float(tot_size_A[j]/tot_num_A[j])/float(part_a)
+            GF_A[j] = float(part_a - tot_size_A[j]) / float(part_a)
+        
         else:
-            tmpB[countB][0] = position_array[j][g][0]
-            tmpB[countB][1] = position_array[j][g][1]
-            tmpB[countB][2] = position_array[j][g][2]
-            countB += 1
+            MCS_A[j] = 0
+            GF_A[j] = 1
 
-    pos_A[j] = tmpA
-    pos_B[j] = tmpB
-    
-    l_pos = pos_A[j]
-    my_clusters.computeClusters(l_pos)
-    number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
-    ids = my_clusters.getClusterIdx()                   # get cluster ids
-    cluster_props.computeProperties(l_pos, ids)
-    size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
-    
-    for k in range(0, len(size_clusters[j])):
-        # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
-            tot_size_A[j] += size_clusters[j][k]
-            tot_num_A[j] += 1
+        l_pos = pos_B[j]
+        my_clusters.computeClusters(l_pos)
+        number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
+        ids = my_clusters.getClusterIdx()                   # get cluster ids
+        cluster_props.computeProperties(l_pos, ids)
+        size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
+        
+        for k in range(0, len(size_clusters[j])):
+            # the size minimum is a very important value to consider
+            if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
+                tot_size_B[j] += size_clusters[j][k]
+                tot_num_B[j] += 1
 
-    if tot_num_A[j] > 0:
-        MCS_A[j] = float(tot_size_A[j]/tot_num_A[j])/float(part_a)
-        GF_A[j] = float(part_a - tot_size_A[j]) / float(part_a)
-    
-    else:
-        MCS_A[j] = 0
-        GF_A[j] = 1
-
-    l_pos = pos_B[j]
-    my_clusters.computeClusters(l_pos)
-    number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
-    ids = my_clusters.getClusterIdx()                   # get cluster ids
-    cluster_props.computeProperties(l_pos, ids)
-    size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
-    
-    for k in range(0, len(size_clusters[j])):
-        # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
-            tot_size_B[j] += size_clusters[j][k]
-            tot_num_B[j] += 1
-
-    if tot_num_B[j] > 0:
-        MCS_B[j] = float(tot_size_B[j]/tot_num_B[j])/float(part_b)
-        GF_B[j] = float(part_b - tot_size_B[j]) / float(part_b)
-    
-    else:
-        MCS_B[j] = 0
-        GF_B[j] = 1
+        if tot_num_B[j] > 0:
+            MCS_B[j] = float(tot_size_B[j]/tot_num_B[j])/float(part_b)
+            GF_B[j] = float(part_b - tot_size_B[j]) / float(part_b)
+        
+        else:
+            MCS_B[j] = 0
+            GF_B[j] = 1
 
 
 
-def getDensityA(n):                                     # call this function as needed
-    countA = 0
-    for g in range(0, part_num):
-        if type_array[n][g] == 0:
-            tmpA[countA][0] = position_array[n][g][0]
-            tmpA[countA][1] = position_array[n][g][1]
-            tmpA[countA][2] = position_array[n][g][2]
-            countA += 1
-    pos_A[n] = tmpA
-    l_pos = pos_A[n]                                    # get ith position array
-    my_density.compute(f_box,
-                       l_pos,
-                       l_pos)
-    return my_density.getDensity()
+    def getDensityA(n):                                     # call this function as needed
+        countA = 0
+        for g in range(0, part_num):
+            if type_array[n][g] == 0:
+                tmpA[countA][0] = position_array[n][g][0]
+                tmpA[countA][1] = position_array[n][g][1]
+                tmpA[countA][2] = position_array[n][g][2]
+                countA += 1
+        pos_A[n] = tmpA
+        l_pos = pos_A[n]                                    # get ith position array
+        my_density.compute(f_box,
+                           l_pos,
+                           l_pos)
+        return my_density.getDensity()
 
-avg_dense_A = np.zeros((1), dtype=np.ndarray)
+    avg_dense_A = np.zeros((1), dtype=np.ndarray)
 
-for j in range(take_last, dumps):
-    avg_dense_A[0] += getDensityA(j)
+    for j in range(take_last, dumps):
+        avg_dense_A[0] += getDensityA(j)
 
-avg_dense_A[0] /= (dumps - take_last)
+    avg_dense_A[0] /= (dumps - take_last)
 
-def getDensityB(n):                                     # call this function as needed
-    countB = 0
-    for g in range(0, part_num):
-        if type_array[n][g] == 1:
-            tmpB[countB][0] = position_array[n][g][0]
-            tmpB[countB][1] = position_array[n][g][1]
-            tmpB[countB][2] = position_array[n][g][2]
-            countB += 1
-    pos_B[n] = tmpB
-    l_pos = pos_B[n]                                    # get ith position array
-    my_density.compute(f_box,
-                       l_pos,
-                       l_pos)
-    return my_density.getDensity()
+    def getDensityB(n):                                     # call this function as needed
+        countB = 0
+        for g in range(0, part_num):
+            if type_array[n][g] == 1:
+                tmpB[countB][0] = position_array[n][g][0]
+                tmpB[countB][1] = position_array[n][g][1]
+                tmpB[countB][2] = position_array[n][g][2]
+                countB += 1
+        pos_B[n] = tmpB
+        l_pos = pos_B[n]                                    # get ith position array
+        my_density.compute(f_box,
+                           l_pos,
+                           l_pos)
+        return my_density.getDensity()
 
-avg_dense_B = np.zeros((1), dtype=np.ndarray)
+    avg_dense_B = np.zeros((1), dtype=np.ndarray)
 
-for j in range(take_last, dumps):
-    avg_dense_B[0] += getDensityB(j)
+    for j in range(take_last, dumps):
+        avg_dense_B[0] += getDensityB(j)
 
-avg_dense_B[0] /= (dumps - take_last)
+    avg_dense_B[0] /= (dumps - take_last)
 
 ##############################################
 ##### Plot the individual and total data #####
@@ -414,37 +416,60 @@ plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
 plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
 plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
-sns.kdeplot(avg_sys_density[0], shade = True, color="g")
-sns.kdeplot(avg_dense_A[0], shade = True, color="r")
-sns.kdeplot(avg_dense_B[0], shade = True, color="b")
-plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
-plt.close()
+if part_perc_a != 0 and part_perc_a != 100:
+    sns.kdeplot(avg_sys_density[0], shade = True, color="g")
+    sns.kdeplot(avg_dense_A[0], shade = True, color="r")
+    sns.kdeplot(avg_dense_B[0], shade = True, color="b")
+    plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
+    plt.close()
 
-sns.kdeplot(getDensityPlease(last), shade = True, color="g")
-sns.kdeplot(getDensityA(last), shade = True, color="r")
-sns.kdeplot(getDensityB(last), shade = True, color="b")
-plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
-plt.close()
+    sns.kdeplot(getDensityPlease(last), shade = True, color="g")
+    sns.kdeplot(getDensityA(last), shade = True, color="r")
+    sns.kdeplot(getDensityB(last), shade = True, color="b")
+    plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
+    plt.close()
 
-plt.plot(MCS, color="g")
-plt.plot(MCS_A, color="r")
-plt.plot(MCS_B, color="b")
-#plt.ylim((0,1))
-plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
-plt.close()
+    plt.plot(MCS, color="g")
+    plt.plot(MCS_A, color="r")
+    plt.plot(MCS_B, color="b")
+    #plt.ylim((0,1))
+    plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
+    plt.close()
 
-plt.plot(GF, color="g")
-plt.plot(GF_A, color="r")
-plt.plot(GF_B, color="b")
-plt.ylim((0,1))
-plt.savefig('GF_'+plt_name+'.png', dpi=1000)
-plt.close()
+    plt.plot(GF, color="g")
+    plt.plot(GF_A, color="r")
+    plt.plot(GF_B, color="b")
+    plt.ylim((0,1))
+    plt.savefig('GF_'+plt_name+'.png', dpi=1000)
+    plt.close()
 
-plt.plot(percent_A, color="r")
-#plt.ylim((0,1))
-plt.savefig('A_comp_'+plt_name+'.png', dpi=1000)
-plt.close()
+    plt.plot(percent_A, color="r")
+    #plt.ylim((0,1))
+    plt.savefig('A_comp_'+plt_name+'.png', dpi=1000)
+    plt.close()
 
-plt.plot(largest, color="g")
-plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
-plt.close()
+    plt.plot(largest, color="g")
+    plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
+    plt.close()
+
+else:                                                           # if monodisperse plot total values
+    sns.kdeplot(avg_sys_density[0], shade = True, color="g")
+    plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+    sns.kdeplot(getDensityPlease(last), shade = True, color="g")
+    plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+    plt.plot(MCS, color="g")
+    plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
+    plt.close()
+
+    plt.plot(GF, color="g")
+    plt.ylim((0,1))
+    plt.savefig('GF_'+plt_name+'.png', dpi=1000)
+    plt.close()
+
+    plt.plot(largest, color="g")
+    plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
+    plt.close()

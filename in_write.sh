@@ -28,7 +28,7 @@ read debug
 
 if [ $debug == "y" ]; then
     tsteps=$(( 50000 ))
-    dump_freq=$(( 1000 ))
+    dump_freq=$(( 10000 ))
     x_a_spacer=$(( 50 ))
     pe_a_spacer=$(( 50 ))
     pe_b=$(( 150 ))
