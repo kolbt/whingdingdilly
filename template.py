@@ -35,7 +35,7 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 40000
+part_num = 15000
 
 hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,
@@ -205,6 +205,7 @@ A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
 B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
+MSD = np.zeros((dumps - 1), dtype=np.ndarray)                # array of individual particle MSDs
 
 # analyze all particles
 for j in range(0, dumps):
@@ -263,6 +264,10 @@ for j in range(0, dumps):
     else:
         MCS[j] = 0
         GF[j] = 1
+
+# let's start by getting the MSD for all particles (don't care about type)
+    if j != dumps:
+        MSD[j] = np.sqrt((position_array[j+1] - position_array[j])**2)
 
 def getDensityPlease(n):                                # call this function as needed
     l_pos = position_array[n]                           # get ith position array
@@ -452,6 +457,10 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
+    plt.plot(MSD, color="g")
+    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
+    plt.close()
+
 else:                                                           # if monodisperse plot total values
     sns.kdeplot(avg_sys_density[0], shade = True, color="g")
     plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
@@ -472,4 +481,8 @@ else:                                                           # if monodispers
 
     plt.plot(largest, color="g")
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
+    plt.close()
+
+    plt.plot(MSD, color="g")
+    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()
