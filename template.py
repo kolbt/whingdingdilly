@@ -35,7 +35,7 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 15000
+part_num = 40000
 
 hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,
