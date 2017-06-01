@@ -206,6 +206,8 @@ B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
 MSD = np.zeros((dumps - 1, part_num), dtype=np.ndarray) # array of individual particle MSDs
+MSD_A = np.zeros((dumps - 1, part_a), dtype=np.ndarray) # array for a particles
+MSD_B = np.zeros((dumps - 1, part_b), dtype=np.ndarray) # array for a particles
 
 # analyze all particles
 for j in range(0, dumps):
@@ -216,15 +218,6 @@ for j in range(0, dumps):
     ids = my_clusters.getClusterIdx()                   # get cluster ids
     cluster_props.computeProperties(l_pos, ids)
     size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
-    
-    # let's start by getting the MSD for all particles (don't care about type)
-    if j != dumps - 1:
-        for w in range(0,part_num):
-            MSD[j][w] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) + ((position_array[j+1][w][1] - position_array[j][w][1])**2) + ((position_array[j+1][w][2] - position_array[j][w][2])**2))
-#        MSD[j] = np.sqrt(((position_array[j+1][:][0] - position_array[j][:][0])**2) +
-#                         ((position_array[j+1][:][1] - position_array[j][:][1])**2) +
-#                         ((position_array[j+1][:][2] - position_array[j][:][2])**2))
-        print(MSD[j])
     
     how_many = my_clusters.getNumClusters()
     
@@ -274,6 +267,28 @@ for j in range(0, dumps):
         MCS[j] = 0
         GF[j] = 1
 
+    # let's start by getting the MSD for all particles (don't care about type)
+    if j != dumps - 1:
+        msda_count = 0
+        msdb_count = 0
+        for w in range(0,part_num):
+            MSD[j][w] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                                
+            if type_array[j][w] == 0:
+                MSD_A[j][msda_count] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                               ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                               ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                msda_count += 1
+            else:
+                MSD_B[j][msdb_count] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                               ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                               ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                msdb_count += 1
+
+
+
 def getDensityPlease(n):                                # call this function as needed
     l_pos = position_array[n]                           # get ith position array
     my_density.compute(f_box,
@@ -283,7 +298,7 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 5
+take_last = dumps - 50
 last = dumps - 1
 msd_last = dumps - 2
 for j in range(take_last, dumps):
@@ -464,6 +479,8 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.close()
 
     sns.kdeplot(MSD[msd_last], shade = True, color="g")
+    sns.kdeplot(MSD_A[msd_last], shade = True, color="r")
+    sns.kdeplot(MSD_B[msd_last], shade = True, color="b")
     plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()
 
