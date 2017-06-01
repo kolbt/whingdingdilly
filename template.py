@@ -205,7 +205,7 @@ A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
 B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
-MSD = np.zeros((dumps - 1), dtype=np.ndarray)                # array of individual particle MSDs
+MSD = np.zeros((dumps - 1, part_num), dtype=np.ndarray) # array of individual particle MSDs
 
 # analyze all particles
 for j in range(0, dumps):
@@ -216,6 +216,15 @@ for j in range(0, dumps):
     ids = my_clusters.getClusterIdx()                   # get cluster ids
     cluster_props.computeProperties(l_pos, ids)
     size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
+    
+    # let's start by getting the MSD for all particles (don't care about type)
+    if j != dumps - 1:
+        for w in range(0,part_num):
+            MSD[j][w] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) + ((position_array[j+1][w][1] - position_array[j][w][1])**2) + ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+#        MSD[j] = np.sqrt(((position_array[j+1][:][0] - position_array[j][:][0])**2) +
+#                         ((position_array[j+1][:][1] - position_array[j][:][1])**2) +
+#                         ((position_array[j+1][:][2] - position_array[j][:][2])**2))
+        print(MSD[j])
     
     how_many = my_clusters.getNumClusters()
     
@@ -264,10 +273,6 @@ for j in range(0, dumps):
     else:
         MCS[j] = 0
         GF[j] = 1
-
-# let's start by getting the MSD for all particles (don't care about type)
-    if j != dumps - 1:
-        MSD[j] = np.sqrt((position_array[j+1] - position_array[j])**2)
 
 def getDensityPlease(n):                                # call this function as needed
     l_pos = position_array[n]                           # get ith position array
