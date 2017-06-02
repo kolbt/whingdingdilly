@@ -1,16 +1,15 @@
 import sys
 
-hoomd_path = "${hoomd_path}"
-tsteps = ${tsteps}
-dump_freq = ${dump_freq}
-part_perc_a = ${part_frac_a}
-part_frac_a = float(part_perc_a) / 100.0
-pe_a = ${pe_a}
-pe_b = ${pe_b}
-gsd_path = "${gsd_path}"
+hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
+gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
 
-# calculate number of tsteps which are dumped
-dumps = tsteps/dump_freq
+# need to extract values from filename (pa, pb, xa) for naming
+part_perc_a = #something from xa
+part_frac_a = float(part_perc_a) / 100.0
+pe_a = #something from pa
+pe_b = # something from pb
+
+dumps = len() # get number of dumps from length of position array?
 
 sys.path.append(hoomd_path)
 

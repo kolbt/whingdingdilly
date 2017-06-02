@@ -5,5 +5,8 @@
 
 
 filename=$1
+pa=$2
+pb=$3
+xa=$4
 
-python post_script.py $filename             # run infiles with python
+python /Users/kolbt/Desktop/compiled/whingdingdilly/post_proc/post_proc.py $filename $pa $pb $xa # run infiles with python
