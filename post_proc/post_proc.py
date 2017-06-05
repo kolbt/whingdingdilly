@@ -1,15 +1,13 @@
 import sys
 
-hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
-gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
+hoomd_path = str(sys.argv[4])
+gsd_path = str(sys.argv[5])
 
 # need to extract values from filename (pa, pb, xa) for naming
-part_perc_a = #something from xa
+part_perc_a = int(sys.argv[3])
 part_frac_a = float(part_perc_a) / 100.0
-pe_a = #something from pa
-pe_b = # something from pb
-
-dumps = len() # get number of dumps from length of position array?
+pe_a = int(sys.argv[1])
+pe_b = int(sys.argv[2])
 
 sys.path.append(hoomd_path)
 
@@ -34,12 +32,17 @@ sys.path.append(gsd_path)
 import gsd
 from gsd import hoomd
 from gsd import pygsd
+import numpy as np
+
+myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+
+f = hoomd.open(name=myfile, mode='rb')
+dumps = f.__len__()
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
 box_data = np.zeros((1), dtype=np.ndarray)              # box dimensions
 
-myfile = name                                           # gsd file to analyze
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
     box_data = snap.configuration.box                   # get box dimensions

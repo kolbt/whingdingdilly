@@ -3,10 +3,11 @@
 #SBATCH -n 1                                # number of cores
 #SBATCH -t 0-10:00                          # time (D-HH:MM)
 
+pa=$1
+pb=$2
+xa=$3
+hoomd_path=$4
+gsd_path=$5
+script_path=$6
 
-filename=$1
-pa=$2
-pb=$3
-xa=$4
-
-python /Users/kolbt/Desktop/compiled/whingdingdilly/post_proc/post_proc.py $filename $pa $pb $xa # run infiles with python
+python $script_path/post_proc.py $pa $pb $xa $hoomd_path $gsd_path
