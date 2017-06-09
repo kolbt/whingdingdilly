@@ -39,6 +39,10 @@ myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
 
+real_time = np.arange(1,float(dumps))
+#real_time *= 0.00001 * 20000                           # step_size * frequency
+real_time *= 0.2
+
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
 box_data = np.zeros((1), dtype=np.ndarray)              # box dimensions
@@ -69,7 +73,7 @@ f_box = box.Box(Lx=l_box,
                 is2D=True)                               # initialize freud box
 
 my_clusters = cluster.Cluster(box=f_box,
-                              rcut=0.85)                 # initialize class
+                              rcut=0.95)                 # initialize class
 cluster_props = cluster.ClusterProperties(box=f_box)
 
 number_clusters = np.zeros((dumps), dtype=np.ndarray)   # arrays to store things
@@ -90,6 +94,9 @@ LIQ_A = np.zeros((dumps - 1), dtype=np.ndarray)         # arrays for MSD
 LIQ_B = np.zeros((dumps - 1), dtype=np.ndarray)
 GAS_A = np.zeros((dumps - 1), dtype=np.ndarray)
 GAS_B = np.zeros((dumps - 1), dtype=np.ndarray)
+MSD_T = np.zeros((dumps - 1), dtype=np.ndarray)
+MSD_TL = np.zeros((dumps - 1), dtype=np.ndarray)
+MSD_TG = np.zeros((dumps - 1), dtype=np.ndarray)
 
 # analyze all particles
 for j in range(0, dumps):
@@ -104,6 +111,7 @@ for j in range(0, dumps):
     size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
     
     how_many = my_clusters.getNumClusters()
+    #print(how_many)
 
     sort_id = np.sort(ids)                              # array of IDs sorted small to large
     q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
@@ -128,34 +136,47 @@ for j in range(0, dumps):
     gs_b_count = 0
     if j <= dumps - 2:
         for b in range(0,part_num):
+            msd_val = np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
+                              ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
+                              ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+            MSD_T[j] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
+                MSD_TL += msd_val                           # add to tot. lq. msd
                 if type_array[j][b] == 0:                   # type A case
-                    # YOU NEED TO PUT IN A GENERAL CASE (NOT TYPE SPECIFIC)
-                    LIQ_A[j] += np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
-                                        ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
-                                        ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+                    LIQ_A[j] += msd_val
                     lq_a_count += 1
                 else:
-                    LIQ_B[j] += np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
-                                        ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
-                                        ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+                    LIQ_B[j] += msd_val
                     lq_b_count += 1
             else:                                           # else, particle is gas
+                MSD_TG += msd_val                           # add to tot. gs. msd
                 if type_array[j][b] == 0:                   # type A case
-                    GAS_A[j] += np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
-                                        ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
-                                        ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+                    GAS_A[j] += msd_val
                     gs_a_count += 1
                 else:
-                    GAS_B[j] += np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
-                                        ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
-                                        ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+                    GAS_B[j] += msd_val
                     gs_b_count += 1
 
         LIQ_A[j] /= lq_a_count
         LIQ_B[j] /= lq_b_count
         GAS_A[j] /= gs_a_count
         GAS_B[j] /= gs_b_count
+        MSD_T[j] /= part_num
+        MSD_TL[j] /= lq_a_count + lq_b_count
+        MSD_TG[j] /= gs_a_count + gs_b_count
+
+for w in range(0,len(LIQ_A)):
+    LIQ_A[w] = np.log10(LIQ_A[w])
+    LIQ_B[w] = np.log10(LIQ_B[w])
+    GAS_A[w] = np.log10(GAS_A[w])
+    GAS_B[w] = np.log10(GAS_B[w])
+    MSD_T[w] = np.log10(MSD_T[w])
+    MSD_TL[w] = np.log10(MSD_TL[w])
+    MSD_TG[w] = np.log10(MSD_TG[w])
+
+for y in range(0,len(real_time)):
+    real_time[y] = np.log10(real_time[y])
+
 
 #    A_id_count = 0
 #    B_id_count = 0
@@ -372,6 +393,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.signal import savgol_filter
 sns.set(color_codes=True)
 
 plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
@@ -420,11 +442,35 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
 #    plt.close()
 
-    plt.plot(LIQ_A, color="r")
-    plt.plot(LIQ_B, color="b")
-    plt.plot(GAS_A, color="r")
-    plt.plot(GAS_B, color="b")
-    plt.savefig('MSD_' + plt_name + '.png', dpi=1000)
+    zzz = savgol_filter(GAS_A, 41, 12)
+
+    plt.loglog(real_time, MSD_T, basex=10, color="g")
+    plt.savefig('MSD_T' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
+    plt.loglog(real_time, MSD_TL, basex=10, color="g")
+    plt.savefig('MSD_TL' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
+    plt.loglog(real_time, MSD_TG, basex=10, color="g")
+    plt.savefig('MSD_TG' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+    plt.loglog(real_time, LIQ_A, basex=10, color="r")
+    plt.savefig('MSD_LA' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
+    plt.loglog(real_time, LIQ_B, basex=10, color="b")
+    plt.savefig('MSD_LB' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
+    plt.loglog(real_time, GAS_A, basex=10, color="r")
+    plt.loglog(real_time, zzz, basex=10, color="g")
+    plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
+    plt.loglog(real_time, GAS_B, basex=10, color="b")
+    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
     plt.close()
 
 
