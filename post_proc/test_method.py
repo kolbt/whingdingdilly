@@ -141,7 +141,7 @@ for j in range(0, dumps):
                               ((position_array[j+1][b][2] - position_array[j][b][2])**2))
             MSD_T[j] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
-                MSD_TL += msd_val                           # add to tot. lq. msd
+                MSD_TL[j] += msd_val                        # add to tot. lq. msd
                 if type_array[j][b] == 0:                   # type A case
                     LIQ_A[j] += msd_val
                     lq_a_count += 1
@@ -149,7 +149,7 @@ for j in range(0, dumps):
                     LIQ_B[j] += msd_val
                     lq_b_count += 1
             else:                                           # else, particle is gas
-                MSD_TG += msd_val                           # add to tot. gs. msd
+                MSD_TG[j] += msd_val                        # add to tot. gs. msd
                 if type_array[j][b] == 0:                   # type A case
                     GAS_A[j] += msd_val
                     gs_a_count += 1
@@ -445,15 +445,9 @@ if part_perc_a != 0 and part_perc_a != 100:
     zzz = savgol_filter(GAS_A, 41, 12)
 
     plt.loglog(real_time, MSD_T, basex=10, color="g")
-    plt.savefig('MSD_T' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.loglog(real_time, MSD_TL, basex=10, color="g")
-    plt.savefig('MSD_TL' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.loglog(real_time, MSD_TG, basex=10, color="g")
-    plt.savefig('MSD_TG' + plt_name + '.png', dpi=1000)
+    plt.loglog(real_time, MSD_TL, basex=10, color="r")
+    plt.loglog(real_time, MSD_TG, basex=10, color="b")
+    plt.savefig('MSD_TS' + plt_name + '.png', dpi=1000)
     plt.close()
 
     plt.loglog(real_time, LIQ_A, basex=10, color="r")
