@@ -8,6 +8,7 @@
 
 import sys
 
+
 #hoomd_path = str(sys.argv[1])
 hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
 #tsteps = int(sys.argv[2])
@@ -15,7 +16,7 @@ tsteps = 10000000
 #dump_freq = int(sys.argv[3])
 dump_freq = 20000
 #part_frac_a = float(sys.argv[4])
-part_perc_a = 50
+part_perc_a = 40
 part_frac_a = float(part_perc_a) / 100.0
 #pe_a = float(sys.argv[5])
 pe_a = 0
@@ -24,6 +25,22 @@ pe_b = 0
 
 # calculate number of tsteps which are dumped
 dumps = tsteps/dump_freq
+
+###
+import numpy as np
+
+dump_list = np.zeros((70), dtype=int)
+value_to_dump = 0
+jumper = 1
+count = 1
+for jjj in range(1,70):
+    if (count-2) % 9 == 0 and count != 2:
+        jumper *= 10
+    value_to_dump += jumper
+    dump_list[jjj] = value_to_dump
+    count += 1
+dump_list += 110000
+###
 
 sys.path.append(hoomd_path)
 
@@ -141,6 +158,13 @@ else:
                               f_lst=activity_a,
                               rotation_diff=3.0,
                               orientation_link=False)
+###
+def dump_spec(timestep):
+    if timestep in dump_list:
+        hoomd.dump.gsd(filename="test.gsd", period=None, group=all, overwrite=False, static=[])
+
+hoomd.analyze.callback(callback = dump_spec, period = 1)
+###
 
 #write dumps
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"

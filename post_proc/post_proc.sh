@@ -17,7 +17,7 @@ else
     submit='sh'
 fi
 
-for filename in $( ls *20.gsd )
+for filename in $( ls *50.gsd )
 do
 
     # pull parameters from filename

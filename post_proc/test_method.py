@@ -165,17 +165,20 @@ for j in range(0, dumps):
         MSD_TL[j] /= lq_a_count + lq_b_count
         MSD_TG[j] /= gs_a_count + gs_b_count
 
-for w in range(0,len(LIQ_A)):
-    LIQ_A[w] = np.log10(LIQ_A[w])
-    LIQ_B[w] = np.log10(LIQ_B[w])
-    GAS_A[w] = np.log10(GAS_A[w])
-    GAS_B[w] = np.log10(GAS_B[w])
-    MSD_T[w] = np.log10(MSD_T[w])
-    MSD_TL[w] = np.log10(MSD_TL[w])
-    MSD_TG[w] = np.log10(MSD_TG[w])
+        print(MSD_T[j])
 
-for y in range(0,len(real_time)):
-    real_time[y] = np.log10(real_time[y])
+# take log of values?
+#for w in range(0,len(LIQ_A)):
+#    LIQ_A[w] = np.log10(LIQ_A[w])
+#    LIQ_B[w] = np.log10(LIQ_B[w])
+#    GAS_A[w] = np.log10(GAS_A[w])
+#    GAS_B[w] = np.log10(GAS_B[w])
+#    MSD_T[w] = np.log10(MSD_T[w])
+#    MSD_TL[w] = np.log10(MSD_TL[w])
+#    MSD_TG[w] = np.log10(MSD_TG[w])
+#
+#for y in range(0,len(real_time)):
+#    real_time[y] = np.log10(real_time[y])
 
 
 #    A_id_count = 0
@@ -393,7 +396,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
-from scipy.signal import savgol_filter
+#from scipy.signal import savgol_filter
 sns.set(color_codes=True)
 
 plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
@@ -442,7 +445,30 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
 #    plt.close()
 
-    zzz = savgol_filter(GAS_A, 41, 12)
+#    zzz = savgol_filter(GAS_A, 41, 12)
+
+#    plt.plot(real_time, MSD_T, color="g")
+#    plt.plot(real_time, MSD_TL, color="r")
+#    plt.plot(real_time, MSD_TG, color="b")
+#    plt.savefig('MSD_TS' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.plot(real_time, LIQ_A, color="r")
+#    plt.savefig('MSD_LA' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.plot(real_time, LIQ_B, color="b")
+#    plt.savefig('MSD_LB' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.plot(real_time, GAS_A, color="r")
+#    #    plt.plot(real_time, zzz, basex=10, color="g")
+#    plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.plot(real_time, GAS_B, color="b")
+#    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
+#    plt.close()
 
     plt.loglog(real_time, MSD_T, basex=10, color="g")
     plt.loglog(real_time, MSD_TL, basex=10, color="r")
@@ -459,7 +485,7 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.close()
     
     plt.loglog(real_time, GAS_A, basex=10, color="r")
-    plt.loglog(real_time, zzz, basex=10, color="g")
+#    plt.loglog(real_time, zzz, basex=10, color="g")
     plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
     plt.close()
     
