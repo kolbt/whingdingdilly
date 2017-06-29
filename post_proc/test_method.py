@@ -1,13 +1,22 @@
 import sys
 
-hoomd_path = str(sys.argv[4])
-gsd_path = str(sys.argv[5])
+#hoomd_path = str(sys.argv[4])
+#gsd_path = str(sys.argv[5])
 
 # need to extract values from filename (pa, pb, xa) for naming
-part_perc_a = int(sys.argv[3])
+#part_perc_a = int(sys.argv[3])
+#part_frac_a = float(part_perc_a) / 100.0
+#pe_a = int(sys.argv[1])
+#pe_b = int(sys.argv[2])
+
+# manual input
+hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
+gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
+
+part_perc_a = 20
 part_frac_a = float(part_perc_a) / 100.0
-pe_a = int(sys.argv[1])
-pe_b = int(sys.argv[2])
+pe_a = 0
+pe_b = 0
 
 sys.path.append(hoomd_path)
 
@@ -17,7 +26,7 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 15000
+part_num = 150000
 
 part_a = part_num * part_frac_a         # get the total number of A particles
 part_a = int(part_a)
@@ -35,13 +44,42 @@ from gsd import pygsd
 import numpy as np
 
 myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+#myfile = "test.gsd"
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
+print(dumps)
 
-real_time = np.arange(1,float(dumps))
+real_time = np.arange(0,float(dumps))
 #real_time *= 0.00001 * 20000                           # step_size * frequency
 real_time *= 0.2
+
+log_time = np.zeros((dumps), dtype=np.float64)
+#value_to_dump = 0
+#jumper = 1
+#count = 1
+#for jjj in range(1,63):
+#    if (count-2) % 9 == 0 and count != 2:
+#        jumper *= 10
+#    value_to_dump += jumper
+#    log_time[jjj] = value_to_dump
+#    count += 1
+
+jumper = 10
+value_to_dump = 100
+count = 0
+for iii in range(0,dumps):
+    if iii < 100:
+        log_time[iii] = iii
+    else:
+        log_time[iii] = value_to_dump
+        value_to_dump += jumper
+        count += 1
+    if count % 90 == 0 and count != 0:
+        jumper *= 10
+        count = 0
+
+log_time *= 0.00001
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
@@ -90,13 +128,13 @@ largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest clust
 MSD = np.zeros((dumps - 1, part_num), dtype=np.ndarray) # array of individual particle MSDs
 MSD_A = np.zeros((dumps - 1, part_a), dtype=np.ndarray) # array for a particles
 MSD_B = np.zeros((dumps - 1, part_b), dtype=np.ndarray) # array for a particles
-LIQ_A = np.zeros((dumps - 1), dtype=np.ndarray)         # arrays for MSD
-LIQ_B = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_A = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_B = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_T = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_TL = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_TG = np.zeros((dumps - 1), dtype=np.ndarray)
+LIQ_A = np.zeros((dumps), dtype=np.ndarray)         # arrays for MSD
+LIQ_B = np.zeros((dumps), dtype=np.ndarray)
+GAS_A = np.zeros((dumps), dtype=np.ndarray)
+GAS_B = np.zeros((dumps), dtype=np.ndarray)
+MSD_T = np.zeros((dumps), dtype=np.float64)
+MSD_TL = np.zeros((dumps), dtype=np.ndarray)
+MSD_TG = np.zeros((dumps), dtype=np.ndarray)
 
 # analyze all particles
 for j in range(0, dumps):
@@ -134,11 +172,11 @@ for j in range(0, dumps):
     lq_b_count = 0
     gs_a_count = 0
     gs_b_count = 0
-    if j <= dumps - 2:
+    if j > 0:
         for b in range(0,part_num):
-            msd_val = np.sqrt(((position_array[j+1][b][0] - position_array[j][b][0])**2) +
-                              ((position_array[j+1][b][1] - position_array[j][b][1])**2) +
-                              ((position_array[j+1][b][2] - position_array[j][b][2])**2))
+            msd_val = np.sqrt(((position_array[j][b][0] - position_array[0][b][0])**2) +
+                              ((position_array[j][b][1] - position_array[0][b][1])**2) +
+                              ((position_array[j][b][2] - position_array[0][b][2])**2))
             MSD_T[j] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
                 MSD_TL[j] += msd_val                        # add to tot. lq. msd
@@ -165,7 +203,7 @@ for j in range(0, dumps):
         MSD_TL[j] /= lq_a_count + lq_b_count
         MSD_TG[j] /= gs_a_count + gs_b_count
 
-        print(MSD_T[j])
+#print(MSD_T[j])
 
 # take log of values?
 #for w in range(0,len(LIQ_A)):
@@ -396,6 +434,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy import interpolate
 #from scipy.signal import savgol_filter
 sns.set(color_codes=True)
 
@@ -470,26 +509,95 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
 #    plt.close()
 
-    plt.loglog(real_time, MSD_T, basex=10, color="g")
-    plt.loglog(real_time, MSD_TL, basex=10, color="r")
-    plt.loglog(real_time, MSD_TG, basex=10, color="b")
+    x = log_time
+    y = MSD_T
+    
+    x2 = np.zeros((99), dtype=np.float64)
+    y2 = np.zeros((99), dtype=np.float64)
+    
+    x3 = np.zeros((dumps - 100), dtype=np.float64)
+    y3 = np.zeros((dumps - 100), dtype=np.float64)
+    
+    for i in range(1,100):
+        x2[i-1] = x[i]
+        y2[i-1] = y[i]
+    for i in range(100,dumps):
+        x3[i-100] = x[i]
+        y3[i-100] = y[i]
+
+
+    first = np.polyfit(np.log10(x2), np.log10(y2), 1)
+    second = np.polyfit(np.log10(x3), np.log10(y3), 1)
+#    poly1 = np.poly1d(first)
+#    poly2 = np.poly1d(second)
+#    lin1 = poly1(np.log10(x2))
+#    lin2 = poly2(np.log10(x3))
+    print(first)
+    print(second)
+
+    def lin_plot(m, b, fx):
+        fy = (fx**m) * (10**b)
+        return fy
+
+    lin1 = lin_plot(first[0], first[1], x2)
+    lin2 = lin_plot(second[0], second[1], x3)
+
+    plt.plot(log_time, MSD_T,  color="g")
+    plt.plot(x2, lin1, color="r", linestyle="solid", label='Slope = ' + str(first[0]))
+    plt.plot(x3, lin2, color="b", linestyle="solid", label='Slope = ' + str(second[0]))
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'Time ($\tau$)')
+    plt.ylabel('MSD')
+    plt.legend(loc='upper left')
+    plt.savefig('FITTED' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+#
+#    line1 = np.zeros((99), dtype=np.float64)
+#    line2 = np.zeros((dumps-100), dtype=np.float64)
+#
+#    for i in range(1,100):
+#        line1[i-1] = lin_plot(first[0], first[1], x[i])
+#
+#    for i in range(100,dumps):
+#        line2[i-100] = lin_plot(second[0], second[1], x[i])
+
+#    tck = interpolate.splrep(x2, y2, k=1, s=0)
+#    tck2 = interpolate.splrep(x3, y3, k=1, s=0)
+#    
+#    y4 = interpolate.splev(x2, tck)
+#    y5 = interpolate.splev(x3, tck2)
+
+    plt.loglog(log_time, MSD_T, basex=10, color="g")
+#    plt.loglog(x2, line1, basex=10, color="r", linestyle="solid")
+#    plt.loglog(x3, line2, basex=10, color="b", linestyle="solid")
+#    plt.loglog(x2, line1, basex=10, color="r")
+#    plt.loglog(x3, line2, basex=10, color="b")
+    #plt.loglog(x, yinterp, basex=10, color="b", linestyle="solid")
+#    plt.loglog(x2, y4, basex=10, color="b", linestyle="solid")
+#    plt.loglog(x3, y5, basex=10, color="r", linestyle="solid")
+#    plt.rcParams['backend'] = 'TkAgg'  # or, 'qt4agg'
+#    plt.rcParams['agg.path.chunksize'] = 100000
+    #plt.loglog(real_time, MSD_TL, basex=10, color="r")
+    #plt.loglog(real_time, MSD_TG, basex=10, color="b")
     plt.savefig('MSD_TS' + plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.loglog(real_time, LIQ_A, basex=10, color="r")
+    plt.loglog(log_time, LIQ_A, basex=10, color="r")
     plt.savefig('MSD_LA' + plt_name + '.png', dpi=1000)
     plt.close()
     
-    plt.loglog(real_time, LIQ_B, basex=10, color="b")
+    plt.loglog(log_time, LIQ_B, basex=10, color="b")
     plt.savefig('MSD_LB' + plt_name + '.png', dpi=1000)
     plt.close()
     
-    plt.loglog(real_time, GAS_A, basex=10, color="r")
+    plt.loglog(log_time, GAS_A, basex=10, color="r")
 #    plt.loglog(real_time, zzz, basex=10, color="g")
     plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
     plt.close()
     
-    plt.loglog(real_time, GAS_B, basex=10, color="b")
+    plt.loglog(log_time, GAS_B, basex=10, color="b")
     plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
     plt.close()
 

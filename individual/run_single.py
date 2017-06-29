@@ -7,6 +7,7 @@
 #    6.) pe_b (float): activity of tyep b particles
 
 import sys
+import os
 
 
 #hoomd_path = str(sys.argv[1])
@@ -16,12 +17,12 @@ tsteps = 10000000
 #dump_freq = int(sys.argv[3])
 dump_freq = 20000
 #part_frac_a = float(sys.argv[4])
-part_perc_a = 40
+part_perc_a = 50
 part_frac_a = float(part_perc_a) / 100.0
 #pe_a = float(sys.argv[5])
-pe_a = 0
+pe_a = 80
 #pe_b = float(sys.argv[6])
-pe_b = 0
+pe_b = 80
 
 # calculate number of tsteps which are dumped
 dumps = tsteps/dump_freq
@@ -29,16 +30,31 @@ dumps = tsteps/dump_freq
 ###
 import numpy as np
 
-dump_list = np.zeros((70), dtype=int)
-value_to_dump = 0
-jumper = 1
-count = 1
-for jjj in range(1,70):
-    if (count-2) % 9 == 0 and count != 2:
+dump_list = np.zeros((550), dtype=int)
+#value_to_dump = 0
+#jumper = 1
+#count = 1
+#for jjj in range(1,70):
+#    if (count-2) % 9 == 0 and count != 2:
+#        jumper *= 10
+#    value_to_dump += jumper
+#    dump_list[jjj] = value_to_dump
+#    count += 1
+#dump_list += 110000
+
+jumper = 10
+value_to_dump = 100
+count = 0
+for iii in range(0,550):
+    if iii < 100:
+        dump_list[iii] = iii
+    else:
+        dump_list[iii] = value_to_dump
+        value_to_dump += jumper
+        count += 1
+    if count % 90 == 0 and count != 0:
         jumper *= 10
-    value_to_dump += jumper
-    dump_list[jjj] = value_to_dump
-    count += 1
+        count = 0
 dump_list += 110000
 ###
 
@@ -47,6 +63,9 @@ sys.path.append(hoomd_path)
 import hoomd
 from hoomd import md
 from hoomd import deprecated
+import gc
+
+gc.enable()
 
 #initialize system randomly, can specify GPU execution here
 
@@ -158,17 +177,19 @@ else:
                               f_lst=activity_a,
                               rotation_diff=3.0,
                               orientation_link=False)
+
+name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 ###
 def dump_spec(timestep):
     if timestep in dump_list:
-        hoomd.dump.gsd(filename="test.gsd", period=None, group=all, overwrite=False, static=[])
+        hoomd.dump.gsd(filename=name, period=None, group=all, overwrite=False, static=[])
+        os.close(2)
 
 hoomd.analyze.callback(callback = dump_spec, period = 1)
 ###
 
 #write dumps
-name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
-hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
+#hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
 
 #run
 hoomd.run(tsteps)
