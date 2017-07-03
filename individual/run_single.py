@@ -179,7 +179,7 @@ else:
                               orientation_link=False)
 
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
-###
+### Dump for MSD
 def dump_spec(timestep):
     if timestep in dump_list:
         hoomd.dump.gsd(filename=name, period=None, group=all, overwrite=False, static=[])

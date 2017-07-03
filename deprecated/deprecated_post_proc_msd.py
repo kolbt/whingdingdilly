@@ -24,9 +24,9 @@ part_a = int(part_a)
 part_b = part_num - part_a              # get the total number of B particles
 part_b = int(part_b)
 
-################################################################################
-############################# Begin Data Analysis ##############################
-################################################################################
+#########################################################################
+########################## Begin Data Analysis ##########################
+#########################################################################
 
 sys.path.append(gsd_path)
 import gsd
@@ -42,7 +42,6 @@ dumps = f.__len__()
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
 box_data = np.zeros((1), dtype=np.ndarray)              # box dimensions
-timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
@@ -51,10 +50,6 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         snap = t[i]                                     # take snap of each dump
         type_array[i] = snap.particles.typeid
         position_array[i] = snap.particles.position     # store all particle positions
-        timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
-
-timesteps -= timesteps[0]
-msd_time = timesteps[1:]
 
 pos_A = np.zeros((dumps), dtype=np.ndarray)             # type A positions
 pos_B = np.zeros((dumps), dtype=np.ndarray)             # type B positions
@@ -88,18 +83,9 @@ A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
 B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
-
-LIQ_A = np.zeros((dumps - 1), dtype=np.ndarray)         # arrays for MSD
-LIQ_B = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_A = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_B = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_T = np.zeros((dumps - 1), dtype=np.float64)
-MSD_TL = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_TG = np.zeros((dumps - 1), dtype=np.ndarray)
-
-disp_x = np.zeros((part_num), dtype=np.ndarray)         # displacement vectors
-disp_y = np.zeros((part_num), dtype=np.ndarray)
-disp_z = np.zeros((part_num), dtype=np.ndarray)
+MSD = np.zeros((dumps - 1, part_num), dtype=np.ndarray) # array of individual particle MSDs
+MSD_A = np.zeros((dumps - 1, part_a), dtype=np.ndarray) # array for a particles
+MSD_B = np.zeros((dumps - 1, part_b), dtype=np.ndarray) # array for a particles
 
 # analyze all particles
 for j in range(0, dumps):
@@ -113,9 +99,6 @@ for j in range(0, dumps):
     
     how_many = my_clusters.getNumClusters()
     
-    #############################################################
-    ### This finds the cluster ids for type A and B particles ###
-    #############################################################
     A_id_count = 0
     B_id_count = 0
     for h in range(0, part_num):
@@ -132,10 +115,6 @@ for j in range(0, dumps):
     numerator_A = 0
     denominator_tot = 0
     
-    #######################################################################
-    ### If clusters are greater than a threshold size, find composition ###
-    #######################################################################
-    
     for m in range(0, how_many):
         clust_dat_A[m] = (A_ids == m).sum()             # sum all A type particles in a cluster
         clust_dat_B[m] = (B_ids == m).sum()
@@ -147,10 +126,6 @@ for j in range(0, dumps):
     if denominator_tot != 0:
         percent_A[j] =  float(numerator_A) / float(denominator_tot)
 
-
-    #####################################################################
-    ### Find avg cluster size, gas fraction, and largest cluster size ###
-    #####################################################################
     l_clust = 0                                             # int size of largest cluster
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
@@ -165,95 +140,32 @@ for j in range(0, dumps):
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
+    
     else:
         MCS[j] = 0
         GF[j] = 1
 
-    #########################################################
-    ### Find MSD for A, B individually, also total system ###
-    #########################################################
+    # let's start by getting the MSD for all particles (don't care about type)
+    if j != dumps - 1:
+        msda_count = 0
+        msdb_count = 0
+        for w in range(0,part_num):
+            MSD[j][w] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                                
+            if type_array[j][w] == 0:
+                MSD_A[j][msda_count] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                               ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                               ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                msda_count += 1
+            else:
+                MSD_B[j][msdb_count] = np.sqrt(((position_array[j+1][w][0] - position_array[j][w][0])**2) +
+                                               ((position_array[j+1][w][1] - position_array[j][w][1])**2) +
+                                               ((position_array[j+1][w][2] - position_array[j][w][2])**2))
+                msdb_count += 1
 
-    # ?you can enhance difference between gas and liq by setting min clust requirement
 
-    sort_id = np.sort(ids)                              # array of IDs sorted small to large
-    q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
-    index = 0                                           # index of the sorted array to look at
-    for a in range(0,len(q_clust)):
-        add_clust = 0
-        while 1:
-            add_clust += 1
-            if index == part_num:                       # break if index is too large
-                break
-            if sort_id[index] != a:                     # break if ID changes
-                break
-            if add_clust == 1:                          # all particles appear once
-                q_clust[a] = 0
-            if add_clust == 2:                          # only multiple ids appear twice
-                q_clust[a] = 1
-            index += 1                                  # increment index
-
-    lq_a_count = 0
-    lq_b_count = 0
-    gs_a_count = 0
-    gs_b_count = 0
-    if j > 0:
-        for b in range(0,part_num):
-            
-            # check instantaneous disp. over last timestep
-            dx = position_array[j][b][0] - position_array[j-1][b][0]
-            dy = position_array[j][b][1] - position_array[j-1][b][1]
-            dz = position_array[j][b][2] - position_array[j-1][b][2]
-            
-            # if it is over some threshold, then it went past a boundary
-            if dx < -50:
-                dx += l_box
-            if dx > 50:
-                dx -= l_box
-            disp_x[b] += dx
-            
-            if dy < -50:
-                dy += l_box
-            if dy > 50:
-                dy -= l_box
-            disp_y[b] += dy
-            
-            if dz < -50:
-                dz += l_box
-            if dz > 50:
-                dz -= l_box
-            disp_z[b] += dz
-            
-            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
-            MSD_T[j-1] += msd_val
-            if q_clust[ids[b]] == 1:                        # check if in liquid
-                MSD_TL[j-1] += msd_val                      # add to tot. lq. msd
-                if type_array[j][b] == 0:                   # type A case
-                    LIQ_A[j-1] += msd_val
-                    lq_a_count += 1
-                else:
-                    LIQ_B[j-1] += msd_val
-                    lq_b_count += 1
-            else:                                           # else, particle is gas
-                MSD_TG[j-1] += msd_val                      # add to tot. gs. msd
-                if type_array[j][b] == 0:                   # type A case
-                    GAS_A[j-1] += msd_val
-                    gs_a_count += 1
-                else:
-                    GAS_B[j-1] += msd_val
-                    gs_b_count += 1
-
-        # if-gating these so we don't break our program
-        if lq_a_count != 0: LIQ_A[j-1] /= lq_a_count
-        if lq_b_count != 0: LIQ_B[j-1] /= lq_b_count
-        if gs_a_count != 0: GAS_A[j-1] /= gs_a_count
-        if gs_b_count != 0: GAS_B[j-1] /= gs_b_count
-        MSD_T[j-1] /= part_num
-        if lq_a_count + lq_b_count != 0: MSD_TL[j-1] /= lq_a_count + lq_b_count
-        if gs_a_count + gs_b_count != 0: MSD_TG[j-1] /= gs_a_count + gs_b_count
-
-############################
-### Density caluclations ###
-############################
 
 def getDensityPlease(n):                                # call this function as needed
     l_pos = position_array[n]                           # get ith position array
@@ -272,9 +184,9 @@ for j in range(take_last, dumps):
 
 avg_sys_density[0] /= (dumps - take_last)
 
-################################################################################
-###### perform the same analysis on species A and species B individually #######
-################################################################################
+#########################################################################
+### perform the same analysis on species A and species B individually ###
+#########################################################################
 
 if part_perc_a != 0 and part_perc_a != 100:
 
@@ -313,10 +225,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         cluster_props.computeProperties(l_pos, ids)
         size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
         
-        ####################################
-        ### GF, MCS for A-A correlations ###
-        ####################################
-        
         for k in range(0, len(size_clusters[j])):
             # the size minimum is a very important value to consider
             if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
@@ -338,10 +246,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         cluster_props.computeProperties(l_pos, ids)
         size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
         
-        ####################################
-        ### GF, MCS for A-A correlations ###
-        ####################################
-
         for k in range(0, len(size_clusters[j])):
             # the size minimum is a very important value to consider
             if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
@@ -402,9 +306,9 @@ if part_perc_a != 0 and part_perc_a != 100:
 
     avg_dense_B[0] /= (dumps - take_last)
 
-################################################################################
-#################### Plot the individual and total data ########################
-################################################################################
+##############################################
+##### Plot the individual and total data #####
+##############################################
 
 import matplotlib
 matplotlib.use('Agg')
@@ -452,43 +356,10 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, GAS_A,  color="r", marker='o', markersize=1, linestyle='None', label='Gas_A')
-    plt.plot(msd_time, GAS_B,  color="b", marker='o', markersize=1, linestyle='None', label='Gas_B')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_GAS_AB_' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.plot(msd_time, LIQ_A,  color="r", marker='o', markersize=1, linestyle='None', label='Liq_A')
-    plt.plot(msd_time, LIQ_B,  color="b", marker='o', markersize=1, linestyle='None', label='Liq_B')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LIQ_AB_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
-    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
+    sns.kdeplot(MSD[msd_last], shade = True, color="g")
+    sns.kdeplot(MSD_A[msd_last], shade = True, color="r")
+    sns.kdeplot(MSD_B[msd_last], shade = True, color="b")
+    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()
 
 else:                                                           # if monodisperse plot total values
@@ -513,22 +384,6 @@ else:                                                           # if monodispers
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
-    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    #plt.xlabel(r'Time ($\tau$)')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
+    sns.kdeplot(MSD[msd_last], shade = True, color="g")
+    plt.savefig('MSD_'+plt_name+'.png', dpi=1000)
     plt.close()

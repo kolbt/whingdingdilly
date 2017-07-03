@@ -13,10 +13,10 @@ import sys
 hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
 gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
 
-part_perc_a = 60
+part_perc_a = 50
 part_frac_a = float(part_perc_a) / 100.0
-pe_a = 0
-pe_b = 0
+pe_a = 80
+pe_b = 80
 
 sys.path.append(hoomd_path)
 
@@ -78,12 +78,35 @@ log_time = np.zeros((dumps-1), dtype=np.float64)
 #    if count % 90 == 0 and count != 0:
 #        jumper *= 10
 #        count = 0
-#
-#log_time *= 0.00001
+#    print(log_time[iii-1])
+
+msd_dumps = np.zeros((101), dtype=np.float64)
+jumper = 5
+value_to_dump = 15
+count = 10
+for iii in range(0,101):
+    if iii <= 10:
+        msd_dumps[iii] = iii
+    elif count == 95:
+        msd_dumps[iii] = value_to_dump
+        jumper *= 10
+        value_to_dump += jumper
+        count = 10
+    else:
+        msd_dumps[iii] = value_to_dump
+        value_to_dump += jumper
+        count += 5
+
+msd_dumps += 9110000
+
+
+
+log_time *= 0.00001
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
 box_data = np.zeros((1), dtype=np.ndarray)              # box dimensions
+timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
@@ -92,6 +115,10 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         snap = t[i]                                     # take snap of each dump
         type_array[i] = snap.particles.typeid
         position_array[i] = snap.particles.position     # store all particle positions
+        timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
+
+timesteps -= timesteps[0]
+msd_time = timesteps[1:]
 
 pos_A = np.zeros((dumps), dtype=np.ndarray)             # type A positions
 pos_B = np.zeros((dumps), dtype=np.ndarray)             # type B positions
@@ -204,7 +231,7 @@ for j in range(0, dumps):
                 dz -= l_box
             disp_z[b] += dz
             
-            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
+            msd_val = (((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
             MSD_T[j-1] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
                 MSD_TL[j-1] += msd_val                        # add to tot. lq. msd
@@ -537,10 +564,7 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
 #    plt.close()
 
-    my_time = np.arange(1,dumps)
-    my_time *= 0.001
-
-    plt.plot(my_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
+    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel(r'Time ($\tau$)')
@@ -589,7 +613,7 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.xlabel(r'Time ($\tau$)')
     plt.ylabel('MSD')
     plt.legend(loc='upper left')
-    plt.savefig('FITTED' + plt_name + '.png', dpi=1000)
+    plt.savefig('FITTED2' + plt_name + '.png', dpi=1000)
     plt.close()
     
     

@@ -32,6 +32,26 @@ sys.path.append(hoomd_path)
 import hoomd
 from hoomd import md
 from hoomd import deprecated
+import numpy as np
+
+#get tsteps for msd calculations
+msd_dumps = np.zeros((101), dtype=np.float64)
+jumper = 5
+value_to_dump = 15
+count = 10
+for iii in range(0,101):
+    if iii <= 10:
+        msd_dumps[iii] = iii
+    elif count == 95:
+        msd_dumps[iii] = value_to_dump
+        jumper *= 10
+        value_to_dump += jumper
+        count = 10
+    else:
+        msd_dumps[iii] = value_to_dump
+        value_to_dump += jumper
+        count += 5
+msd_dumps += 9110000
 
 #initialize system randomly, can specify GPU execution here
 
@@ -87,7 +107,6 @@ hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 hoomd.run(100000)
 
 #set the activity of each type
-import numpy as np
 
 angle = np.random.rand(part_num) * 2 * np.pi
 
@@ -146,6 +165,17 @@ else:
 
 #write dumps
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+msd_name = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+
+### Dump for MSD ###
+def dump_spec(timestep):
+    if timestep in msd_dumps:
+        hoomd.dump.gsd(filename=msd_name, period=None, group=all, overwrite=False, static=[])
+        os.close(2)
+
+hoomd.analyze.callback(callback = dump_spec, period = 1)
+####################
+
 hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
 
 #run
