@@ -13,7 +13,7 @@ import sys
 hoomd_path = "/Users/kolbt/Desktop/compiled/hoomd-blue/build"
 gsd_path = "/Users/kolbt/Desktop/compiled/gsd/build"
 
-part_perc_a = 20
+part_perc_a = 60
 part_frac_a = float(part_perc_a) / 100.0
 pe_a = 0
 pe_b = 0
@@ -26,7 +26,7 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 150000
+part_num = 15000
 
 part_a = part_num * part_frac_a         # get the total number of A particles
 part_a = int(part_a)
@@ -54,7 +54,7 @@ real_time = np.arange(0,float(dumps))
 #real_time *= 0.00001 * 20000                           # step_size * frequency
 real_time *= 0.2
 
-log_time = np.zeros((dumps), dtype=np.float64)
+log_time = np.zeros((dumps-1), dtype=np.float64)
 #value_to_dump = 0
 #jumper = 1
 #count = 1
@@ -65,21 +65,21 @@ log_time = np.zeros((dumps), dtype=np.float64)
 #    log_time[jjj] = value_to_dump
 #    count += 1
 
-jumper = 10
-value_to_dump = 100
-count = 0
-for iii in range(0,dumps):
-    if iii < 100:
-        log_time[iii] = iii
-    else:
-        log_time[iii] = value_to_dump
-        value_to_dump += jumper
-        count += 1
-    if count % 90 == 0 and count != 0:
-        jumper *= 10
-        count = 0
-
-log_time *= 0.00001
+#jumper = 10
+#value_to_dump = 100
+#count = 0
+#for iii in range(1,dumps):
+#    if iii < 100:
+#        log_time[iii-1] = iii
+#    else:
+#        log_time[iii-1] = value_to_dump
+#        value_to_dump += jumper
+#        count += 1
+#    if count % 90 == 0 and count != 0:
+#        jumper *= 10
+#        count = 0
+#
+#log_time *= 0.00001
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
@@ -128,13 +128,18 @@ largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest clust
 MSD = np.zeros((dumps - 1, part_num), dtype=np.ndarray) # array of individual particle MSDs
 MSD_A = np.zeros((dumps - 1, part_a), dtype=np.ndarray) # array for a particles
 MSD_B = np.zeros((dumps - 1, part_b), dtype=np.ndarray) # array for a particles
-LIQ_A = np.zeros((dumps), dtype=np.ndarray)         # arrays for MSD
-LIQ_B = np.zeros((dumps), dtype=np.ndarray)
-GAS_A = np.zeros((dumps), dtype=np.ndarray)
-GAS_B = np.zeros((dumps), dtype=np.ndarray)
-MSD_T = np.zeros((dumps), dtype=np.float64)
-MSD_TL = np.zeros((dumps), dtype=np.ndarray)
-MSD_TG = np.zeros((dumps), dtype=np.ndarray)
+
+LIQ_A = np.zeros((dumps - 1), dtype=np.ndarray)         # arrays for MSD
+LIQ_B = np.zeros((dumps - 1), dtype=np.ndarray)
+GAS_A = np.zeros((dumps - 1), dtype=np.ndarray)
+GAS_B = np.zeros((dumps - 1), dtype=np.ndarray)
+MSD_T = np.zeros((dumps - 1), dtype=np.float64)
+MSD_TL = np.zeros((dumps - 1), dtype=np.ndarray)
+MSD_TG = np.zeros((dumps - 1), dtype=np.ndarray)
+
+disp_x = np.zeros((part_num), dtype=np.ndarray)         # displacement vectors
+disp_y = np.zeros((part_num), dtype=np.ndarray)
+disp_z = np.zeros((part_num), dtype=np.ndarray)
 
 # analyze all particles
 for j in range(0, dumps):
@@ -174,34 +179,57 @@ for j in range(0, dumps):
     gs_b_count = 0
     if j > 0:
         for b in range(0,part_num):
-            msd_val = np.sqrt(((position_array[j][b][0] - position_array[0][b][0])**2) +
-                              ((position_array[j][b][1] - position_array[0][b][1])**2) +
-                              ((position_array[j][b][2] - position_array[0][b][2])**2))
-            MSD_T[j] += msd_val
+            
+            # check instantaneous disp. over last timestep
+            dx = position_array[j][b][0] - position_array[j-1][b][0]
+            dy = position_array[j][b][1] - position_array[j-1][b][1]
+            dz = position_array[j][b][2] - position_array[j-1][b][2]
+            
+            # if it is over some threshold, then it went past a boundary
+            if dx < -50:
+                dx += l_box
+            if dx > 50:
+                dx -= l_box
+            disp_x[b] += dx
+            
+            if dy < -50:
+                dy += l_box
+            if dy > 50:
+                dy -= l_box
+            disp_y[b] += dy
+            
+            if dz < -50:
+                dz += l_box
+            if dz > 50:
+                dz -= l_box
+            disp_z[b] += dz
+            
+            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
+            MSD_T[j-1] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
-                MSD_TL[j] += msd_val                        # add to tot. lq. msd
+                MSD_TL[j-1] += msd_val                        # add to tot. lq. msd
                 if type_array[j][b] == 0:                   # type A case
-                    LIQ_A[j] += msd_val
+                    LIQ_A[j-1] += msd_val
                     lq_a_count += 1
                 else:
-                    LIQ_B[j] += msd_val
+                    LIQ_B[j-1] += msd_val
                     lq_b_count += 1
             else:                                           # else, particle is gas
-                MSD_TG[j] += msd_val                        # add to tot. gs. msd
+                MSD_TG[j-1] += msd_val                        # add to tot. gs. msd
                 if type_array[j][b] == 0:                   # type A case
-                    GAS_A[j] += msd_val
+                    GAS_A[j-1] += msd_val
                     gs_a_count += 1
                 else:
-                    GAS_B[j] += msd_val
+                    GAS_B[j-1] += msd_val
                     gs_b_count += 1
 
-        LIQ_A[j] /= lq_a_count
-        LIQ_B[j] /= lq_b_count
-        GAS_A[j] /= gs_a_count
-        GAS_B[j] /= gs_b_count
-        MSD_T[j] /= part_num
-        MSD_TL[j] /= lq_a_count + lq_b_count
-        MSD_TG[j] /= gs_a_count + gs_b_count
+        LIQ_A[j-1] /= lq_a_count
+        LIQ_B[j-1] /= lq_b_count
+        GAS_A[j-1] /= gs_a_count
+        GAS_B[j-1] /= gs_b_count
+        MSD_T[j-1] /= part_num
+        MSD_TL[j-1] /= lq_a_count + lq_b_count
+        MSD_TG[j-1] /= gs_a_count + gs_b_count
 
 #print(MSD_T[j])
 
@@ -509,22 +537,33 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
 #    plt.close()
 
+    my_time = np.arange(1,dumps)
+    my_time *= 0.001
+
+    plt.plot(my_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'Time ($\tau$)')
+    plt.ylabel('MSD')
+    plt.legend(loc='upper left')
+    plt.savefig('FITTED' + plt_name + '.png', dpi=1000)
+    plt.close()
+    
     x = log_time
     y = MSD_T
     
-    x2 = np.zeros((99), dtype=np.float64)
-    y2 = np.zeros((99), dtype=np.float64)
+    x2 = np.zeros((100), dtype=np.float64)
+    y2 = np.zeros((100), dtype=np.float64)
     
-    x3 = np.zeros((dumps - 100), dtype=np.float64)
-    y3 = np.zeros((dumps - 100), dtype=np.float64)
+    x3 = np.zeros((dumps - 101), dtype=np.float64)
+    y3 = np.zeros((dumps - 101), dtype=np.float64)
     
-    for i in range(1,100):
-        x2[i-1] = x[i]
-        y2[i-1] = y[i]
-    for i in range(100,dumps):
+    for i in range(0,100):
+        x2[i] = x[i]
+        y2[i] = y[i]
+    for i in range(100,dumps-1):
         x3[i-100] = x[i]
         y3[i-100] = y[i]
-
 
     first = np.polyfit(np.log10(x2), np.log10(y2), 1)
     second = np.polyfit(np.log10(x3), np.log10(y3), 1)
@@ -542,9 +581,9 @@ if part_perc_a != 0 and part_perc_a != 100:
     lin1 = lin_plot(first[0], first[1], x2)
     lin2 = lin_plot(second[0], second[1], x3)
 
-    plt.plot(log_time, MSD_T,  color="g")
-    plt.plot(x2, lin1, color="r", linestyle="solid", label='Slope = ' + str(first[0]))
-    plt.plot(x3, lin2, color="b", linestyle="solid", label='Slope = ' + str(second[0]))
+    plt.plot(log_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
+    #plt.plot(x2, lin1, color="r", linestyle="solid", label='Slope = ' + str(first[0]))
+    #plt.plot(x3, lin2, color="b", linestyle="solid", label='Slope = ' + str(second[0]))
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel(r'Time ($\tau$)')
@@ -552,6 +591,29 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.legend(loc='upper left')
     plt.savefig('FITTED' + plt_name + '.png', dpi=1000)
     plt.close()
+    
+    
+    
+    
+    
+    slopes = np.diff(np.log10(MSD_T)) / np.diff(np.log10(log_time))
+    slopes_diff = np.zeros((dumps-2), dtype=np.float64)
+    
+    for i in range(1,len(slopes)):
+        slopes_diff[i-1] = slopes[i] - slopes[i-1]
+    
+    plt.plot(slopes)
+    plt.ylim((0,2))
+    plt.savefig('SLOPES' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+    plt.plot(slopes_diff)
+    plt.ylim((-2,2))
+    plt.savefig('SLOPES_DIFF' + plt_name + '.png', dpi=1000)
+    plt.close()
+
+
+    
 
 #
 #    line1 = np.zeros((99), dtype=np.float64)
