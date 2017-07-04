@@ -17,7 +17,7 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 15000
+part_num = 40000
 
 part_a = part_num * part_frac_a         # get the total number of A particles
 part_a = int(part_a)
