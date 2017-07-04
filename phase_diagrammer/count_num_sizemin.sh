@@ -1,18 +1,49 @@
 #!/bin/sh
 
-size_min=??? # maybe like 2000?
+size_min=2000           # maybe like 2000?
 occurrences=0
-occur_min=??? # maybe like 100 tsteps?
+occur_min=100           # maybe like 100 tsteps?
 output=0
 
-for i in "cat myfile.txt | awk '{print $1}'"
+rm pe${pb}B_sep.txt
+
+pa=0
+pb=80
+xa=0
+
+if [ -e pe${pb}B_sep.txt ]; then
+    rm pe${pb}B_sep.txt             # Delete file if it exists
+fi
+
+while [ $pa -le 150 ]
 do
-    if [ $i -ge $size_min ]; then
-        occurrences=$(( $occurrences + 1 ))
-    fi
+
+    while [ $xa -le 100 ]
+    do
+        #####################################
+        ### Read the largest clust files ####
+        for i in $(cat largest_pa${pa}_pb${pb}_xa${xa}.txt | awk '{print $1}')
+        do
+            if [ $i -ge $size_min ]; then           # are we past the size threshold?
+                occurrences=$(( $occurrences + 1 ))
+            fi
+        done
+
+        if [ $occurrences -ge $occur_min ]; then    # do we pass that threshold enough?
+            output=$(( 1 ))                         # if so, we have phase sep (=1)
+        fi
+
+        echo $output >> pe${pb}B_sep.txt
+        ###                               ###
+        #####################################
+
+        occurrences=$(( 0 ))    # reset count
+        output=$(( 0 ))         # reset output value
+        xa=$(( $xa + 10 ))      # increment in-counter
+    done
+
+    xa=$(( 0 ))                 # reset in-counter
+    pa=$(( $pa + 10 ))          # increment out-counter
 done
 
-if [ $occurrences -ge $occur_min ]; then
-    output=$(( 1 ))
-
-echo $output >> outfile.txt
+python /Users/kolbt/Desktop/compiled/whingdingdilly/phase_diagrammer/plot_binary_phase.py pe${pb}B_sep.txt

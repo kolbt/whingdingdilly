@@ -14,15 +14,14 @@ phase_diag = np.zeros((11,16), dtype=np.int8)
 # for loop the fuck outta this
 r=0
 c=0
-for i in range(0,len(data))
+for i in range(0,len(data)):
     phase_diag[r][c] = data[i]
     r += 1
-    if r == 12:
+    if r == 11:
         r = 0
         c += 1
 
 # WORD. Now plot that shit
-plt.imshow(phase_diag, cmap='hot', interpolation='nearest')
-plt.show()
-
-
+plt.imshow(phase_diag, cmap='Blues')
+plt.savefig('myphase.png', dpi=200)
+plt.close()
