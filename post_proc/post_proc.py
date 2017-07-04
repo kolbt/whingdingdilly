@@ -162,6 +162,15 @@ for j in range(0, dumps):
                     
     largest[j] = l_clust                                # save largest cluster size for tstep
 
+    f_largest = "largest_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    if j == 0:
+        a_w = 'w'
+    else:
+        a_w = 'a'
+    f = open(f_largest, a_w)
+    f.write(str(l_clust) + '\n')
+    f.close()
+
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
@@ -264,7 +273,7 @@ def getDensityPlease(n):                                # call this function as 
 
 avg_sys_density = np.zeros((1), dtype=np.ndarray)
 
-take_last = dumps - 50
+take_last = dumps - 10
 last = dumps - 1
 msd_last = dumps - 2
 for j in range(take_last, dumps):
