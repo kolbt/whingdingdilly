@@ -38,8 +38,14 @@ else
     dump_freq=$(( 20000 ))
     x_a_spacer=$(( 10 ))
     pe_a_spacer=$(( 10 ))
-    pe_b=$(( 150 ))
+    #pe_b=$(( 150 ))
 fi
+
+echo "What should PeB be?"
+read mype_b
+
+pe_b=$(( $pe_b ))
+
 ##
 
 # This is my comment
