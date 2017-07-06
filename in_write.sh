@@ -45,6 +45,7 @@ echo "What should PeB be?"
 read mype_b
 
 pe_b=$(( $mype_b ))
+echo "PeB is ${pe_b}"
 
 ##
 
