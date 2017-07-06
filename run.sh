@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH -p general                          # partition to run on
 #SBATCH -n 1                                # number of cores
-#SBATCH -t 4-00:00                          # time (D-HH:MM)
+#SBATCH -t 8-00:00                          # time (D-HH:MM)
 
 
 filename=$1

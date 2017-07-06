@@ -3,7 +3,7 @@
 exec_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 
 pa=0
-pb=150
+pb=40
 xa=0
 
 x_loc=0

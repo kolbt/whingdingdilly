@@ -44,7 +44,7 @@ fi
 echo "What should PeB be?"
 read mype_b
 
-pe_b=$(( $pe_b ))
+pe_b=$(( $mype_b ))
 
 ##
 
