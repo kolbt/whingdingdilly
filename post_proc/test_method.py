@@ -183,9 +183,10 @@ for j in range(0, dumps):
     how_many = my_clusters.getNumClusters()
     #print(how_many)
 
-    sort_id = np.sort(ids)                              # array of IDs sorted small to large
+    sort_id = np.sort(ids)                              # IDs sorted small to large, len = part_num
     q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
     index = 0                                           # index of the sorted array to look at
+    size_min = 15                                       # ignore clusters that aren't at least 15
     for a in range(0,len(q_clust)):
         add_clust = 0
         while 1:
@@ -196,7 +197,7 @@ for j in range(0, dumps):
                 break
             if add_clust == 1:                          # all particles appear once
                 q_clust[a] = 0
-            if add_clust == 2:                          # only multiple ids appear twice
+            if add_clust > size_min:                    # only multiple ids appear twice
                 q_clust[a] = 1
             index += 1                                  # increment index
 
@@ -205,6 +206,8 @@ for j in range(0, dumps):
     gs_a_count = 0
     gs_b_count = 0
     if j > 0:
+        numerator_A = 0
+        denominator_tot = 0
         for b in range(0,part_num):
             
             # check instantaneous disp. over last timestep
@@ -250,13 +253,20 @@ for j in range(0, dumps):
                     GAS_B[j-1] += msd_val
                     gs_b_count += 1
 
-        LIQ_A[j-1] /= lq_a_count
-        LIQ_B[j-1] /= lq_b_count
-        GAS_A[j-1] /= gs_a_count
-        GAS_B[j-1] /= gs_b_count
+        if lq_a_count != 0: LIQ_A[j-1] /= lq_a_count
+        if lq_b_count != 0: LIQ_B[j-1] /= lq_b_count
+        if gs_a_count != 0: GAS_A[j-1] /= gs_a_count
+        if gs_b_count != 0: GAS_B[j-1] /= gs_b_count
         MSD_T[j-1] /= part_num
-        MSD_TL[j-1] /= lq_a_count + lq_b_count
-        MSD_TG[j-1] /= gs_a_count + gs_b_count
+        if lq_a_count + lq_b_count != 0: MSD_TL[j-1] /= lq_a_count + lq_b_count
+        if gs_a_count + gs_b_count != 0: MSD_TG[j-1] /= gs_a_count + gs_b_count
+
+        numerator_A = lq_a_count
+        denominator_tot = lq_a_count + lq_b_count
+
+        if denominator_tot != 0:
+            percent_A[j] =  float(numerator_A) / float(denominator_tot)
+        print(percent_A[j])
 
 #print(MSD_T[j])
 
@@ -573,68 +583,68 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('FITTED' + plt_name + '.png', dpi=1000)
     plt.close()
     
-    x = log_time
-    y = MSD_T
-    
-    x2 = np.zeros((100), dtype=np.float64)
-    y2 = np.zeros((100), dtype=np.float64)
-    
-    x3 = np.zeros((dumps - 101), dtype=np.float64)
-    y3 = np.zeros((dumps - 101), dtype=np.float64)
-    
-    for i in range(0,100):
-        x2[i] = x[i]
-        y2[i] = y[i]
-    for i in range(100,dumps-1):
-        x3[i-100] = x[i]
-        y3[i-100] = y[i]
+#    x = log_time
+#    y = MSD_T
+#    
+#    x2 = np.zeros((100), dtype=np.float64)
+#    y2 = np.zeros((100), dtype=np.float64)
+#    
+#    x3 = np.zeros((dumps - 101), dtype=np.float64)
+#    y3 = np.zeros((dumps - 101), dtype=np.float64)
+#    
+#    for i in range(0,100):
+#        x2[i] = x[i]
+#        y2[i] = y[i]
+#    for i in range(100,dumps-1):
+#        x3[i-100] = x[i]
+#        y3[i-100] = y[i]
+#
+#    first = np.polyfit(np.log10(x2), np.log10(y2), 1)
+#    second = np.polyfit(np.log10(x3), np.log10(y3), 1)
+##    poly1 = np.poly1d(first)
+##    poly2 = np.poly1d(second)
+##    lin1 = poly1(np.log10(x2))
+##    lin2 = poly2(np.log10(x3))
+#    print(first)
+#    print(second)
+#
+#    def lin_plot(m, b, fx):
+#        fy = (fx**m) * (10**b)
+#        return fy
+#
+#    lin1 = lin_plot(first[0], first[1], x2)
+#    lin2 = lin_plot(second[0], second[1], x3)
+#
+#    plt.plot(log_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
+#    #plt.plot(x2, lin1, color="r", linestyle="solid", label='Slope = ' + str(first[0]))
+#    #plt.plot(x3, lin2, color="b", linestyle="solid", label='Slope = ' + str(second[0]))
+#    plt.xscale('log')
+#    plt.yscale('log')
+#    plt.xlabel(r'Time ($\tau$)')
+#    plt.ylabel('MSD')
+#    plt.legend(loc='upper left')
+#    plt.savefig('FITTED2' + plt_name + '.png', dpi=1000)
+#    plt.close()
 
-    first = np.polyfit(np.log10(x2), np.log10(y2), 1)
-    second = np.polyfit(np.log10(x3), np.log10(y3), 1)
-#    poly1 = np.poly1d(first)
-#    poly2 = np.poly1d(second)
-#    lin1 = poly1(np.log10(x2))
-#    lin2 = poly2(np.log10(x3))
-    print(first)
-    print(second)
-
-    def lin_plot(m, b, fx):
-        fy = (fx**m) * (10**b)
-        return fy
-
-    lin1 = lin_plot(first[0], first[1], x2)
-    lin2 = lin_plot(second[0], second[1], x3)
-
-    plt.plot(log_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
-    #plt.plot(x2, lin1, color="r", linestyle="solid", label='Slope = ' + str(first[0]))
-    #plt.plot(x3, lin2, color="b", linestyle="solid", label='Slope = ' + str(second[0]))
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel(r'Time ($\tau$)')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('FITTED2' + plt_name + '.png', dpi=1000)
-    plt.close()
     
     
     
     
-    
-    slopes = np.diff(np.log10(MSD_T)) / np.diff(np.log10(log_time))
-    slopes_diff = np.zeros((dumps-2), dtype=np.float64)
-    
-    for i in range(1,len(slopes)):
-        slopes_diff[i-1] = slopes[i] - slopes[i-1]
-    
-    plt.plot(slopes)
-    plt.ylim((0,2))
-    plt.savefig('SLOPES' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    plt.plot(slopes_diff)
-    plt.ylim((-2,2))
-    plt.savefig('SLOPES_DIFF' + plt_name + '.png', dpi=1000)
-    plt.close()
+#    slopes = np.diff(np.log10(MSD_T)) / np.diff(np.log10(log_time))
+#    slopes_diff = np.zeros((dumps-2), dtype=np.float64)
+#    
+#    for i in range(1,len(slopes)):
+#        slopes_diff[i-1] = slopes[i] - slopes[i-1]
+#    
+#    plt.plot(slopes)
+#    plt.ylim((0,2))
+#    plt.savefig('SLOPES' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#
+#    plt.plot(slopes_diff)
+#    plt.ylim((-2,2))
+#    plt.savefig('SLOPES_DIFF' + plt_name + '.png', dpi=1000)
+#    plt.close()
 
 
     
@@ -655,7 +665,7 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    y4 = interpolate.splev(x2, tck)
 #    y5 = interpolate.splev(x3, tck2)
 
-    plt.loglog(log_time, MSD_T, basex=10, color="g")
+#    plt.loglog(log_time, MSD_T, basex=10, color="g")
 #    plt.loglog(x2, line1, basex=10, color="r", linestyle="solid")
 #    plt.loglog(x3, line2, basex=10, color="b", linestyle="solid")
 #    plt.loglog(x2, line1, basex=10, color="r")
@@ -667,25 +677,25 @@ if part_perc_a != 0 and part_perc_a != 100:
 #    plt.rcParams['agg.path.chunksize'] = 100000
     #plt.loglog(real_time, MSD_TL, basex=10, color="r")
     #plt.loglog(real_time, MSD_TG, basex=10, color="b")
-    plt.savefig('MSD_TS' + plt_name + '.png', dpi=1000)
-    plt.close()
+#    plt.savefig('MSD_TS' + plt_name + '.png', dpi=1000)
+#    plt.close()
 
-    plt.loglog(log_time, LIQ_A, basex=10, color="r")
-    plt.savefig('MSD_LA' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.loglog(log_time, LIQ_B, basex=10, color="b")
-    plt.savefig('MSD_LB' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.loglog(log_time, GAS_A, basex=10, color="r")
-#    plt.loglog(real_time, zzz, basex=10, color="g")
-    plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    plt.loglog(log_time, GAS_B, basex=10, color="b")
-    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
-    plt.close()
+#    plt.loglog(log_time, LIQ_A, basex=10, color="r")
+#    plt.savefig('MSD_LA' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.loglog(log_time, LIQ_B, basex=10, color="b")
+#    plt.savefig('MSD_LB' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.loglog(log_time, GAS_A, basex=10, color="r")
+##    plt.loglog(real_time, zzz, basex=10, color="g")
+#    plt.savefig('MSD_GA' + plt_name + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.loglog(log_time, GAS_B, basex=10, color="b")
+#    plt.savefig('MSD_GB' + plt_name + '.png', dpi=1000)
+#    plt.close()
 
 
 else:                                                           # if monodisperse plot total values

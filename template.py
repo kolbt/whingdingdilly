@@ -195,6 +195,7 @@ myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
+size_min = 15                                           # minimum size of cluster
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
@@ -273,37 +274,37 @@ for j in range(0, dumps):
     #############################################################
     ### This finds the cluster ids for type A and B particles ###
     #############################################################
-    A_id_count = 0
-    B_id_count = 0
-    for h in range(0, part_num):
-        if type_array[j][h] == 0:
-            A_ids[A_id_count] = ids[h]                  # store the cluster ids for A type
-            A_id_count += 1                             # IMPROVE: sort while placing?
-        else:
-            B_ids[B_id_count] = ids[h]                  # store the cluster ids for B type
-            B_id_count += 1                             # could put ids in order ...
+#    A_id_count = 0
+#    B_id_count = 0
+#    for h in range(0, part_num):
+#        if type_array[j][h] == 0:
+#            A_ids[A_id_count] = ids[h]                  # store the cluster ids for A type
+#            A_id_count += 1                             # IMPROVE: sort while placing?
+#        else:
+#            B_ids[B_id_count] = ids[h]                  # store the cluster ids for B type
+#            B_id_count += 1                             # could put ids in order ...
+#
+#    clust_dat = np.zeros((how_many), dtype = np.ndarray)
+#    clust_dat_A = np.zeros((how_many), dtype = np.ndarray)
+#    clust_dat_B = np.zeros((how_many), dtype = np.ndarray)
+#    numerator_A = 0
+#    denominator_tot = 0
 
-    clust_dat = np.zeros((how_many), dtype = np.ndarray)
-    clust_dat_A = np.zeros((how_many), dtype = np.ndarray)
-    clust_dat_B = np.zeros((how_many), dtype = np.ndarray)
-    numerator_A = 0
-    denominator_tot = 0
-    
     #######################################################################
     ### If clusters are greater than a threshold size, find composition ###
     #######################################################################
     
-    for m in range(0, how_many):
-        clust_dat_A[m] = (A_ids == m).sum()             # sum all A type particles in a cluster
-        clust_dat_B[m] = (B_ids == m).sum()
-        clust_dat[m] = clust_dat_A[m] + clust_dat_B[m]  # find total number of particles in cluster
-        if clust_dat[m] > 15:
-            numerator_A += clust_dat_A[m]
-            denominator_tot += clust_dat[m]
-    # get the total percent of A particles in all clusters
-    if denominator_tot != 0:
-        percent_A[j] =  float(numerator_A) / float(denominator_tot)
-    
+#    for m in range(0, how_many):
+#        clust_dat_A[m] = (A_ids == m).sum()             # sum all A type particles in a cluster
+#        clust_dat_B[m] = (B_ids == m).sum()
+#        clust_dat[m] = clust_dat_A[m] + clust_dat_B[m]  # find total number of particles in cluster
+#        if clust_dat[m] > 15:
+#            numerator_A += clust_dat_A[m]
+#            denominator_tot += clust_dat[m]
+#    # get the total percent of A particles in all clusters
+#    if denominator_tot != 0:
+#        percent_A[j] =  float(numerator_A) / float(denominator_tot)
+
     
     #####################################################################
     ### Find avg cluster size, gas fraction, and largest cluster size ###
@@ -311,7 +312,7 @@ for j in range(0, dumps):
     l_clust = 0                                             # int size of largest cluster
     for k in range(0, len(size_clusters[j])):
         # the size minimum is a very important value to consider
-        if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
+        if size_clusters[j][k] > size_min and size_clusters[j][k] < part_num:
             tot_size[j] += size_clusters[j][k]
             tot_num[j] += 1
             if size_clusters[j][k] > l_clust:           # if larger cluster is found
@@ -354,7 +355,7 @@ for j in range(0, dumps):
                 break
             if add_clust == 1:                          # all particles appear once
                 q_clust[a] = 0
-            if add_clust == 2:                          # only multiple ids appear twice
+            if add_clust > size_min:                    # only multiple ids appear twice
                 q_clust[a] = 1
             index += 1                                  # increment index
 
@@ -363,6 +364,8 @@ for j in range(0, dumps):
     gs_a_count = 0
     gs_b_count = 0
     if j > 0:
+        numerator_A = 0
+        denominator_tot = 0
         for b in range(0,part_num):
             
             # check instantaneous disp. over last timestep
@@ -415,7 +418,13 @@ for j in range(0, dumps):
         if gs_b_count != 0: GAS_B[j-1] /= gs_b_count
         MSD_T[j-1] /= part_num
         if lq_a_count + lq_b_count != 0: MSD_TL[j-1] /= lq_a_count + lq_b_count
-    if gs_a_count + gs_b_count != 0: MSD_TG[j-1] /= gs_a_count + gs_b_count
+        if gs_a_count + gs_b_count != 0: MSD_TG[j-1] /= gs_a_count + gs_b_count
+
+        numerator_A = lq_a_count
+        denominator_tot = lq_a_count + lq_b_count
+        
+        if denominator_tot != 0:
+            percent_A[j] =  float(numerator_A) / float(denominator_tot)
 
 ############################
 ### Density caluclations ###
@@ -485,7 +494,7 @@ if part_perc_a != 0 and part_perc_a != 100:
         
         for k in range(0, len(size_clusters[j])):
             # the size minimum is a very important value to consider
-            if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
+            if size_clusters[j][k] > size_min and size_clusters[j][k] < part_num:
                 tot_size_A[j] += size_clusters[j][k]
                 tot_num_A[j] += 1
 
@@ -510,7 +519,7 @@ if part_perc_a != 0 and part_perc_a != 100:
         
         for k in range(0, len(size_clusters[j])):
             # the size minimum is a very important value to consider
-            if size_clusters[j][k] > 15 and size_clusters[j][k] < part_num:
+            if size_clusters[j][k] > size_min and size_clusters[j][k] < part_num:
                 tot_size_B[j] += size_clusters[j][k]
                 tot_num_B[j] += 1
 
