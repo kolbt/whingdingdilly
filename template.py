@@ -192,6 +192,7 @@ from gsd import pygsd
 import numpy as np
 
 myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+msdfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()

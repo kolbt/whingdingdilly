@@ -35,6 +35,7 @@ from gsd import pygsd
 import numpy as np
 
 myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+msdfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
@@ -182,8 +183,6 @@ for j in range(0, dumps):
     #########################################################
     ### Find MSD for A, B individually, also total system ###
     #########################################################
-
-    # ?you can enhance difference between gas and liq by setting min clust requirement
 
     sort_id = np.sort(ids)                              # array of IDs sorted small to large
     q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
