@@ -7,6 +7,7 @@
 #    6.) pe_b (float): activity of tyep b particles
 
 import sys
+import os
 
 #hoomd_path = str(sys.argv[1])
 hoomd_path = "${hoomd_path}"
