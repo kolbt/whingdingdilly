@@ -1,14 +1,12 @@
 #!/bin/sh
 
-size_min=2000           # maybe like 2000?
+size_min=5300           # maybe like 2000?
 occurrences=0
-occur_min=100           # maybe like 100 tsteps?
+occur_min=200           # maybe like 100 tsteps?
 output=0
 
-rm pe${pb}B_sep.txt
-
 pa=0
-pb=80
+pb=45
 xa=0
 
 if [ -e pe${pb}B_sep.txt ]; then
