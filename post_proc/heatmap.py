@@ -65,10 +65,26 @@ f_box = box.Box(Lx=l_box,
                 Ly=l_box,
                 is2D=True)                              # initialize freud box
 
+
+# find what length of each type array should be
+
+# initialize A/B_pos arrays
+
 # analyze all particles
 for j in range(0, dumps):
     
     l_pos = position_array[j]
+    a_count = 0
+    b_count = 0
+    
+    for i in range(0, part_num):
+        if type_array[i] == 0:
+            A_pos[a_count]=[l_pos[i]]
+            b_count += 1
+        else:
+            B_pos[b_count]=[l_pos[i]]
+            a_count += 1
+    
     tree = spatial.KDTree(l_pos)                        # tree of all points
     a_tree = spatial.KDTree(A_pos)                      # tree of A-type particles
     b_tree = spatial.KDTree(B_pos)                      # tree of B-type particles
