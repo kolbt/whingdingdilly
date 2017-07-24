@@ -104,7 +104,7 @@ hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-
 hoomd.run(10000)
 
 #run simulation with current settings here
-hoomd.md.integrate.mode_standard(dt=0.00001)
+hoomd.md.integrate.mode_standard(dt=0.000005)
 hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 hoomd.run(100000)
 
