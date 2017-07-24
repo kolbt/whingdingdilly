@@ -1,4 +1,35 @@
 import sys
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+#import sphviewer as sph
+#def myplot(x, y, nb=32, xsize=500, ysize=500):
+#    xmin = np.min(x)
+#    xmax = np.max(x)
+#    ymin = np.min(y)
+#    ymax = np.max(y)
+#    
+#    x0 = (xmin+xmax)/2.
+#    y0 = (ymin+ymax)/2.
+#    
+#    pos = np.zeros([3, len(x)])
+#    pos[0,:] = x
+#    pos[1,:] = y
+#    w = np.ones(len(x))
+#    
+#    P = sph.Particles(pos, w, nb=nb)
+#    S = sph.Scene(P)
+#    S.update_camera(r='infinity', x=x0, y=y0, z=0,
+#                    xsize=xsize, ysize=ysize)
+#    R = sph.Render(S)
+#    R.set_logscale()
+#    img = R.get_image()
+#    extent = R.get_extent()
+#    for i, j in zip(xrange(4), [x0,x0,y0,y0]):
+#        extent[i] += j
+#    return img, extent
 
 hoomd_path = str(sys.argv[4])
 gsd_path = str(sys.argv[5])
@@ -31,11 +62,9 @@ sys.path.append(gsd_path)
 import gsd
 from gsd import hoomd
 from gsd import pygsd
-import numpy as np
+
 import scipy.spatial as spatial
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+
 import seaborn as sns
 sns.set(color_codes=True)
 
@@ -68,9 +97,9 @@ parallel.setNumThreads(1)                               # don't run multiple thr
 l_box = box_data[0]                                     # get box dimensions (square here)
 
 # Figuring out how to mesh grid my data
-#find_grid = int(l_box / 2)
-#split_x = split_y = np.linspace(-find_grid, find_grid, 100)
-#splt_X, splt_Y = np.meshgrid(split_x, split_y)
+find_grid = int(l_box / 2)
+split_x = split_y = np.linspace(-find_grid, find_grid, 100)
+splt_X, splt_Y = np.meshgrid(split_x, split_y)
 
 f_box = box.Box(Lx=l_box,
                 Ly=l_box,
@@ -124,8 +153,8 @@ for j in range(dumps-1, dumps):
     plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
     plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
-    from astropy.convolution import convolve
-    from astropy.convolution.kernels import Gaussian2DKernel
+#    from astropy.convolution import convolve
+#    from astropy.convolution.kernels import Gaussian2DKernel
 
     if part_perc_a != 0 and part_perc_a != 100:
         # plot some junk
@@ -163,6 +192,11 @@ for j in range(dumps-1, dumps):
         plt.savefig('heatmap_' + plt_name2 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
         plt.close()
     
+#        heatmap_16, extent_16 = myplot(A_pos[:,0], A_pos[:,1], nb=64)
+#        plt.imshow(heatmap_16, extent=extent_16, origin='lower', cmap='plasma', aspect='auto')
+#        plt.colorbar()
+#        plt.savefig('heatmap_test.png', dpi = 1000)
+
 #        heatmap, xedges, yedges = np.histogram2d(A_pos[:,0], A_pos[:,1], bins=100)
 #        #extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 #
