@@ -66,6 +66,12 @@ from freud import parallel, box, density, cluster
 parallel.setNumThreads(1)                               # don't run multiple threads
 
 l_box = box_data[0]                                     # get box dimensions (square here)
+
+# Figuring out how to mesh grid my data
+#find_grid = int(l_box / 2)
+#split_x = split_y = np.linspace(-find_grid, find_grid, 100)
+#splt_X, splt_Y = np.meshgrid(split_x, split_y)
+
 f_box = box.Box(Lx=l_box,
                 Ly=l_box,
                 is2D=True)                              # initialize freud box
@@ -102,8 +108,13 @@ for j in range(dumps-1, dumps):
     a_neighbors = tree.query_ball_tree(a_tree, radius)
     b_neighbors = tree.query_ball_tree(b_tree, radius)
 
-    num_a_neigh = np.array(map(len, a_neighbors))
-    num_b_neigh = np.array(map(len, b_neighbors))
+    num_a_neigh = np.array(map(len, a_neighbors), dtype=np.float64)
+    #num_a_neigh = float(num_a_neigh)
+    num_a_neigh /= 7.0
+    print(num_a_neigh)
+    num_b_neigh = np.array(map(len, b_neighbors), dtype=np.float64)
+    #num_b_neigh = float(num_b_neigh)
+    num_b_neigh /= 7.0
 
     ################################################################################
     #################### Plot the individual and total data ########################
@@ -113,6 +124,9 @@ for j in range(dumps-1, dumps):
     plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
     plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
+    from astropy.convolution import convolve
+    from astropy.convolution.kernels import Gaussian2DKernel
+
     if part_perc_a != 0 and part_perc_a != 100:
         # plot some junk
         fig, ax = plt.subplots()
@@ -121,7 +135,7 @@ for j in range(dumps-1, dumps):
         x = pos_all[:, 0]
         y = pos_all[:, 1]
         z_a = num_a_neigh
-        plt.scatter(x, y, c=z_a, s=1.5, cmap='hot')
+        plt.scatter(x, y, c=z_a, s=1.5, cmap='plasma')
         ax.get_xlim()
         ax.get_ylim()
         #ax.set_xlim([-70,70])
@@ -138,7 +152,7 @@ for j in range(dumps-1, dumps):
         x = pos_all[:, 0]
         y = pos_all[:, 1]
         z_b = num_b_neigh
-        plt.scatter(x, y, c=z_b, s=1.5, cmap='hot')
+        plt.scatter(x, y, c=z_b, s=1.5, cmap='plasma')
         ax.get_xlim()
         ax.get_ylim()
         #ax.set_xlim([-70,70])
@@ -148,6 +162,16 @@ for j in range(dumps-1, dumps):
         plt.colorbar()
         plt.savefig('heatmap_' + plt_name2 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
         plt.close()
+    
+#        heatmap, xedges, yedges = np.histogram2d(A_pos[:,0], A_pos[:,1], bins=100)
+#        #extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+#
+#        #plt.clf()
+#        plt.imshow(convolve(heatmap, Gaussian2DKernel(stddev=2.0)), cmap='plasma', interpolation='none')
+#        #plt.pcolormesh(xedges, yedges, heatmap.T, cmap='hot')
+#        plt.colorbar()
+#        plt.savefig('heatmap_test.png', dpi = 1000)
+#        plt.close()
 
     else:                                                           # if monodisperse plot total values
         # plot some other junk
