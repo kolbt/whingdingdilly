@@ -97,9 +97,21 @@ parallel.setNumThreads(1)                               # don't run multiple thr
 l_box = box_data[0]                                     # get box dimensions (square here)
 
 # Figuring out how to mesh grid my data
-find_grid = int(l_box / 2)
-split_x = split_y = np.linspace(-find_grid, find_grid, 100)
-splt_X, splt_Y = np.meshgrid(split_x, split_y)
+n_divisions = 200
+find_grid = float(l_box / 2)
+split_x = split_y = np.linspace(-find_grid, find_grid, n_divisions)
+#mesh = np.zeros((len(split_x), len(split_y), 2), dtype = np.float64)
+flat_mesh = np.zeros((len(split_x)*len(split_y), 2), dtype = np.float64)
+mesh_count = 0
+for iii in range(0, len(split_x)):
+    for kkk in range(0, len(split_y)):
+        #mesh[iii, kkk, 0] = split_x[iii]
+        #mesh[iii, kkk, 1] = split_y[kkk]
+        flat_mesh[mesh_count, 0] = split_x[iii]
+        flat_mesh[mesh_count, 1] = split_y[kkk]
+        mesh_count += 1
+
+
 
 f_box = box.Box(Lx=l_box,
                 Ly=l_box,
@@ -129,7 +141,9 @@ for j in range(dumps-1, dumps):
             B_pos[b_count][1]=l_pos[i][1]
             b_count += 1
 
+
     tree = spatial.KDTree(pos_all)                      # tree of all points
+
     a_tree = spatial.KDTree(A_pos)                      # tree of A-type particles
     b_tree = spatial.KDTree(B_pos)                      # tree of B-type particles
     radius = 1.0
@@ -144,6 +158,13 @@ for j in range(dumps-1, dumps):
     #num_b_neigh = float(num_b_neigh)
     num_b_neigh /= 7.0
 
+    # let's use a mesh as a reference instead
+    mesh_tree = spatial.KDTree(flat_mesh)
+    a_neigh = mesh_tree.query_ball_tree(a_tree, radius)
+    b_neigh = mesh_tree.query_ball_tree(b_tree, radius)
+    mesh_a_num = np.array(map(len, a_neigh), dtype=np.float64)
+    mesh_b_num = np.array(map(len, b_neigh), dtype=np.float64)
+
     ################################################################################
     #################### Plot the individual and total data ########################
     ################################################################################
@@ -157,6 +178,25 @@ for j in range(dumps-1, dumps):
 
     if part_perc_a != 0 and part_perc_a != 100:
         # plot some junk
+        
+        fig, ax = plt.subplots()
+        fig.set_facecolor('black')
+        plt.subplots_adjust(top = 0.99, bottom = 0.01, right = 0.995, left = 0.005)
+        x = flat_mesh[:, 0]
+        y = flat_mesh[:, 1]
+        z_a = mesh_a_num
+#        N = int(len(z_a)**.5)
+#        z = z_a.reshape(N, N)
+#        plt.imshow(z, cmap='plasma')
+        plt.scatter(x, y, c=z_a, s=1.0, marker=',', cmap='plasma')
+        ax.get_xlim()
+        ax.get_ylim()
+        ax.get_xaxis().set_visible(False)
+        ax.get_yaxis().set_visible(False)
+        plt.colorbar()
+        plt.savefig('mesh_heatmap_' + plt_name1 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
+        plt.close()
+        
         fig, ax = plt.subplots()
         fig.set_facecolor('black')
         plt.subplots_adjust(top = 0.995, bottom = 0.005, right = 0.995, left = 0.005)
