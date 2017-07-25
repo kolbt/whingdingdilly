@@ -140,7 +140,6 @@ for j in range(dumps-1, dumps):
     num_a_neigh = np.array(map(len, a_neighbors), dtype=np.float64)
     #num_a_neigh = float(num_a_neigh)
     num_a_neigh /= 7.0
-    print(num_a_neigh)
     num_b_neigh = np.array(map(len, b_neighbors), dtype=np.float64)
     #num_b_neigh = float(num_b_neigh)
     num_b_neigh /= 7.0
@@ -192,7 +191,16 @@ for j in range(dumps-1, dumps):
         plt.savefig('heatmap_' + plt_name2 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
         plt.close()
     
-#        heatmap_16, extent_16 = myplot(A_pos[:,0], A_pos[:,1], nb=64)
+#        sns.jointplot(x=A_pos[:,0], y=A_pos[:,1], kind='hex')
+#        plt.savefig('sbn_heatmap.png', transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
+#        plt.close()
+
+#        lm = sns.kdeplot(A_pos[:,0], A_pos[:,1], cmap='plasma', n_levels=10, shade=True)
+#        lm.set(xlim=(-find_grid, find_grid), ylim=(-find_grid, find_grid))
+#        plt.savefig('sbn_heatmap.png', transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
+#        plt.close()
+
+#        heatmap_16, extent_16 = myplot(A_pos[:,0], A_pos[:,1], nb=32)
 #        plt.imshow(heatmap_16, extent=extent_16, origin='lower', cmap='plasma', aspect='auto')
 #        plt.colorbar()
 #        plt.savefig('heatmap_test.png', dpi = 1000)
