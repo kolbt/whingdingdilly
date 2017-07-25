@@ -116,6 +116,9 @@ size_clusters = np.zeros((dumps), dtype=np.ndarray)
 size_min = 200
 
 # arrays to hold the avg neighbor data
+avg_aa = np.zeros(dumps, dtype=np.float64)
+avg_ab = np.zeros(dumps, dtype=np.float64)
+avg_ba = np.zeros(dumps, dtype=np.float64)
 avg_bb = np.zeros(dumps, dtype=np.float64)
 
 # analyze all particles
@@ -160,14 +163,14 @@ for j in range(0, dumps):
             else:
                 Bliq_count += 1
 
-    if all_count != 0:
-        loop_count = 0
-        all_pos = np.zeros((all_count, 2), dtype=np.float64)
-        for c in range(0, part_num):
-            if q_clust[ids[c]] == 1:
-                all_pos[loop_count][0] = l_pos[c][0]
-                all_pos[loop_count][1] = l_pos[c][1]
-                loop_count += 1
+#    if all_count != 0:
+#        loop_count = 0
+#        all_pos = np.zeros((all_count, 2), dtype=np.float64)
+#        for c in range(0, part_num):
+#            if q_clust[ids[c]] == 1:
+#                all_pos[loop_count][0] = l_pos[c][0]
+#                all_pos[loop_count][1] = l_pos[c][1]
+#                loop_count += 1
 
     if Aliq_count != 0:
         loop_count = 0
@@ -189,47 +192,33 @@ for j in range(0, dumps):
                     Bliq_pos[loop_count, 1] = l_pos[c][1]
                     loop_count += 1
 
-#    a_count = 0
-#    b_count = 0
-#    for i in range(0, part_num):
-#        pos_all[i][0] = l_pos[i][0]
-#        pos_all[i][1] = l_pos[i][1]
-#        if type_array[j][i] == 0:
-#            A_pos[a_count][0]=l_pos[i][0]
-#            A_pos[a_count][1]=l_pos[i][1]
-#            a_count += 1
-#        else:
-#            B_pos[b_count][0]=l_pos[i][0]
-#            B_pos[b_count][1]=l_pos[i][1]
-#            b_count += 1
-#
-#    tree = spatial.KDTree(pos_all)                      # tree of all points
-#    a_tree = spatial.KDTree(A_pos)                      # tree of A-type particles
-#    b_tree = spatial.KDTree(B_pos)                      # tree of B-type particles
-#    radius = 1.0
-
     a_tree = spatial.KDTree(Aliq_pos)                      # tree of A-type particles
     b_tree = spatial.KDTree(Bliq_pos)                      # tree of B-type particles
     radius = 1.0
     
     # Let's look at the dense phase:
-    # NOT DENSE PHASE YET (will be once I change the coord in arrays)
     # -how many A neighbors the avg A particle has and,
     
     aa = a_tree.query_ball_tree(a_tree, radius)
     num_aa = np.array(map(len, aa), dtype=np.float64)
     num_aa -= 1.0                                       # can't reference itself
+    if len(num_aa) != 0:
+        avg_aa[j] = (np.sum(num_aa)/len(num_aa))
     
     # -how many B neighbors the avg A particle has and,
     
     ab = a_tree.query_ball_tree(b_tree, radius)
     num_ab = np.array(map(len, ab), dtype=np.float64)
-    
+    if len(num_ab) != 0:
+        avg_ab[j] = (np.sum(num_ab)/len(num_ab))
+
     # -how many A neighbors the avg B particle has and,
     
     ba = b_tree.query_ball_tree(a_tree, radius)
     num_ba = np.array(map(len, ba), dtype=np.float64)
-    
+    if len(num_ba) != 0:
+        avg_ba[j] = (np.sum(num_ba)/len(num_ba))
+
     # -how many B neighbors the avg B particle has.
     
     bb = b_tree.query_ball_tree(b_tree, radius)
@@ -237,14 +226,6 @@ for j in range(0, dumps):
     num_bb -= 1.0                                       # can't reference itself
     if len(num_bb) != 0:
         avg_bb[j] = (np.sum(num_bb)/len(num_bb))
-    
-#    a_neighbors = tree.query_ball_tree(a_tree, radius)
-#    b_neighbors = tree.query_ball_tree(b_tree, radius)
-#
-#    num_a_neigh = np.array(map(len, a_neighbors), dtype=np.float64)
-#    num_a_neigh /= 7.0
-#    num_b_neigh = np.array(map(len, b_neighbors), dtype=np.float64)
-#    num_b_neigh /= 7.0
 
 ################################################################################
 #################### Plot the individual and total data ########################
@@ -257,23 +238,27 @@ plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B
 if part_perc_a != 0 and part_perc_a != 100:
     # plot some junk
     
-    plt.plot(avg_bb, color="g")
-    plt.savefig('avg_bb_'+ plt_name + '.png', dpi=1000)
+    plt.plot(avg_aa, color="g")
+    plt.plot(avg_ab, color="r")
+    plt.plot(avg_ba, color="b")
+    plt.plot(avg_bb, color="k")
+    plt.savefig('avg_neighs_'+ plt_name + '.png', dpi=1000)
     plt.close()
     
-    fig, ax = plt.subplots()
-    fig.set_facecolor('black')
-    plt.subplots_adjust(top = 0.99, bottom = 0.01, right = 0.995, left = 0.005)
-    x = all_pos[:, 0]
-    y = all_pos[:, 1]
-    plt.scatter(x, y, s=1.5, c='b')
-    ax.set_xlim([left, right])
-    ax.set_ylim([left, right])
-    ax.get_xaxis().set_visible(False)
-    ax.get_yaxis().set_visible(False)
-    plt.savefig('all_' + plt_name1 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
-    plt.close()
-    
+#    # This is just for checking the cluster algorithm with a visual
+#    fig, ax = plt.subplots()
+#    fig.set_facecolor('black')
+#    plt.subplots_adjust(top = 0.99, bottom = 0.01, right = 0.995, left = 0.005)
+#    x = all_pos[:, 0]
+#    y = all_pos[:, 1]
+#    plt.scatter(x, y, s=1.5, c='b')
+#    ax.set_xlim([left, right])
+#    ax.set_ylim([left, right])
+#    ax.get_xaxis().set_visible(False)
+#    ax.get_yaxis().set_visible(False)
+#    plt.savefig('all_' + plt_name1 + '.png', facecolor=fig.get_facecolor(), transparent=True, dpi=1000, box_inches = 'tight', edgecolor='none')
+#    plt.close()
+
     fig, ax = plt.subplots()
     fig.set_facecolor('black')
     plt.subplots_adjust(top = 0.99, bottom = 0.01, right = 0.995, left = 0.005)
