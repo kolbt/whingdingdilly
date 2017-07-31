@@ -6,6 +6,7 @@ import numpy as np
 
 # start with 1D array
 file = str(sys.argv[1])
+pb = float(sys.argv[2])
 data = np.loadtxt(file, dtype=np.int8)
 
 # change this array so that it is 11(rows) x 16(columns)
@@ -30,5 +31,5 @@ for i in range(0,len(data)):
 
 # WORD. Now plot that shit
 plt.imshow(phase_diag, cmap='Blues')
-plt.savefig('myphase.png', dpi=200)
+plt.savefig('myphase_'+str(pb)+'.png', dpi=200)
 plt.close()

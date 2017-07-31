@@ -33,19 +33,30 @@ def plotCubeAt(pos=(0,0,0),ax=None):
     # Plotting a cube element at position pos
     if ax !=None:
         X, Y, Z = cuboid_data( pos )
-        ax.plot_surface(X, Y, Z, color='b', rstride=1, cstride=1, alpha=1)
+        ax.plot_surface(X, Y, Z, color='b', rstride=1, cstride=1, alpha=0.8)
 
 # start with 1D array
 file = str(sys.argv[1])
 data = np.loadtxt(file, dtype=np.int8)
 
 # for loop the fuck outta this
-phase_3D = np.zeros((11,16,16), dtype=np.int8)
+#phase_3D = np.zeros((11,16,16), dtype=np.int8)
+#for j in range(0,16):
+#    r=0
+#    c=0
+#    for i in range(0,len(data)):
+#        phase_3D[r][c][j] = data[i][j]
+#        r += 1
+#        if r == 11:
+#            r = 0
+#            c += 1
+
+phase_3D = np.zeros((16,16,11), dtype=np.int8)
 for j in range(0,16):
     r=0
     c=0
     for i in range(0,len(data)):
-        phase_3D[r][c][j] = data[i][j]
+        phase_3D[c][j][r] = data[i][j]
         r += 1
         if r == 11:
             r = 0
@@ -56,21 +67,39 @@ fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 #ax.set_aspect('equal')
 
-for idx in range(0,11):
+#for idx in range(0,11):
+#    for idy in range(0,16):
+#        for idz in range(0,16):
+#            if phase_3D[idx,idy,idz] != 0:
+##                ax.scatter(idx, idy, idz, c='b', marker='s', s=20)
+#                plotCubeAt(pos=(idx-0.5, idy-0.5, idz-0.5), ax=ax)
+##            else:
+##                ax.scatter(idx, idy, idz, c='w')
+
+for idx in range(0,16):
     for idy in range(0,16):
-        for idz in range(0,16):
+        for idz in range(0,11):
             if phase_3D[idx,idy,idz] != 0:
-#                ax.scatter(idx, idy, idz, c='b', marker='s', s=20)
+                #                ax.scatter(idx, idy, idz, c='b', marker='s', s=20)
                 plotCubeAt(pos=(idx-0.5, idy-0.5, idz-0.5), ax=ax)
 #            else:
 #                ax.scatter(idx, idy, idz, c='w')
 
-ax.set_xlabel('Particle Fraction of A')
-ax.set_xlim3d(0,10)
-ax.set_ylabel('Pe_A')
+#ax.set_xlabel('Particle Fraction of A')
+#ax.set_xlim3d(0,10)
+#ax.set_ylabel('Pe_A')
+#ax.set_ylim3d(0,15)
+#ax.set_zlabel('Pe_B')
+#ax.set_zlim3d(0,15)
+#plt.show()
+
+
+ax.set_xlabel('Pe_A')
+ax.set_xlim3d(0,15)
+ax.set_ylabel('Pe_B')
 ax.set_ylim3d(0,15)
-ax.set_zlabel('Pe_B')
-ax.set_zlim3d(0,15)
+ax.set_zlabel('Particle Fraction of A')
+ax.set_zlim3d(0,10)
 plt.show()
 
 # WORD. Now plot that shit
