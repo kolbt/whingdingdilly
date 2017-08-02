@@ -7,7 +7,6 @@
 #SBATCH --ntasks=1                          # task count
 #SBATCH --cpus-per-task=4                   # core count
 #SBATCH --time=11-00:00                     # time (D-HH:MM)
-#SBATCH --output=slurm-%j.out               # get Slurm output
 
 
 filename=$1

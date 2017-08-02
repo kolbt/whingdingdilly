@@ -17,6 +17,7 @@ final = node.source.num_frames - 1                      # index of last frame
 rs = RenderSettings(
     filename = "final_tstep_" + outfile + ".png",
     size = (2000,2000),
+    generate_alpha = True,
     renderer = OpenGLRenderer()
 )                                                       # settings for render
 
