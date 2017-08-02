@@ -53,7 +53,8 @@ with hoomd.open(name=msdfile, mode='rb') as t:          # open for reading
         type_array[i] = snap.particles.typeid
         position_array[i] = snap.particles.position     # store all particle positions
         timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
-
+part_num = len(type_array[0])
+print(part_num)
 timesteps -= timesteps[0]
 msd_time = timesteps[1:]
 
