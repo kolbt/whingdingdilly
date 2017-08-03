@@ -11,4 +11,4 @@
 
 filename=$1
 
-python $filename                            # run infiles with python
+mpirun -n 2 python $filename --mode=gpu     # I want two gpus
