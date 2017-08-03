@@ -6,6 +6,11 @@ pb=$1
 pa=0
 xa=0
 
+if [ -z "$1" ]; then
+    echo "You haven't passed a value for PeB, set one now."
+    read pb
+fi
+
 x_loc=0
 y_loc=1800
 
@@ -19,11 +24,13 @@ do
     do
         #store name in variable
         filename="pa${pa}_pb${pb}_xa${xa}"
-        # take snapshot
-        ovitos $exec_path/snap_final_tstep.py ${filename}.gsd
-        # crop and paste
-        python $exec_path/crop_place.py final_tstep_${filename}.png peB${pb}.png $x_loc $y_loc
-
+        # check for file existence
+        if [ -e $filename ]; then
+            # take snapshot
+            ovitos $exec_path/snap_final_tstep.py ${filename}.gsd
+            # crop and paste
+            python $exec_path/crop_place.py final_tstep_${filename}.png peB${pb}.png $x_loc $y_loc
+        fi
         xa=$(( $xa + 10 ))
         y_loc=$(( $y_loc - 180 ))
 
