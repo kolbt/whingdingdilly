@@ -25,7 +25,7 @@ do
         #store name in variable
         filename="pa${pa}_pb${pb}_xa${xa}"
         # check for file existence
-        if [ -e $filename ]; then
+        if [ -f "${filename}.gsd" ]; then
             # take snapshot
             ovitos $exec_path/snap_final_tstep.py ${filename}.gsd
             # crop and paste
