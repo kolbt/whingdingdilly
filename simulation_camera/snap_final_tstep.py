@@ -8,6 +8,7 @@ from ovito.vis import *
 import sys
 
 infile = str(sys.argv[1])
+theory_binary = int(sys.argv[2])                        # theory prediction
 outfile, file_extension = os.path.splitext(infile)      # get base name
 
 node = import_file(infile, multiple_frames = True)      # load file as trajectory
@@ -16,12 +17,22 @@ node.add_to_scene()
 a = 0
 final = node.source.num_frames - 1                      # index of last frame
 
+if theory_binary == 0:
+    r_col = 1.0
+    g_col = 1.0
+    b_col = 1.0
+else:
+    r_col = 0.2
+    g_col = 1.0
+    b_col = 0.9
+
 # made this a while loop so that I could handle exceptions
 while a == 0:
     rs = RenderSettings(
         filename = "final_tstep_" + outfile + ".png",
         size = (2000,2000),
-        generate_alpha = True,
+        #generate_alpha = True,
+        background_color = (r_col, g_col, b_col),
         renderer = OpenGLRenderer()
     )                                                       # settings for render
 
