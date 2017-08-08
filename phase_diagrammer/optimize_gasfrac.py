@@ -63,7 +63,8 @@ for i in range(0, 16):
         if theory_diag[j][i] != phase_diag[j][i]:
             count += 1
 # this gives the number of mismatches
-print(count)
+#print(count)
+sys.exit(count)
 
 # WORD. Now plot that shit
 #plt.imshow(theory_diag, cmap='Blues')

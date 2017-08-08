@@ -6,6 +6,11 @@ cd /Volumes/Hagrid
 #       kappa = 2.220
 #       gf    = 0.40
 
+# Vars that give optimal values
+kap_var=0
+gf_var=0
+comparer=100
+
 part_num=15000
 kappa=2000
 gf=30
@@ -18,11 +23,11 @@ do
     cd pe${pb}B
     cd *
 
-    echo "PeB is: ${pb}"
+#    echo "PeB is: ${pb}"
 
-    while [ $kappa -le 2500 ]
+    while [ $kappa -le 3000 ]
     do
-        echo "Kappa is: ${kappa}"
+#        echo "Kappa is: ${kappa}"
 
         while [ $gf -le 60 ]
         do
@@ -41,7 +46,7 @@ do
             fi
             touch pe${pb}B_sep.txt
 
-            echo "Gas Fraction is: ${gf}"
+#            echo "Gas Fraction is: ${gf}"
             while [ $pa -le 150 ]
             do
 
@@ -76,16 +81,28 @@ do
             python /Users/kolbt/Desktop/compiled/whingdingdilly/phase_diagrammer/optimize_gasfrac.py\
             pe${pb}B_sep.txt ${pb} ${gf} ${kappa}
 
+            tmp=$?
+
+            if [ ${tmp} -lt ${comparer} ]; then
+                comparer=$(( ${tmp} ))
+                kap_var=$(( ${kappa} ))
+                gf_var=$(( ${gf} ))
+            fi
+
             pa=$(( 0 ))
             gf=$(( ${gf} + 5 ))
         done
 
         gf=$(( 30 ))
 
-        kappa=$(( ${kappa} + 100 ))
+        kappa=$(( ${kappa} + 50 ))
     done
-
+    echo "For PeB=${pb}, optimal parameters are kappa=${kap_var} and gf=${gf_var} with a mismatch of ${comparer}"
     kappa=$(( 2000 ))
+    comparer=$(( 100 ))
+    gf_var=$(( 0 ))
+    kap_var=$(( 0 ))
+
 
     pb=$(( ${pb} + 10 ))
     cd ../..
