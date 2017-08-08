@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # starting at 10 cause I already did 0
+# run from Hagrid
 pb=10
 while [ $pb -le 150 ]
 do
