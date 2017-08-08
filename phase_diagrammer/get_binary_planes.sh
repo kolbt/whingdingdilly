@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# gotta run these from Hagrid 
 pb=0
 path=$(pwd)
 diag_path="${path}/phase_3D.txt"

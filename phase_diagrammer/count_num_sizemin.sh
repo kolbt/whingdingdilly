@@ -1,6 +1,7 @@
 #!/bin/sh
 
-size_min=5300           # maybe like 2000?
+#size_min=5300           # maybe like 2000?
+size_min=6000           # this reflects the optimal parameter (gf=0.4)
 occurrences=0
 occur_min=200           # maybe like 100 tsteps?
 output=0
