@@ -93,7 +93,8 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
 
         # Loading bars are fun :D
         time.sleep(1)
-        sys.stdout.write("\r%d%%" % j)
+        percent = float(j) / float(dumps) * 100.0
+        sys.stdout.write("\r%5.1f%%" % percent)
         sys.stdout.flush()
     
         l_pos = position_array
