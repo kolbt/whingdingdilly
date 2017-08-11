@@ -8,7 +8,7 @@ from ovito.vis import *
 import sys
 
 infile = str(sys.argv[1])
-theory_binary = int(sys.argv[2])                        # theory prediction
+bin_value = int(sys.argv[2])                            # theory prediction
 outfile, file_extension = os.path.splitext(infile)      # get base name
 
 node = import_file(infile, multiple_frames = True)      # load file as trajectory
@@ -17,11 +17,23 @@ node.add_to_scene()
 a = 0
 final = node.source.num_frames - 1                      # index of last frame
 
-if theory_binary == 0:
+# both phase sep
+if bin_value == 3:                      # should be yellow
+    r_col = 1.0
+    g_col = 1.0
+    b_col = 0.0
+# both gas
+elif bin_value == 2:                    # should be white
     r_col = 1.0
     g_col = 1.0
     b_col = 1.0
-else:
+# theory phase sep
+elif bin_value == 1:                    # should be green
+    r_col = 0.0
+    g_col = 1.0
+    b_col = 0.0
+# sim phase sep
+else:                                   # should be cyan
     r_col = 0.2
     g_col = 1.0
     b_col = 0.9
