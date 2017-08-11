@@ -5,7 +5,7 @@
 #SBATCH --mem=8G                            # memory requested
 #SBATCH --nodes=1                           # run on one node
 #SBATCH --ntasks=2                          # task count
-#SBATCH --cpus-per-task=4                   # core count
+#SBATCH --cpus-per-task=1                   # core count
 #SBATCH --time=11-00:00                     # time (D-HH:MM)
 
 
