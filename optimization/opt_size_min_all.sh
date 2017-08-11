@@ -5,7 +5,7 @@ gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
 script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/optimization'
 sedtype='gsed'
 
-size_min=1500
+size_min=1000
 
 for filename in $( ls pa*.gsd )
 do
@@ -15,7 +15,7 @@ do
     pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
     xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
 
-    while [ $size_min -le 5000 ]
+    while [ $size_min -le 1000 ]
     do
 
         echo "Running minimum cluster size of ${size_min}... "

@@ -38,7 +38,7 @@ msdfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + 
 
 f = hoomd.open(name=msdfile, mode='rb')
 dumps = f.__len__()
-size_min = 15                                           # minimum size of cluster
+size_min = 1000                                         # minimum size of cluster
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types

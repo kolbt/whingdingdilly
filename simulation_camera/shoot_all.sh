@@ -4,7 +4,7 @@
 # run from Hagrid
 cd /Volumes/Hagrid
 
-pb=0
+pb=10
 while [ $pb -le 150 ]
 do
 

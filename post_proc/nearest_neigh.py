@@ -112,7 +112,7 @@ size_clusters = np.zeros((dumps), dtype=np.ndarray)
 #A_pos = np.zeros((part_a, 2), dtype=np.float64)
 #B_pos = np.zeros((part_b, 2), dtype=np.float64)
 
-size_min = 200
+size_min = 1000
 
 # arrays to hold the avg neighbor data
 avg_aa = np.zeros(dumps, dtype=np.float64)
