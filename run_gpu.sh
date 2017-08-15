@@ -2,7 +2,7 @@
 #SBATCH --qos gpu_access                    # quality of service
 #SBATCH --gres=gpu:2                        # I want two gpus
 #SBATCH --partition=gpu                     # partition to run on
-#SBATCH --mem=16G                           # memory requested
+#SBATCH --mem=32G                           # memory requested
 #SBATCH --nodes=1                           # run on one node
 #SBATCH --ntasks=2                          # task count
 #SBATCH --cpus-per-task=1                   # core count
