@@ -105,7 +105,7 @@ lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
-hoomd.md.integrate.mode_standard(dt=0.0000005)
+hoomd.md.integrate.mode_standard(dt=0.00000005)
 hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 hoomd.run(100000)
 
