@@ -479,15 +479,16 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('MSD_GAS_AB_' + plt_name + '.png', dpi=1000)
     plt.close()
     
-    plt.plot(msd_time, LIQ_A,  color="r", marker='o', markersize=1, linestyle='None', label='Liq_A')
-    plt.plot(msd_time, LIQ_B,  color="b", marker='o', markersize=1, linestyle='None', label='Liq_B')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LIQ_AB_' + plt_name + '.png', dpi=1000)
-    plt.close()
+    if np.any(LIQ_A) == 1 and np.any(LIQ_B) == 1:
+        plt.plot(msd_time, LIQ_A,  color="r", marker='o', markersize=1, linestyle='None', label='Liq_A')
+        plt.plot(msd_time, LIQ_B,  color="b", marker='o', markersize=1, linestyle='None', label='Liq_B')
+        plt.xscale('log')
+        plt.yscale('log')
+        plt.xlabel('Timesteps')
+        plt.ylabel('MSD')
+        plt.legend(loc='upper left')
+        plt.savefig('MSD_LIQ_AB_' + plt_name + '.png', dpi=1000)
+        plt.close()
 
     plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
     plt.xscale('log')
@@ -497,8 +498,9 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.legend(loc='upper left')
     plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
     plt.close()
-    
-    plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
+
+    if np.any(MSD_TL) == 1:
+        plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
     plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
     plt.xscale('log')
     plt.yscale('log')
@@ -539,7 +541,8 @@ else:                                                           # if monodispers
     plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
+    if np.any(MSD_TL) == 1:
+        plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
     plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
     plt.xscale('log')
     plt.yscale('log')
