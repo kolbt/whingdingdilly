@@ -7,4 +7,4 @@
 
 filename=$1
 
-python $filename # I want two gpus
+python $filename # I want one gpu
