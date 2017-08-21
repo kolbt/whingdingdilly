@@ -99,13 +99,13 @@ lj.pair_coeff.set('A', 'A', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('A', 'B', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 
-#integrator type
-#hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
-#hoomd.run(10000)
+integrator type
+hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
+hoomd.run(10000)
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
-hoomd.md.integrate.mode_standard(dt=0.00000005)
+hoomd.md.integrate.mode_standard(dt=0.00001)
 hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 hoomd.run(100000)
 
