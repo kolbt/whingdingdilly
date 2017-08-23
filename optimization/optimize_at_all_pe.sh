@@ -9,13 +9,13 @@ cd /Volumes/Hagrid/clust_1000
 part_num=15000
 occur_min=200
 all_counter=0
-kappa=2000
+kappa=1000
 gf=30
 pb=0
 pa=0
 xa=0
 
-while [ $kappa -le 3000 ]
+while [ $kappa -le 2000 ]
 do
 
     while [ $gf -le 60 ]
@@ -69,7 +69,7 @@ do
             pe${pb}B_sep.txt ${pb} ${gf} ${kappa}
 
             tmp=$?
-            all_counter=$(( $all_count + $tmp ))
+            all_counter=$(( $all_counter + $tmp ))
 
             pa=$(( 0 ))
             pb=$(( $pb + 10 ))

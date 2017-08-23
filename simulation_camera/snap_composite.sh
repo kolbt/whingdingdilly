@@ -31,7 +31,8 @@ do
         # check for file existence
         if [ -f "${filename}.gsd" ]; then
             # look at the theory text file so you can color the background appropriately
-            theory_binary=$(sed "${theory_counter}q;d" "/Volumes/Hagrid/theory_txts/peB${pb}_theory.mtx")
+#            theory_binary=$(sed "${theory_counter}q;d" "/Volumes/Hagrid/theory_txts/peB${pb}_theory.mtx")
+            theory_binary=$(sed "${theory_counter}q;d" "/Volumes/Hagrid/clust_1000/kap120_phi30_theory/peB${pb}_theory.mtx")
             # look at the simulation text file to see if it's considered phase separated
             sim_binary=$(sed "${sim_counter}q;d" pe${pb}B_sep.txt)
 

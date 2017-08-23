@@ -2,9 +2,9 @@
 
 # starting at 10 cause I already did 0
 # run from Hagrid
-cd /Volumes/Hagrid
+#cd /Volumes/Hagrid/clust_1000
 
-pb=10
+pb=0
 while [ $pb -le 150 ]
 do
 

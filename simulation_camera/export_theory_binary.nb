@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     21379,        497]
-NotebookOptionsPosition[     20505,        470]
-NotebookOutlinePosition[     20866,        486]
-CellTagsIndexPosition[     20823,        483]
+NotebookDataLength[     21656,        502]
+NotebookOptionsPosition[     20787,        475]
+NotebookOutlinePosition[     21143,        491]
+CellTagsIndexPosition[     21100,        488]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -22,7 +22,7 @@ Cell[BoxData[{
  RowBox[{
   RowBox[{"phi", "=", "0.6"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
-  RowBox[{"kappa", "=", "2.220"}], ";"}], "\[IndentingNewLine]", 
+  RowBox[{"kappa", "=", "1.200"}], ";"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{"myf", "[", 
    RowBox[{"PeA_", ",", "PeB_", ",", "xa_"}], "]"}], ":=", 
@@ -136,8 +136,9 @@ Cell[BoxData[{
    3.7105951175634737`*^9, 3.7105951217260733`*^9}, {3.710595285350058*^9, 
    3.710595286327898*^9}, 3.710600606985634*^9, {3.710835632223868*^9, 
    3.710835644103075*^9}, {3.711126116921002*^9, 3.7111261177013083`*^9}, {
-   3.711191650365726*^9, 
-   3.711191650667593*^9}},ExpressionUUID->"acd7db6a-907f-41fb-b9c8-\
+   3.711191650365726*^9, 3.711191650667593*^9}, {3.712393955529414*^9, 
+   3.7123939564952106`*^9}, {3.712412368325791*^9, 
+   3.712412372159462*^9}},ExpressionUUID->"acd7db6a-907f-41fb-b9c8-\
 b37dfc64b845"],
 
 Cell[CellGroupData[{
@@ -339,14 +340,14 @@ Cell[BoxData[
       Hold[$CellContext`PeB$$], 0, 150, 10}, {
       Hold[$CellContext`gf$$], 0.3, 0.7, 0.05}}, Typeset`size$$ = {
     419., {130., 134.}}, Typeset`update$$ = 0, Typeset`initDone$$, 
-    Typeset`skipInitDone$$ = True, $CellContext`PeB$2523561$$ = 
-    0, $CellContext`gf$2523562$$ = 0}, 
+    Typeset`skipInitDone$$ = True, $CellContext`PeB$103651$$ = 
+    0, $CellContext`gf$103652$$ = 0}, 
     DynamicBox[Manipulate`ManipulateBoxes[
      1, StandardForm, 
       "Variables" :> {$CellContext`gf$$ = 0.3, $CellContext`PeB$$ = 0}, 
       "ControllerVariables" :> {
-        Hold[$CellContext`PeB$$, $CellContext`PeB$2523561$$, 0], 
-        Hold[$CellContext`gf$$, $CellContext`gf$2523562$$, 0]}, 
+        Hold[$CellContext`PeB$$, $CellContext`PeB$103651$$, 0], 
+        Hold[$CellContext`gf$$, $CellContext`gf$103652$$, 0]}, 
       "OtherVariables" :> {
        Typeset`show$$, Typeset`bookmarkList$$, Typeset`bookmarkMode$$, 
         Typeset`animator$$, Typeset`animvar$$, Typeset`name$$, 
@@ -368,9 +369,10 @@ Cell[BoxData[
    StripOnInput->False],
   Manipulate`InterpretManipulate[1]]], "Output",
  CellChangeTimes->{3.710843608617694*^9, 3.710843639114092*^9, 
-  3.710844261719411*^9, 3.711126130263132*^9, 
-  3.711191674418089*^9},ExpressionUUID->"d7516a88-6ad1-4f47-9a08-\
-787659822571"]
+  3.710844261719411*^9, 3.711126130263132*^9, 3.711191674418089*^9, 
+  3.7123896018977003`*^9, 3.7123941124438753`*^9, 
+  3.712412421256769*^9},ExpressionUUID->"cf62e3d8-1536-4aae-8512-\
+3e7d6229df04"]
 }, Open  ]],
 
 Cell[BoxData[
@@ -436,13 +438,14 @@ Cell[BoxData[
      RowBox[{"p", "+=", "10"}], ",", "\[IndentingNewLine]", 
      RowBox[{
       RowBox[{"binary", "[", 
-       RowBox[{"p", ",", "0.4"}], "]"}], ";", "\[IndentingNewLine]", 
+       RowBox[{"p", ",", "0.3"}], "]"}], ";", "\[IndentingNewLine]", 
       RowBox[{"mat2d", "=", 
        RowBox[{"Abs", "[", 
         RowBox[{"1", "-", "mat2d"}], "]"}]}], ";", "\[IndentingNewLine]", 
       RowBox[{"Export", "[", 
        RowBox[{
-        RowBox[{"\"\</Users/kolbt/Desktop/theory_txts/peB\>\"", "<>", 
+        RowBox[{
+        "\"\</Users/kolbt/Desktop/kap120_phi30_theory/peB\>\"", "<>", 
          RowBox[{"ToString", "[", "p", "]"}], "<>", "\"\<_theory.mtx\>\""}], 
         ",", "mat2d", ",", "\"\<MTX\>\""}], "]"}]}]}], "\[IndentingNewLine]", 
     "]"}], "\[IndentingNewLine]", 
@@ -465,11 +468,13 @@ Cell[BoxData[
   3.7108546041459103`*^9, 3.710854623740656*^9}, {3.710855094968289*^9, 
   3.7108551100972424`*^9}, {3.710855143343871*^9, 3.710855146570384*^9}, {
   3.710855248757415*^9, 3.710855269444944*^9}, {3.711191666474218*^9, 
-  3.711191666980275*^9}},ExpressionUUID->"9cc16037-ba19-4a68-a368-\
+  3.711191666980275*^9}, {3.712394096032317*^9, 3.712394105976511*^9}, {
+  3.712412427229965*^9, 
+  3.712412437343062*^9}},ExpressionUUID->"9cc16037-ba19-4a68-a368-\
 b65b77159a9c"]
 },
-WindowSize->{993, 1101},
-WindowMargins->{{Automatic, -1047}, {-599, Automatic}},
+WindowSize->{976, 845},
+WindowMargins->{{Automatic, 97}, {Automatic, 101}},
 FrontEndVersion->"11.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (April 27, \
 2017)",
 StyleDefinitions->"Default.nb"
@@ -485,19 +490,19 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[558, 20, 4920, 120, 180, "Input", "ExpressionUUID" -> \
+Cell[558, 20, 5018, 121, 201, "Input", "ExpressionUUID" -> \
 "acd7db6a-907f-41fb-b9c8-b37dfc64b845"],
 Cell[CellGroupData[{
-Cell[5503, 144, 8625, 185, 516, "Input", "ExpressionUUID" -> \
+Cell[5601, 145, 8625, 185, 516, "Input", "ExpressionUUID" -> \
 "dceb889a-cfb4-492b-8f43-75c7c83ef44e"],
-Cell[14131, 331, 2025, 41, 401, "Output", "ExpressionUUID" -> \
-"d7516a88-6ad1-4f47-9a08-787659822571"]
+Cell[14229, 332, 2094, 42, 401, "Output", "ExpressionUUID" -> \
+"cf62e3d8-1536-4aae-8512-3e7d6229df04"]
 }, Open  ]],
-Cell[16171, 375, 1195, 23, 138, "Input", "ExpressionUUID" -> \
+Cell[16338, 377, 1195, 23, 138, "Input", "ExpressionUUID" -> \
 "9e5cc0b6-e945-4cd1-bdab-bd90991c3f14"],
-Cell[17369, 400, 512, 11, 32, "Input", "ExpressionUUID" -> \
+Cell[17536, 402, 512, 11, 32, "Input", "ExpressionUUID" -> \
 "a9511786-a987-4d40-a7e5-a0f61fcb0fcb"],
-Cell[17884, 413, 2617, 55, 201, "Input", "ExpressionUUID" -> \
+Cell[18051, 415, 2732, 58, 201, "Input", "ExpressionUUID" -> \
 "9cc16037-ba19-4a68-a368-b65b77159a9c"]
 }
 ]
