@@ -105,7 +105,7 @@ hoomd.run(10000)
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
-hoomd.md.integrate.mode_standard(dt=0.000005)
+hoomd.md.integrate.mode_standard(dt=0.0000005)
 hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
 hoomd.run(100000)
 
