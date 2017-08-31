@@ -7,6 +7,7 @@ from wdd_pkg import msd
 from wdd_pkg import msd_out
 from wdd_pkg import pos_by_type
 from wdd_pkg import nearest_neighbor
+from wdd_pkg import contact_force
 from mypy import hey_there
 from mypy import load_bar
 
