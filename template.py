@@ -179,6 +179,9 @@ hoomd.analyze.callback(callback = dump_spec, period = 1)
 
 hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
 
+#hoomd.compute.thermo(group=all)
+#hoomd.analyze.log(filename='pressure_out.txt', quantities = ['pressure_all'], period = dumps)
+
 #run
 hoomd.run(tsteps)
 

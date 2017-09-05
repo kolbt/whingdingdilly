@@ -84,7 +84,7 @@ elif part_perc_a != 100:                # mix of each
     for i in range(mid,part_num):
         system.particles[i].type = 'B'
 
-all = hoomd.group.all()
+all=hoomd.group.all()
 gA = hoomd.group.type(type = 'A', update=True)
 gB = hoomd.group.type(type = 'B', update=True)
 N = len(all)
@@ -180,6 +180,10 @@ hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
 hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
+
+# Don't have to instantiate the compute, already passed to integrator
+#hoomd.compute.thermo(group=gB)
+#hoomd.analyze.log(filename="pressure_outii.txt", quantities=["pressure"], period=dump_freq)
 
 #run
 hoomd.run(tsteps)

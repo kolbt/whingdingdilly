@@ -1,6 +1,6 @@
 import sys
 import time
-sys.path.append("/Users/kolbt/Desktop")
+sys.path.append("/Users/kolbt/Desktop/compiled/whingdingdilly")
 from wdd_pkg import my_clust
 from wdd_pkg import qclust
 from wdd_pkg import msd
