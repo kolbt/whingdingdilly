@@ -32,7 +32,7 @@ fi
 
 # Default values for simulations
 part_num=$(( 15000 ))
-tsteps=$(( 10000000 ))
+runfor=$(( 100 ))
 dump_freq=$(( 20000 ))
 x_a_spacer=$(( 10 ))
 pe_a_spacer=$(( 10 ))
@@ -51,8 +51,8 @@ do
 
     echo "part_num is ${part_num}, input new value or same value."
     read part_num
-    echo "tsteps is ${tsteps}, input new value or same value."
-    read tsteps
+    echo "runfor is ${runfor} tau, input new value or same value."
+    read runfor
     echo "dump_freq is ${dump_freq}, input new value or same value."
     read dump_freq
     echo "x_start is ${x_count}, input new value or same value."
@@ -70,8 +70,11 @@ do
     echo "PeB is ${pe_b}, input new value or same value."
     read pe_b
 
+    # this shows how long the simulation will run
+    tsteps=$(bc <<< "scale=2;$runfor/0.000001")
+
     echo "part_num is ${part_num}"
-    echo "tsteps is ${tsteps}"
+    echo "runfor is ${runfor}"
     echo "dump_freq is ${dump_freq}"
     echo "x_start is ${x_count}"
     echo "x_max is ${x_max}"
@@ -80,6 +83,7 @@ do
     echo "pe_max is ${pe_max}"
     echo "pe_a_spacer is ${pe_a_spacer}"
     echo "PeB is ${pe_b}"
+    echo "Simulation will run for ${tsteps} timesteps"
 
     echo "Are these values okay (y/n)?"
     read loop
@@ -103,7 +107,7 @@ do
         infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
         $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
         $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
-        $sedtype -i 's/\${tsteps}/'"${tsteps}"'/g' $infile                      # write tsteps to infile
+        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
         $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
         $sedtype -i 's/\${part_frac_a}/'"${x_count}"'/g' $infile                # write particle fraction to infile
         $sedtype -i 's/\${pe_a}/'"${pe_count}"'/g' $infile                      # write activity of A to infile

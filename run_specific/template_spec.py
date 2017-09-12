@@ -12,7 +12,7 @@ import os
 #hoomd_path = str(sys.argv[1])
 hoomd_path = "${hoomd_path}"
 #tsteps = int(sys.argv[2])
-tsteps = ${tsteps}
+runfor = ${runfor}
 #dump_freq = int(sys.argv[3])
 dump_freq = ${dump_freq}
 #part_frac_a = float(sys.argv[4])
@@ -25,6 +25,12 @@ pe_b = ${pe_b}
 #gsd_path = str(sys.argv[7])
 gsd_path = "${gsd_path}"
 
+# timestep size
+my_dt = 0.000001
+# run for 100 tau, 100 * sigma^2 / Diffusion coeff
+sim_length = 100 * 1
+# compute number of tsteps to achieve this
+tsteps = sim_length / my_dt
 # calculate number of tsteps which are dumped
 dumps = tsteps/dump_freq
 
@@ -105,8 +111,9 @@ hoomd.run(10000)
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
-hoomd.md.integrate.mode_standard(dt=0.0000005)
-hoomd.md.integrate.brownian(group=all, kT=0.5, seed=123)
+#hoomd.md.integrate.mode_standard(dt=0.0000005)
+hoomd.md.integrate.mode_standard(dt=my_dt)
+hoomd.md.integrate.brownian(group=all, kT=1.0, seed=123)
 hoomd.run(100000)
 
 #set the activity of each type
