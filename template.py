@@ -35,7 +35,7 @@ from hoomd import md
 from hoomd import deprecated
 import numpy as np
 
-#get tsteps for msd calculations
+#get tsteps for msd calculations, needs to be in tau not tsteps
 msd_dumps = np.zeros((101), dtype=np.float64)
 jumper = 5
 value_to_dump = 15

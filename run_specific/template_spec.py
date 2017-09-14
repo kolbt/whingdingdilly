@@ -25,10 +25,12 @@ pe_b = ${pe_b}
 #gsd_path = str(sys.argv[7])
 gsd_path = "${gsd_path}"
 
-# timestep size
-my_dt = 0.000001
+# tau = sigma^2 / diffusion coefficient
+tau = 1
+# dt = 2E-5 * tau, or, x * sigma^2 / Diffusion coeff
+my_dt = 0.000001 * tau
 # run for 100 tau, 100 * sigma^2 / Diffusion coeff
-sim_length = 100 * 1
+sim_length = 100 * tau
 # compute number of tsteps to achieve this
 tsteps = sim_length / my_dt
 # calculate number of tsteps which are dumped
@@ -41,7 +43,7 @@ from hoomd import md
 from hoomd import deprecated
 import numpy as np
 
-#get tsteps for msd calculations
+#get tsteps for msd calculations, needs to be in tau
 msd_dumps = np.zeros((101), dtype=np.float64)
 jumper = 5
 value_to_dump = 15
@@ -59,6 +61,7 @@ for iii in range(0,101):
         value_to_dump += jumper
         count += 5
 #msd_dumps += 9110000
+# this is to account for energy minimization and initial brownian run
 msd_dumps += tsteps - 1000000 + 110000
 
 #initialize system randomly, can specify GPU execution here
@@ -178,7 +181,9 @@ name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 msd_name = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 
 ### Dump for MSD ###
+# change this to units of tau?
 def dump_spec(timestep):
+    
     if timestep in msd_dumps:
         hoomd.dump.gsd(filename=msd_name, period=None, group=all, overwrite=False, static=[])
         os.close(2)
