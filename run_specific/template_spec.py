@@ -43,12 +43,15 @@ from hoomd import md
 from hoomd import deprecated
 import numpy as np
 
+pow = np.log10(tsteps)
+msd_length = int(18*(pow-2)+29)
+
 #get tsteps for msd calculations, needs to be in tau
-msd_dumps = np.zeros((101), dtype=np.float64)
+msd_dumps = np.zeros((msd_length), dtype=np.float64)
 jumper = 5
 value_to_dump = 15
 count = 10
-for iii in range(0,101):
+for iii in range(0,len(msd_dumps)):
     if iii <= 10:
         msd_dumps[iii] = iii
     elif count == 95:
@@ -60,7 +63,7 @@ for iii in range(0,101):
         msd_dumps[iii] = value_to_dump
         value_to_dump += jumper
         count += 5
-#msd_dumps += 9110000
+
 # this is to account for energy minimization and initial brownian run
 msd_dumps += tsteps - 1000000 + 110000
 
