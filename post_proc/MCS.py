@@ -16,7 +16,7 @@ from hoomd import md
 from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
-
+my_dt = 0.000001
 part_num = 15000
 
 part_a = part_num * part_frac_a         # get the total number of A particles
@@ -34,8 +34,7 @@ from gsd import hoomd
 from gsd import pygsd
 import numpy as np
 
-myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
-msdfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+myfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
@@ -57,6 +56,7 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
 
 timesteps -= timesteps[0]
 msd_time = timesteps[1:]
+msd_time *= my_dt
 
 pos_A = np.zeros((dumps), dtype=np.ndarray)             # type A positions
 pos_B = np.zeros((dumps), dtype=np.ndarray)             # type B positions
@@ -79,7 +79,6 @@ my_clusters = cluster.Cluster(box=f_box,
                               rcut=1.0)                 # initialize class
 cluster_props = cluster.ClusterProperties(box=f_box)
 
-number_clusters = np.zeros((dumps), dtype=np.ndarray)   # arrays to store things
 ids = np.zeros((dumps), dtype=np.ndarray)
 size_clusters = np.zeros((dumps), dtype=np.ndarray)
 tot_size = np.zeros((dumps), dtype=np.ndarray)          # number of particles in clusters
@@ -91,29 +90,14 @@ B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
 percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
 
-LIQ_A = np.zeros((dumps - 1), dtype=np.ndarray)         # arrays for MSD
-LIQ_B = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_A = np.zeros((dumps - 1), dtype=np.ndarray)
-GAS_B = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_T = np.zeros((dumps - 1), dtype=np.float64)
-MSD_TL = np.zeros((dumps - 1), dtype=np.ndarray)
-MSD_TG = np.zeros((dumps - 1), dtype=np.ndarray)
-
-disp_x = np.zeros((part_num), dtype=np.ndarray)         # displacement vectors
-disp_y = np.zeros((part_num), dtype=np.ndarray)
-disp_z = np.zeros((part_num), dtype=np.ndarray)
-
 # analyze all particles
 for j in range(0, dumps):
     
     l_pos = position_array[j]
     my_clusters.computeClusters(l_pos)
-    number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
     ids = my_clusters.getClusterIdx()                   # get cluster ids
     cluster_props.computeProperties(l_pos, ids)
     size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
-    
-    how_many = my_clusters.getNumClusters()
 
     #####################################################################
     ### Find avg cluster size, gas fraction, and largest cluster size ###
@@ -138,6 +122,8 @@ for j in range(0, dumps):
     f.write(str(l_clust) + '\n')
     f.close()
 
+    mcs_text = "MCS" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    gf_text = "GF" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
@@ -145,114 +131,13 @@ for j in range(0, dumps):
         MCS[j] = 0
         GF[j] = 1
 
-    #########################################################
-    ### Find MSD for A, B individually, also total system ###
-    #########################################################
+    f = open(mcs_text, a_w)
+    f.write(str(MCS[j]) + '\n')
+    f.close()
 
-    sort_id = np.sort(ids)                              # array of IDs sorted small to large
-    q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
-    index = 0                                           # index of the sorted array to look at
-    for a in range(0,len(q_clust)):
-        add_clust = 0
-        while 1:
-            add_clust += 1
-            if index == part_num:                       # break if index is too large
-                break
-            if sort_id[index] != a:                     # break if ID changes
-                break
-            if add_clust == 1:                          # all particles appear once
-                q_clust[a] = 0
-            if add_clust > size_min:                    # only multiple ids appear twice
-                q_clust[a] = 1
-            index += 1                                  # increment index
-
-    lq_a_count = 0
-    lq_b_count = 0
-    gs_a_count = 0
-    gs_b_count = 0
-    if j > 0:
-        numerator_A = 0
-        denominator_tot = 0
-        for b in range(0,part_num):
-            
-            # check instantaneous disp. over last timestep
-            dx = position_array[j][b][0] - position_array[j-1][b][0]
-            dy = position_array[j][b][1] - position_array[j-1][b][1]
-            dz = position_array[j][b][2] - position_array[j-1][b][2]
-            
-            # if it is over some threshold, then it went past a boundary
-            if dx < -50:
-                dx += l_box
-            if dx > 50:
-                dx -= l_box
-            disp_x[b] += dx
-            
-            if dy < -50:
-                dy += l_box
-            if dy > 50:
-                dy -= l_box
-            disp_y[b] += dy
-            
-            if dz < -50:
-                dz += l_box
-            if dz > 50:
-                dz -= l_box
-            disp_z[b] += dz
-            
-            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
-            MSD_T[j-1] += msd_val
-            if q_clust[ids[b]] == 1:                        # check if in liquid
-                MSD_TL[j-1] += msd_val                      # add to tot. lq. msd
-                if type_array[j][b] == 0:                   # type A case
-                    LIQ_A[j-1] += msd_val
-                    lq_a_count += 1
-                else:
-                    LIQ_B[j-1] += msd_val
-                    lq_b_count += 1
-            else:                                           # else, particle is gas
-                MSD_TG[j-1] += msd_val                      # add to tot. gs. msd
-                if type_array[j][b] == 0:                   # type A case
-                    GAS_A[j-1] += msd_val
-                    gs_a_count += 1
-                else:
-                    GAS_B[j-1] += msd_val
-                    gs_b_count += 1
-
-        # if-gating these so we don't break our program
-        if lq_a_count != 0: LIQ_A[j-1] /= lq_a_count
-        if lq_b_count != 0: LIQ_B[j-1] /= lq_b_count
-        if gs_a_count != 0: GAS_A[j-1] /= gs_a_count
-        if gs_b_count != 0: GAS_B[j-1] /= gs_b_count
-        MSD_T[j-1] /= part_num
-        if lq_a_count + lq_b_count != 0: MSD_TL[j-1] /= lq_a_count + lq_b_count
-        if gs_a_count + gs_b_count != 0: MSD_TG[j-1] /= gs_a_count + gs_b_count
-
-        numerator_A = lq_a_count
-        denominator_tot = lq_a_count + lq_b_count
-        
-        if denominator_tot != 0:
-            percent_A[j] =  float(numerator_A) / float(denominator_tot)
-
-############################
-### Density caluclations ###
-############################
-
-def getDensityPlease(n):                                # call this function as needed
-    l_pos = position_array[n]                           # get ith position array
-    my_density.compute(f_box,
-                       l_pos,
-                       l_pos)
-    return my_density.getDensity()
-
-avg_sys_density = np.zeros((1), dtype=np.ndarray)
-
-take_last = dumps - 10
-last = dumps - 1
-msd_last = dumps - 2
-for j in range(take_last, dumps):
-    avg_sys_density[0] += getDensityPlease(j)
-
-avg_sys_density[0] /= (dumps - take_last)
+    f = open(gf_text, a_w)
+    f.write(str(GF[j]) + '\n')
+    f.close()
 
 ################################################################################
 ###### perform the same analysis on species A and species B individually #######
@@ -290,7 +175,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         
         l_pos = pos_A[j]
         my_clusters.computeClusters(l_pos)
-        number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
         ids = my_clusters.getClusterIdx()                   # get cluster ids
         cluster_props.computeProperties(l_pos, ids)
         size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
@@ -315,7 +199,6 @@ if part_perc_a != 0 and part_perc_a != 100:
 
         l_pos = pos_B[j]
         my_clusters.computeClusters(l_pos)
-        number_clusters[j] = my_clusters.getNumClusters()   # find number of clusters
         ids = my_clusters.getClusterIdx()                   # get cluster ids
         cluster_props.computeProperties(l_pos, ids)
         size_clusters[j] = cluster_props.getClusterSizes()  # get number of particles in each
@@ -337,52 +220,6 @@ if part_perc_a != 0 and part_perc_a != 100:
         else:
             MCS_B[j] = 0
             GF_B[j] = 1
-
-
-
-    def getDensityA(n):                                     # call this function as needed
-        countA = 0
-        for g in range(0, part_num):
-            if type_array[n][g] == 0:
-                tmpA[countA][0] = position_array[n][g][0]
-                tmpA[countA][1] = position_array[n][g][1]
-                tmpA[countA][2] = position_array[n][g][2]
-                countA += 1
-        pos_A[n] = tmpA
-        l_pos = pos_A[n]                                    # get ith position array
-        my_density.compute(f_box,
-                           l_pos,
-                           l_pos)
-        return my_density.getDensity()
-
-    avg_dense_A = np.zeros((1), dtype=np.ndarray)
-
-    for j in range(take_last, dumps):
-        avg_dense_A[0] += getDensityA(j)
-
-    avg_dense_A[0] /= (dumps - take_last)
-
-    def getDensityB(n):                                     # call this function as needed
-        countB = 0
-        for g in range(0, part_num):
-            if type_array[n][g] == 1:
-                tmpB[countB][0] = position_array[n][g][0]
-                tmpB[countB][1] = position_array[n][g][1]
-                tmpB[countB][2] = position_array[n][g][2]
-                countB += 1
-        pos_B[n] = tmpB
-        l_pos = pos_B[n]                                    # get ith position array
-        my_density.compute(f_box,
-                           l_pos,
-                           l_pos)
-        return my_density.getDensity()
-
-    avg_dense_B = np.zeros((1), dtype=np.ndarray)
-
-    for j in range(take_last, dumps):
-        avg_dense_B[0] += getDensityB(j)
-
-    avg_dense_B[0] /= (dumps - take_last)
 
 ################################################################################
 #################### Plot the individual and total data ########################
