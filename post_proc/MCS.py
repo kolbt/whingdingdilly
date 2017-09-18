@@ -49,7 +49,7 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
 
 timesteps -= timesteps[0]
-msd_time[1:] = timesteps[1:]
+msd_time = timesteps[1:]
 msd_time *= my_dt
 
 part_num = len(type_array[0])
