@@ -17,12 +17,6 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 my_dt = 0.000001
-part_num = 15000
-
-part_a = part_num * part_frac_a         # get the total number of A particles
-part_a = int(part_a)
-part_b = part_num - part_a              # get the total number of B particles
-part_b = int(part_b)
 
 ################################################################################
 ############################# Begin Data Analysis ##############################
@@ -58,6 +52,13 @@ timesteps -= timesteps[0]
 msd_time = timesteps[1:]
 msd_time *= my_dt
 
+part_num = len(type_array[0])
+
+part_a = part_num * part_frac_a         # get the total number of A particles
+part_a = int(part_a)
+part_b = part_num - part_a              # get the total number of B particles
+part_b = int(part_b)
+
 pos_A = np.zeros((dumps), dtype=np.ndarray)             # type A positions
 pos_B = np.zeros((dumps), dtype=np.ndarray)             # type B positions
 tmpA = np.zeros((part_a, 3), dtype=np.float32)          # temporary storage arrays
@@ -87,7 +88,6 @@ MCS = np.zeros((dumps), dtype=np.ndarray)               # Mean cluster size
 GF = np.zeros((dumps), dtype=np.ndarray)                # Gas fraction
 A_ids = np.zeros((part_a), dtype=np.ndarray)            # type A ids
 B_ids = np.zeros((part_b), dtype=np.ndarray)            # type B ids
-percent_A = np.zeros((dumps), dtype=np.ndarray)         # composition A at each timestep
 largest = np.zeros((dumps), dtype=np.ndarray)           # read out largest cluster at each tstep
 
 # analyze all particles
@@ -236,121 +236,35 @@ plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A
 plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
 if part_perc_a != 0 and part_perc_a != 100:
-    sns.kdeplot(avg_sys_density[0], shade = True, color="g")
-    sns.kdeplot(avg_dense_A[0], shade = True, color="r")
-    sns.kdeplot(avg_dense_B[0], shade = True, color="b")
-    plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
-    plt.close()
 
-    sns.kdeplot(getDensityPlease(last), shade = True, color="g")
-    sns.kdeplot(getDensityA(last), shade = True, color="r")
-    sns.kdeplot(getDensityB(last), shade = True, color="b")
-    plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    plt.plot(MCS, color="g")
-    plt.plot(MCS_A, color="r")
-    plt.plot(MCS_B, color="b")
+    plt.plot(msd_time, MCS, color="g")
+    plt.plot(msd_time, MCS_A, color="r")
+    plt.plot(msd_time, MCS_B, color="b")
     #plt.ylim((0,1))
     plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(GF, color="g")
-    plt.plot(GF_A, color="r")
-    plt.plot(GF_B, color="b")
+    plt.plot(msd_time, GF, color="g")
+    plt.plot(msd_time, GF_A, color="r")
+    plt.plot(msd_time, GF_B, color="b")
     plt.ylim((0,1))
     plt.savefig('GF_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(percent_A, color="r")
-    #plt.ylim((0,1))
-    plt.savefig('A_comp_'+plt_name+'.png', dpi=1000)
-    plt.close()
-
-    plt.plot(largest, color="g")
+    plt.plot(msd_time, largest, color="g")
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
-    plt.close()
-
-    plt.plot(msd_time, GAS_A,  color="r", marker='o', markersize=1, linestyle='None', label='Gas_A')
-    plt.plot(msd_time, GAS_B,  color="b", marker='o', markersize=1, linestyle='None', label='Gas_B')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_GAS_AB_' + plt_name + '.png', dpi=1000)
-    plt.close()
-    
-    if np.any(LIQ_A) == 1 and np.any(LIQ_B) == 1:
-        plt.plot(msd_time, LIQ_A,  color="r", marker='o', markersize=1, linestyle='None', label='Liq_A')
-        plt.plot(msd_time, LIQ_B,  color="b", marker='o', markersize=1, linestyle='None', label='Liq_B')
-        plt.xscale('log')
-        plt.yscale('log')
-        plt.xlabel('Timesteps')
-        plt.ylabel('MSD')
-        plt.legend(loc='upper left')
-        plt.savefig('MSD_LIQ_AB_' + plt_name + '.png', dpi=1000)
-        plt.close()
-
-    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    if np.any(MSD_TL) == 1:
-        plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
-    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
     plt.close()
 
 else:                                                           # if monodisperse plot total values
-    sns.kdeplot(avg_sys_density[0], shade = True, color="g")
-    plt.savefig('avg_density_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    sns.kdeplot(getDensityPlease(last), shade = True, color="g")
-    plt.savefig('final_density_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    plt.plot(MCS, color="g")
+    plt.plot(msd_time, MCS, color="g")
     plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(GF, color="g")
+    plt.plot(msd_time, GF, color="g")
     plt.ylim((0,1))
     plt.savefig('GF_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(largest, color="g")
+    plt.plot(msd_time, largest, color="g")
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
-    plt.close()
-
-    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
-    plt.close()
-
-    if np.any(MSD_TL) == 1:
-        plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
-    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('Timesteps')
-    #plt.xlabel(r'Time ($\tau$)')
-    plt.ylabel('MSD')
-    plt.legend(loc='upper left')
-    plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
     plt.close()

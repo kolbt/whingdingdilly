@@ -17,13 +17,6 @@ from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
 
-part_num = 15000
-
-part_a = part_num * part_frac_a         # get the total number of A particles
-part_a = int(part_a)
-part_b = part_num - part_a              # get the total number of B particles
-part_b = int(part_b)
-
 ################################################################################
 ############################# Begin Data Analysis ##############################
 ################################################################################
@@ -54,6 +47,13 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         type_array[i] = snap.particles.typeid
         position_array[i] = snap.particles.position     # store all particle positions
         timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
+
+part_num = len(type_array[0])
+
+part_a = part_num * part_frac_a         # get the total number of A particles
+part_a = int(part_a)
+part_b = part_num - part_a              # get the total number of B particles
+part_b = int(part_b)
 
 timesteps -= timesteps[0]
 msd_time = timesteps[1:]

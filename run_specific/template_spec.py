@@ -65,7 +65,8 @@ for iii in range(0,len(msd_dumps)):
         count += 5
 
 # this is to account for energy minimization and initial brownian run
-msd_dumps += tsteps - 1000000 + 110000
+#msd_dumps += tsteps - msd_dumps[-1] + 110000
+msd_dumps += 110000
 
 #initialize system randomly, can specify GPU execution here
 
