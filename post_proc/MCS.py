@@ -49,7 +49,7 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         timesteps[i] = snap.configuration.step          # store tstep for plotting purposes
 
 timesteps -= timesteps[0]
-msd_time = timesteps[1:]
+msd_time[1:] = timesteps[1:]
 msd_time *= my_dt
 
 part_num = len(type_array[0])
@@ -237,34 +237,34 @@ plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B
 
 if part_perc_a != 0 and part_perc_a != 100:
 
-    plt.plot(msd_time, MCS, color="g")
-    plt.plot(msd_time, MCS_A, color="r")
-    plt.plot(msd_time, MCS_B, color="b")
+plt.plot(msd_time, MCS[1:], color="g")
+    plt.plot(msd_time, MCS_A[1:], color="r")
+    plt.plot(msd_time, MCS_B[1:], color="b")
     #plt.ylim((0,1))
     plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, GF, color="g")
-    plt.plot(msd_time, GF_A, color="r")
-    plt.plot(msd_time, GF_B, color="b")
+    plt.plot(msd_time, GF[1:], color="g")
+    plt.plot(msd_time, GF_A[1:], color="r")
+    plt.plot(msd_time, GF_B[1:], color="b")
     plt.ylim((0,1))
     plt.savefig('GF_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, largest, color="g")
+    plt.plot(msd_time, largest[1:], color="g")
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
 
 else:                                                           # if monodisperse plot total values
-    plt.plot(msd_time, MCS, color="g")
+    plt.plot(msd_time, MCS[1:], color="g")
     plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, GF, color="g")
+    plt.plot(msd_time, GF[1:], color="g")
     plt.ylim((0,1))
     plt.savefig('GF_'+plt_name+'.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, largest, color="g")
+    plt.plot(msd_time, largest[1:], color="g")
     plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
