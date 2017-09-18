@@ -16,6 +16,7 @@ from hoomd import md
 from hoomd import deprecated
 
 #initialize system randomly, can specify GPU execution here
+my_dt = 0.000001
 
 ################################################################################
 ############################# Begin Data Analysis ##############################
@@ -55,6 +56,7 @@ part_b = int(part_b)
 
 timesteps -= timesteps[0]
 msd_time = timesteps[1:]
+msd_time *= my_dt
 
 from freud import parallel, box, density, cluster
 parallel.setNumThreads(1)                               # don't run multiple threads
