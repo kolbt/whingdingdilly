@@ -265,11 +265,11 @@ if part_perc_a != 0 and part_perc_a != 100:
 
 else:                                                           # if monodisperse plot total values
     plt.plot(msd_time, MCS[1:], color="g")
-    plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Time (tau)')
     plt.ylabel('MCS')
+    plt.savefig('MCS_'+ plt_name + '.png', dpi=1000)
     plt.close()
 
     plt.plot(msd_time, GF[1:], color="g")
@@ -280,7 +280,7 @@ else:                                                           # if monodispers
     plt.close()
 
     plt.plot(msd_time, largest[1:], color="g")
-    plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.xlabel('Time (tau)')
     plt.ylabel('Largest Cluster')
+    plt.savefig('Largest_clust_'+plt_name+'.png', dpi=1000)
     plt.close()
