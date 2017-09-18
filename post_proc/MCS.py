@@ -128,7 +128,7 @@ for j in range(0, dumps):
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
     else:
-        MCS[j] = 0
+        MCS[j] = 0.0001
         GF[j] = 1
 
     f = open(mcs_text, a_w)
@@ -194,7 +194,7 @@ if part_perc_a != 0 and part_perc_a != 100:
             GF_A[j] = float(part_a - tot_size_A[j]) / float(part_a)
         
         else:
-            MCS_A[j] = 0
+            MCS_A[j] = 0.0001
             GF_A[j] = 1
 
         l_pos = pos_B[j]
@@ -218,7 +218,7 @@ if part_perc_a != 0 and part_perc_a != 100:
             GF_B[j] = float(part_b - tot_size_B[j]) / float(part_b)
         
         else:
-            MCS_B[j] = 0
+            MCS_B[j] = 0.0001
             GF_B[j] = 1
 
 ################################################################################
@@ -241,6 +241,7 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.plot(msd_time, MCS_A[1:], color="r")
     plt.plot(msd_time, MCS_B[1:], color="b")
     #plt.ylim((0,1))
+    plt.ylim(ymin=0.0001)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Time (tau)')
@@ -265,6 +266,7 @@ if part_perc_a != 0 and part_perc_a != 100:
 
 else:                                                           # if monodisperse plot total values
     plt.plot(msd_time, MCS[1:], color="g")
+    plt.ylim(ymin=0.0001)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Time (tau)')
