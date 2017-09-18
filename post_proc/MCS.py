@@ -237,7 +237,7 @@ plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B
 
 if part_perc_a != 0 and part_perc_a != 100:
 
-plt.plot(msd_time, MCS[1:], color="g")
+    plt.plot(msd_time, MCS[1:], color="g")
     plt.plot(msd_time, MCS_A[1:], color="r")
     plt.plot(msd_time, MCS_B[1:], color="b")
     #plt.ylim((0,1))
