@@ -74,7 +74,7 @@ msd_dumps += 110000
 
 hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,
-                                             phi_p = 0.6,
+                                             phi_p = 0.05,
                                              name = 'A',
                                              min_dist = 0.5,
                                              seed = 230958,
