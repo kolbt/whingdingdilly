@@ -24,6 +24,8 @@ pe_a = ${pe_a}
 pe_b = ${pe_b}
 #gsd_path = str(sys.argv[7])
 gsd_path = "${gsd_path}"
+#part_num = int(sys.argv[8])
+part_num = ${part_num}
 
 # tau = sigma^2 / diffusion coefficient
 tau = 1
@@ -69,8 +71,6 @@ for iii in range(0,len(msd_dumps)):
 msd_dumps += 110000
 
 #initialize system randomly, can specify GPU execution here
-
-part_num = ${part_num}
 
 hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,

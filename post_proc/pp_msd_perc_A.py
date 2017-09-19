@@ -154,7 +154,8 @@ for j in range(0, dumps):
                 dz -= l_box
             disp_z[b] += dz
             
-            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
+#            msd_val = np.sqrt(((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2))
+            msd_val = ((disp_x[b])**2) + ((disp_y[b])**2) + ((disp_z[b])**2)
             MSD_T[j-1] += msd_val
             if q_clust[ids[b]] == 1:                        # check if in liquid
                 MSD_TL[j-1] += msd_val                      # add to tot. lq. msd
@@ -201,6 +202,15 @@ sns.set(color_codes=True)
 plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
 plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
 plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
+
+def half(x):
+    return np.sqrt(50*x)
+def one(x):
+    return (50*x)
+def one_and_half(x):
+    return (50*x)**1.5
+def two(x):
+    return (50*x)**2
 
 if part_perc_a != 0 and part_perc_a != 100:
 
@@ -250,7 +260,13 @@ if part_perc_a != 0 and part_perc_a != 100:
 
 else:                                                           # if monodisperse plot total values
 
-    plt.plot(msd_time, MSD_T,  color="g", marker='o', markersize=1, linestyle='None', label='MSD')
+    plt.plot(msd_time, half(msd_time), label='x^0.5', linewidth=1.0)
+    plt.plot(msd_time, one(msd_time), label='x^1.0', linewidth=1.0)
+    plt.plot(msd_time, one_and_half(msd_time), label='x^1.5', linewidth=1.0)
+    plt.plot(msd_time, two(msd_time), label='x^2.0', linewidth=1.0)
+    plt.plot(msd_time, MSD_T,  color="g", marker='s', markersize=3, linestyle='None', label='MSD')
+    plt.xlim((10**-6,10))
+    plt.ylim((10**-6,10**4))
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Time (tau)')
@@ -259,8 +275,14 @@ else:                                                           # if monodispers
     plt.savefig('MSD_total_' + plt_name + '.png', dpi=1000)
     plt.close()
 
-    plt.plot(msd_time, MSD_TL,  color="b", marker='o', markersize=1, linestyle='None', label='Liq')
-    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=1, linestyle='None', label='Gas')
+    plt.plot(msd_time, half(msd_time), label='x^0.5', linewidth=1.0)
+    plt.plot(msd_time, one(msd_time), label='x^1.0', linewidth=1.0)
+    plt.plot(msd_time, one_and_half(msd_time), label='x^1.5', linewidth=1.0)
+    plt.plot(msd_time, two(msd_time), label='x^2.0', linewidth=1.0)
+    plt.plot(msd_time, MSD_TL,  color="b", marker='s', markersize=3, linestyle='None', label='Liq')
+    plt.plot(msd_time, MSD_TG,  color="r", marker='o', markersize=3, linestyle='None', label='Gas')
+    plt.xlim((10**-6,10))
+    plt.ylim((10**-6,10**4))
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('Time (tau)')
