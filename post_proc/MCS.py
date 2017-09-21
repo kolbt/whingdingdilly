@@ -32,7 +32,8 @@ myfile = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
-size_min = 1000                                         # minimum size of cluster
+#size_min = 1000                                         # minimum size of cluster
+size_min = 2
 
 position_array = np.zeros((dumps), dtype=np.ndarray)    # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)        # particle types
@@ -132,11 +133,11 @@ for j in range(0, dumps):
         GF[j] = 1
 
     f = open(mcs_text, a_w)
-    f.write(str(MCS[j]) + '\n')
+    f.write(str(timesteps[j]) + ' ' + str(MCS[j]) + '\n')
     f.close()
 
     f = open(gf_text, a_w)
-    f.write(str(GF[j]) + '\n')
+    f.write(str(timesteps[j]) + ' ' + str(GF[j]) + '\n')
     f.close()
 
 ################################################################################
