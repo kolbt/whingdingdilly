@@ -1,0 +1,23 @@
+set term png
+set output "MCS_data_redner.png"
+set key left top
+set logscale xy
+set xrange [10**-6:200]
+set yrange [2.5*10**-5:10**-1]
+set xlabel 'Time (tau)'
+set ylabel 'MCS'
+set format xy "10^{%L}"
+plot 'MCS70_pb0_xa100.txt' title '70',\
+	'MCS80_pb0_xa100.txt' title '80',\
+	'MCS90_pb0_xa100.txt' title '90',\
+	'MCS100_pb0_xa100.txt' title '100',\
+	'MCS110_pb0_xa100.txt' title '110',\
+	'MCS120_pb0_xa100.txt' title '120',\
+	'MCS130_pb0_xa100.txt' title '130',\
+	'MCS140_pb0_xa100.txt' title '140',\
+	'MCS150_pb0_xa100.txt' title '150',\
+	'MCS70_pb0_xa100.txt' using 1:($1/500000)**0.5 w lines title 'x^{0.5}',\
+	'MCS70_pb0_xa100.txt' using 1:($1/500) w lines title 'x^{1}',\
+ 	'MCS70_pb0_xa100.txt' using 1:($1/50)**1.5 w lines title 'x^{1.5}',\
+	'MCS70_pb0_xa100.txt' using 1:($1/15)**2 w lines title 'x^{2}'
+set term x11
