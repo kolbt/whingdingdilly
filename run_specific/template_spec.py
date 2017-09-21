@@ -26,6 +26,9 @@ pe_b = ${pe_b}
 gsd_path = "${gsd_path}"
 #part_num = int(sys.argv[8])
 part_num = ${part_num}
+#phi = float(sys.argv[9])
+phi = ${phi}
+phi = float(phi)/100.0
 
 # tau = sigma^2 / diffusion coefficient
 tau = 1
@@ -74,7 +77,7 @@ msd_dumps += 110000
 
 hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,
-                                             phi_p = 0.05,
+                                             phi_p = phi,
                                              name = 'A',
                                              min_dist = 0.5,
                                              seed = 230958,

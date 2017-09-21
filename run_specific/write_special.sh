@@ -32,6 +32,7 @@ fi
 
 # Default values for simulations
 part_num=$(( 15000 ))
+phi=$(( 60 ))
 runfor=$(( 100 ))
 dump_freq=$(( 20000 ))
 x_a_spacer=$(( 10 ))
@@ -51,6 +52,8 @@ do
 
     echo "part_num is ${part_num}, input new value or same value."
     read part_num
+    echo "density, as a percent, is ${phi}."
+    read phi
     echo "runfor is ${runfor} tau, input new value or same value."
     read runfor
     echo "dump_freq is ${dump_freq}, input new value or same value."
@@ -107,6 +110,7 @@ do
         infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
         $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
         $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
+        $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
         $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
         $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
         $sedtype -i 's/\${part_frac_a}/'"${x_count}"'/g' $infile                # write particle fraction to infile
