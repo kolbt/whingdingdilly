@@ -114,7 +114,7 @@ for j in range(0, dumps):
                     
     largest[j] = l_clust                                # save largest cluster size for tstep
 
-    f_largest = "largest_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    f_largest = "LOG_largest_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
     if j == 0:
         a_w = 'w'
     else:
@@ -123,8 +123,8 @@ for j in range(0, dumps):
     f.write(str(l_clust) + '\n')
     f.close()
 
-    mcs_text = "MCS" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
-    gf_text = "GF" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    mcs_text = "LOG_MCS_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    gf_text = "LOG_GF_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
@@ -232,9 +232,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(color_codes=True)
 
-plt_name  = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
-plt_name1 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
-plt_name2 = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
+plt_name  = "log_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a)
+plt_name1 = "log_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "A"
+plt_name2 = "log_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "B"
 
 if part_perc_a != 0 and part_perc_a != 100:
 

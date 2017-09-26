@@ -74,7 +74,7 @@ for iii in range(0,len(msd_dumps)):
 msd_dumps += 110000
 
 last_ten = 10 * tau / my_dt
-msd_ten = msd_dumps
+msd_ten = np.copy(msd_dumps)
 msd_ten += tsteps - last_ten
 
 #initialize system randomly, can specify GPU execution here

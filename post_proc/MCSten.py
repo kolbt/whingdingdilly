@@ -114,7 +114,7 @@ for j in range(0, dumps):
                     
     largest[j] = l_clust                                # save largest cluster size for tstep
 
-    f_largest = "largest_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    f_largest = "ten_largest_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
     if j == 0:
         a_w = 'w'
     else:
@@ -123,8 +123,8 @@ for j in range(0, dumps):
     f.write(str(l_clust) + '\n')
     f.close()
 
-    mcs_text = "MCS" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
-    gf_text = "GF" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    mcs_text = "ten_MCS_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
+    gf_text = "ten_GF_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".txt"
     if tot_num[j] > 0:
         MCS[j] = float(tot_size[j]/tot_num[j])/float(part_num)
         GF[j] = float(part_num - tot_size[j]) / float(part_num)
