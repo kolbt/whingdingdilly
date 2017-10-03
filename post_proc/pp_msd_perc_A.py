@@ -282,6 +282,10 @@ if part_perc_a != 0 and part_perc_a != 100:
     plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
     plt.close()
 
+    np.savetxt('MSD_typed_' + plt_name + '.txt', np.transpose([msd_time, GAS_A, GAS_B, LIQ_A, LIQ_B]))
+    np.savetxt('MSD_totals_' + plt_name + '.txt', np.transpose([msd_time, MSD_T, MSD_TL, MSD_TG]))
+
+
 else:                                                           # if monodisperse plot total values
 
     plt.plot(msd_time, half(msd_time), label='x^0.5', linewidth=1.0)
@@ -315,3 +319,5 @@ else:                                                           # if monodispers
     plt.legend(loc='upper left')
     plt.savefig('MSD_LG_' + plt_name + '.png', dpi=1000)
     plt.close()
+
+    np.savetxt('MSD_totals_' + plt_name + '.txt', np.transpose([msd_time, MSD_T, MSD_TL, MSD_TG]))
