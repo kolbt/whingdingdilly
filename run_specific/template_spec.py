@@ -48,17 +48,24 @@ from hoomd import md
 from hoomd import deprecated
 import numpy as np
 
-pow = np.log10(tsteps)
-msd_length = int(18*(pow-2)+29)
+pow = np.log10(1/my_dt)
+one_length = int(18*(pow-2)+29)             # gives length of array w/ values below 1 tau
+tau_to_tstep = tau / my_dt                  # this is 1 tau in terms of tsteps
+spacer = tau / (5*my_dt)                    # 1/5th of tau, the spacer
+gr_one_len = (tsteps - tau_to_tstep)/spacer # gives length of remaining array (tau > 1)
+ar_tot_len = int(gr_one_len + one_length)
 
 #get tsteps for msd calculations, needs to be in tau
-msd_dumps = np.zeros((msd_length), dtype=np.float64)
+msd_dumps = np.zeros((ar_tot_len), dtype=np.float64)
 jumper = 5
 value_to_dump = 15
 count = 10
 for iii in range(0,len(msd_dumps)):
     if iii <= 10:
         msd_dumps[iii] = iii
+    elif value_to_dump * my_dt >= 1:
+        msd_dumps[iii] = tau_to_tstep
+        tau_to_tstep += spacer
     elif count == 95:
         msd_dumps[iii] = value_to_dump
         jumper *= 10
@@ -69,13 +76,18 @@ for iii in range(0,len(msd_dumps)):
         value_to_dump += jumper
         count += 5
 
-# this is to account for energy minimization and initial brownian run
-#msd_dumps += tsteps - msd_dumps[-1] + 110000
-msd_dumps += 110000
+ten_size = 0
+for jjj in range(0,len(msd_dumps)):
+    if msd_dumps[jjj]*my_dt <= 10:
+        ten_size += 1
 
+msd_ten = np.zeros((ten_size), dtype=np.float64)
+for hhh in range(0,len(msd_ten)):
+    msd_ten[hhh] = msd_dumps[hhh]
+
+msd_dumps += 110000
 last_ten = 10 * tau / my_dt
-msd_ten = np.copy(msd_dumps)
-msd_ten += tsteps - last_ten
+msd_ten += tsteps - last_ten + 110000
 
 #initialize system randomly, can specify GPU execution here
 
