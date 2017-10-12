@@ -51,7 +51,7 @@ import numpy as np
 pow = np.log10(1/my_dt)
 one_length = int(18*(pow-2)+29)             # gives length of array w/ values below 1 tau
 tau_to_tstep = tau / my_dt                  # this is 1 tau in terms of tsteps
-spacer = tau / (5*my_dt)                    # 1/5th of tau, the spacer
+spacer = tau / (10*my_dt)                   # 1/10th of tau, the spacer
 gr_one_len = (tsteps - tau_to_tstep)/spacer # gives length of remaining array (tau > 1)
 ar_tot_len = int(gr_one_len + one_length)
 

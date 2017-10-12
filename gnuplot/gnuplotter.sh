@@ -2,7 +2,7 @@
 
 path='/Users/kolbt/Desktop/compiled/whingdingdilly/gnuplot/'
 xa=0
-pb=0
+pb=500
 
 #while [ $xa -le 100 ]
 #do
