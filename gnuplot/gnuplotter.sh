@@ -34,6 +34,11 @@ do
     cp ${path}MSD_temp.txt MSD_gnuplot_xa${xa}.txt
     gsed -i 's/\${xa}/'"${xa}"'/g' MSD_gnuplot_xa${xa}.txt
     gsed -i 's/\${pb}/'"${pb}"'/g' MSD_gnuplot_xa${xa}.txt
+
+    cp ${path}MCS_temp.txt MCS_gnuplot_xa${xa}.txt
+    gsed -i 's/\${xa}/'"${xa}"'/g' MCS_gnuplot_xa${xa}.txt
+    gsed -i 's/\${pb}/'"${pb}"'/g' MCS_gnuplot_xa${xa}.txt
+
     xa=$(( $xa + 10 ))
 
 done
