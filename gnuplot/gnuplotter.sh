@@ -47,6 +47,10 @@ do
     gsed -i 's/\${xa}/'"${xa}"'/g' MSD_dense_typed_gnuplot_xa${xa}.txt
     gsed -i 's/\${pb}/'"${pb}"'/g' MSD_dense_typed_gnuplot_xa${xa}.txt
 
+    cp ${path}MSD_temp_dilute_typed.txt MSD_dilute_typed_gnuplot_xa${xa}.txt
+    gsed -i 's/\${xa}/'"${xa}"'/g' MSD_dilute_typed_gnuplot_xa${xa}.txt
+    gsed -i 's/\${pb}/'"${pb}"'/g' MSD_dilute_typed_gnuplot_xa${xa}.txt
+
     cp ${path}MCS_temp.txt MCS_gnuplot_xa${xa}.txt
     gsed -i 's/\${xa}/'"${xa}"'/g' MCS_gnuplot_xa${xa}.txt
     gsed -i 's/\${pb}/'"${pb}"'/g' MCS_gnuplot_xa${xa}.txt
