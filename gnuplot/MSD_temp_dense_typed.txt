@@ -1,0 +1,55 @@
+#set term png
+#set output "xa_${xa}"
+set key left top
+set logscale xy
+set xrange [10**-4:10]
+set yrange [10**-4:10**5]
+set xlabel 'Time (tau)'
+set ylabel 'MSD'
+set format xy "10^{%L}"
+
+set title "Typed Dense MSD"
+plot 'MSD_typed_pa10_pb${pb}_xa${xa}.txt' using 1:4 w lines title '10-A',\
+	'MSD_typed_pa10_pb${pb}_xa${xa}.txt' using 1:5 w lines title '10-B',\
+	'MSD_typed_pa20_pb${pb}_xa${xa}.txt' using 1:4 w lines title '20-A',\
+	'MSD_typed_pa20_pb${pb}_xa${xa}.txt' using 1:5 w lines title '20-B',\
+	'MSD_typed_pa30_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-30',\
+	'MSD_typed_pa40_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-40',\
+	'MSD_typed_pa60_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-60',\
+	'MSD_typed_pa70_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-70',\
+	'MSD_typed_pa80_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-80',\
+	'MSD_typed_pa90_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-90',\
+	'MSD_typed_pa110_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-110',\
+	'MSD_typed_pa120_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-120',\
+	'MSD_typed_pa130_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-130',\
+	'MSD_typed_pa140_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-140',\
+	'MSD_typed_pa150_pb${pb}_xa${xa}.txt' using 1:4 w lines title '150-A',\
+	'MSD_typed_pa150_pb${pb}_xa${xa}.txt' using 1:5 w lines title '150-B',\
+	'MSD_typed_pa160_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-160',\
+	'MSD_typed_pa170_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-170',\
+	'MSD_typed_pa180_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-180',\
+	'MSD_typed_pa190_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-190',\
+	'MSD_typed_pa200_pb${pb}_xa${xa}.txt' using 1:4 w lines title '200-A',\
+	'MSD_typed_pa200_pb${pb}_xa${xa}.txt' using 1:5 w lines title '200-B',\
+	'MSD_typed_pa250_pb${pb}_xa${xa}.txt' using 1:4 w lines title '250-A',\
+	'MSD_typed_pa250_pb${pb}_xa${xa}.txt' using 1:5 w lines title '250-B',\
+	'MSD_typed_pa300_pb${pb}_xa${xa}.txt' using 1:4 w lines title '300-A',\
+	'MSD_typed_pa300_pb${pb}_xa${xa}.txt' using 1:5 w lines title '300-B',\
+	'MSD_typed_pa350_pb${pb}_xa${xa}.txt' using 1:4 w lines title '350-A',\
+	'MSD_typed_pa350_pb${pb}_xa${xa}.txt' using 1:5 w lines title '350-B',\
+	'MSD_typed_pa400_pb${pb}_xa${xa}.txt' using 1:4 w lines title '400-A',\
+	'MSD_typed_pa400_pb${pb}_xa${xa}.txt' using 1:5 w lines title '400-B',\
+	'MSD_typed_pa450_pb${pb}_xa${xa}.txt' using 1:4 w lines title '450-A',\
+	'MSD_typed_pa450_pb${pb}_xa${xa}.txt' using 1:5 w lines title '450-B',\
+	'MSD_typed_pa500_pb${pb}_xa${xa}.txt' using 1:4 w lines title '500-A',\
+	'MSD_typed_pa500_pb${pb}_xa${xa}.txt' using 1:5 w lines title '500-B',\
+	'MSD_typed_pa0_pb${pb}_xa${xa}.txt' using 1:($1/50000)**0.5 w lines title 'x^{0.5}',\
+	'MSD_typed_pa0_pb${pb}_xa${xa}.txt' using 1:($1/33) w lines title 'x^{1}',\
+ 	'MSD_typed_pa0_pb${pb}_xa${xa}.txt' using 1:($1/3)**1.5 w lines title 'x^{1.5}',\
+	'MSD_typed_pa0_pb${pb}_xa${xa}.txt' using 1:($1)**2 w lines title 'x^{2}'
+	#'MSD_typed_pa0_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-0',\
+	#'MSD_typed_pa50_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-50',\
+	#'MSD_typed_pa100_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-100',\
+	#'MSD_typed_pa500_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'liq-500',\
+	
+#set term x11

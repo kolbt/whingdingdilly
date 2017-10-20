@@ -3,7 +3,7 @@
 set key left top
 set logscale xy
 #set xrange [1:200]
-#set yrange [10**-2:10**-1]
+set yrange [10**-6:10**6]
 set xlabel 'Time (tau)'
 set ylabel 'MSD'
 set format xy "10^{%L}"

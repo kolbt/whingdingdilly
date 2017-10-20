@@ -2,8 +2,8 @@
 #set output "xa_${xa}"
 set key left top
 set logscale xy
-set xrange [10**-6:200]
-set yrange [10**-5:10**1]
+set xrange [10**0:200]
+set yrange [10**-6:10**1]
 set xlabel 'Time (tau)'
 set ylabel 'MCS'
 set format xy "10^{%L}"

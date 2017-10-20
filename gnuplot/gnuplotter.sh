@@ -1,7 +1,7 @@
 #!bin/sh
 
 path='/Users/kolbt/Desktop/compiled/whingdingdilly/gnuplot/'
-xa=0
+xa=50
 pb=500
 
 #while [ $xa -le 100 ]
@@ -28,12 +28,24 @@ pb=500
 #
 #done
 
-while [ $xa -le 100 ]
+while [ $xa -le 50 ]
 do
 
     cp ${path}MSD_temp.txt MSD_gnuplot_xa${xa}.txt
     gsed -i 's/\${xa}/'"${xa}"'/g' MSD_gnuplot_xa${xa}.txt
     gsed -i 's/\${pb}/'"${pb}"'/g' MSD_gnuplot_xa${xa}.txt
+
+    cp ${path}MSD_temp_dense.txt MSD_dense_gnuplot_xa${xa}.txt
+    gsed -i 's/\${xa}/'"${xa}"'/g' MSD_dense_gnuplot_xa${xa}.txt
+    gsed -i 's/\${pb}/'"${pb}"'/g' MSD_dense_gnuplot_xa${xa}.txt
+
+    cp ${path}MSD_temp_dilute.txt MSD_dilute_gnuplot_xa${xa}.txt
+    gsed -i 's/\${xa}/'"${xa}"'/g' MSD_dilute_gnuplot_xa${xa}.txt
+    gsed -i 's/\${pb}/'"${pb}"'/g' MSD_dilute_gnuplot_xa${xa}.txt
+
+    cp ${path}MSD_temp_dense_typed.txt MSD_dense_typed_gnuplot_xa${xa}.txt
+    gsed -i 's/\${xa}/'"${xa}"'/g' MSD_dense_typed_gnuplot_xa${xa}.txt
+    gsed -i 's/\${pb}/'"${pb}"'/g' MSD_dense_typed_gnuplot_xa${xa}.txt
 
     cp ${path}MCS_temp.txt MCS_gnuplot_xa${xa}.txt
     gsed -i 's/\${xa}/'"${xa}"'/g' MCS_gnuplot_xa${xa}.txt
