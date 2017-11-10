@@ -7,14 +7,16 @@ echo "Are you running on Longleaf (y/n)?"
 read answer
 
 if [ $answer == "y" ]; then
-    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd-blue/build'
+#    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd-blue/build'
+    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_11_10_17/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
     template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/template_spec.py'
     sedtype='sed'
     submit='sbatch'
 else
-    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
+#    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
+    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
     template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/template_spec.py'
@@ -93,6 +95,18 @@ do
 
 done
 
+echo "Time to set some seeds!"
+echo "Positional seed"
+read seed1
+echo "Equilibration seed"
+read seed2
+echo "Orientational seed"
+read seed3
+echo "A activity seed"
+read seed4
+echo "B activity seed"
+read seed5
+
 
 mkdir ${current}_parent
 cd ${current}_parent
@@ -117,6 +131,11 @@ do
         $sedtype -i 's/\${pe_a}/'"${pe_count}"'/g' $infile                      # write activity of A to infile
         $sedtype -i 's/\${pe_b}/'"${pe_b}"'/g' $infile                          # write activity of B to infile
         $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
+        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
+        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
+        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
+        $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
+        $sedtype -i 's/\${seed5}/'"${seed5}"'/g' $infile
 
         $submit $script_path $infile
 

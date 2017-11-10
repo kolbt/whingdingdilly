@@ -2,95 +2,97 @@
 #set output "xa_${xa}"
 set key left top
 set logscale xy
-set xrange [10**0:200]
-set yrange [10**-6:10**1]
+set xrange [10**-1:200]
+set yrange [10**-3:10**0]
+#set yrange [10**-6:10**1]
 set xlabel 'Time (tau)'
 set ylabel 'MCS'
 set format xy "10^{%L}"
 
-plot 'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-0',\
-	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-0',\
-	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-0',\
-	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-10',\
-	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-10',\
-	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-10',\
-	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-20',\
-	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-20',\
-	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-20',\
-	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-30',\
-	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-30',\
-	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-30',\
-	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-40',\
-	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-40',\
-	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-40',\
-	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-50',\
-	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-50',\
-	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-50',\
-	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-60',\
-	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-60',\
-	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-60',\
-	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-70',\
-	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-70',\
-	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-70',\
-	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-80',\
-	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-80',\
-	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-80',\
-	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-90',\
-	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-90',\
-	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-90',\
-	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-100',\
-	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-100',\
-	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-100',\
-	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-110',\
-	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-110',\
-	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-110',\
-	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-120',\
-	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-120',\
-	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-120',\
-	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-130',\
-	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-130',\
-	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-130',\
-	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-140',\
-	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-140',\
-	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-140',\
-	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-150',\
-	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-150',\
-	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-150',\
-	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-160',\
-	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-160',\
-	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-160',\
-	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-170',\
-	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-170',\
-	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-170',\
-	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-180',\
-	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-180',\
-	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-180',\
-	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-190',\
-	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-190',\
-	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-190',\
-	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-200',\
-	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-200',\
-	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-200',\
-	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-250',\
-	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-250',\
-	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-250',\
-	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-300',\
-	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-300',\
-	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-300',\
-	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-350',\
-	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-350',\
-	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-350',\
-	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-400',\
-	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-400',\
-	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-400',\
-	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-450',\
-	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-450',\
-	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-450',\
-	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:2 title 'pa-500',\
-	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-500',\
-	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-500',\
-	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/500) w lines title 'x^{1}',\
- 	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/50)**1.5 w lines title 'x^{1.5}',\
-	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/15)**2 w lines title 'x^{2}'
+plot 'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-0',\
+	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-0',\
+	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-0',\
+	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-10',\
+	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-10',\
+	'LOG_MCS_pa10_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-10',\
+	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-20',\
+	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-20',\
+	'LOG_MCS_pa20_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-20',\
+	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-30',\
+	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-30',\
+	'LOG_MCS_pa30_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-30',\
+	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-40',\
+	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-40',\
+	'LOG_MCS_pa40_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-40',\
+	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-50',\
+	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-50',\
+	'LOG_MCS_pa50_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-50',\
+	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-60',\
+	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-60',\
+	'LOG_MCS_pa60_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-60',\
+	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-70',\
+	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-70',\
+	'LOG_MCS_pa70_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-70',\
+	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-80',\
+	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-80',\
+	'LOG_MCS_pa80_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-80',\
+	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-90',\
+	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-90',\
+	'LOG_MCS_pa90_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-90',\
+	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-100',\
+	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-100',\
+	'LOG_MCS_pa100_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-100',\
+	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-110',\
+	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-110',\
+	'LOG_MCS_pa110_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-110',\
+	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-120',\
+	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-120',\
+	'LOG_MCS_pa120_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-120',\
+	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-130',\
+	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-130',\
+	'LOG_MCS_pa130_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-130',\
+	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-140',\
+	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-140',\
+	'LOG_MCS_pa140_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-140',\
+	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-150',\
+	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-150',\
+	'LOG_MCS_pa150_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-150',\
+	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-160',\
+	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-160',\
+	'LOG_MCS_pa160_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-160',\
+	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-170',\
+	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-170',\
+	'LOG_MCS_pa170_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-170',\
+	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-180',\
+	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-180',\
+	'LOG_MCS_pa180_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-180',\
+	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-190',\
+	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-190',\
+	'LOG_MCS_pa190_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-190',\
+	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-200',\
+	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-200',\
+	'LOG_MCS_pa200_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-200',\
+	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-250',\
+	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-250',\
+	'LOG_MCS_pa250_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-250',\
+	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-300',\
+	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-300',\
+	'LOG_MCS_pa300_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-300',\
+	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-350',\
+	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-350',\
+	'LOG_MCS_pa350_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-350',\
+	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-400',\
+	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-400',\
+	'LOG_MCS_pa400_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-400',\
+	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-450',\
+	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-450',\
+	'LOG_MCS_pa450_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-450',\
+	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'pa-500',\
+	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-500',\
+	'LOG_MCS_pa500_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-500',\
+	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/50000)**0.5 w lines title 'x^{0.5}',\
+	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/33) w lines title 'x^{1}',\
+ 	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/3)**1.5 w lines title 'x^{1.5}',\
+	'LOG_MCS_pa0_pb${pb}_xa${xa}.txt' using 1:($1/1)**2 w lines title 'x^{2}'
 	
 #set term x11

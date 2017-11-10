@@ -1,8 +1,8 @@
 #!bin/sh
 
 path='/Users/kolbt/Desktop/compiled/whingdingdilly/gnuplot/'
-xa=50
-pb=500
+xa=100
+pb=0
 
 #while [ $xa -le 100 ]
 #do
@@ -28,7 +28,7 @@ pb=500
 #
 #done
 
-while [ $xa -le 50 ]
+while [ $xa -le 100 ]
 do
 
     cp ${path}MSD_temp.txt MSD_gnuplot_xa${xa}.txt

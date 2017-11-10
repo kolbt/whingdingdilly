@@ -29,6 +29,17 @@ part_num = ${part_num}
 #phi = float(sys.argv[9])
 phi = ${phi}
 phi = float(phi)/100.0
+#seed1 = int(sys.argv[10])
+#seed2 = int(sys.argv[11])
+#seed3 = int(sys.argv[12])
+#seed4 = int(sys.argv[13])
+#seed5 = int(sys.argv[14])
+seed1 = ${seed1}                # seed for position
+seed2 = ${seed2}                # seed for bd equilibration
+seed3 = ${seed3}                # seed for initial orientations
+seed4 = ${seed4}                # seed for A activity
+seed5 = ${seed5}                # seed for B activity
+
 
 # tau = sigma^2 / diffusion coefficient
 tau = 1
@@ -96,7 +107,7 @@ system = hoomd.deprecated.init.create_random(N = part_num,
                                              phi_p = phi,
                                              name = 'A',
                                              min_dist = 0.5,
-                                             seed = 230958,
+                                             seed = seed1,
                                              dimensions = 2)
 
 system.particles.types.add('B')
@@ -132,19 +143,19 @@ lj.pair_coeff.set('A', 'B', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 
 #integrator type
-hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
-hoomd.run(10000)
+#hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
+#hoomd.run(10000)
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
 #hoomd.md.integrate.mode_standard(dt=0.0000005)
 hoomd.md.integrate.mode_standard(dt=my_dt)
-hoomd.md.integrate.brownian(group=all, kT=1.0, seed=123)
+hoomd.md.integrate.brownian(group=all, kT=1.0, seed=seed2)
 hoomd.run(100000)
 
 #set the activity of each type
-
-angle = np.random.rand(part_num) * 2 * np.pi
+np.random.seed(a=seed3)                         # seed for random orientations
+angle = np.random.rand(part_num) * 2 * np.pi    # random number for particle orientation
 
 if part_perc_a != 0 and part_perc_a != 100:
     activity_a = []
@@ -162,12 +173,12 @@ if part_perc_a != 0 and part_perc_a != 100:
         tuple = (x, y, z)
         activity_b.append(tuple)
     hoomd.md.force.active(group=gA,
-                          seed=123,
+                          seed=seed4,
                           f_lst=activity_a,
                           rotation_diff=3.0,
                           orientation_link=False)
     hoomd.md.force.active(group=gB,
-                          seed=375,
+                          seed=seed5,
                           f_lst=activity_b,
                           rotation_diff=3.0,
                           orientation_link=False)
@@ -181,7 +192,7 @@ else:
             tuple = (x, y, z)
             activity_b.append(tuple)
         hoomd.md.force.active(group=gB,
-                              seed=375,
+                              seed=seed5,
                               f_lst=activity_b,
                               rotation_diff=3.0,
                               orientation_link=False)
@@ -194,7 +205,7 @@ else:
             tuple = (x, y, z)
             activity_a.append(tuple)
         hoomd.md.force.active(group=gA,
-                              seed=123,
+                              seed=seed4,
                               f_lst=activity_a,
                               rotation_diff=3.0,
                               orientation_link=False)
@@ -209,17 +220,28 @@ msd_tentau = "MSDten_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc
 def dump_spec(timestep):
     
     if timestep in msd_dumps:
-        hoomd.dump.gsd(filename=msd_name, period=None, group=all, overwrite=False, static=[])
+        hoomd.dump.gsd(filename=msd_name,
+                       period=None,
+                       group=all,
+                       overwrite=False,
+                       dynamic=['attribute', 'property', 'momentum'])
         os.close(2)
 
     if timestep in msd_ten:
-        hoomd.dump.gsd(filename=msd_tentau, period=None, group=all, overwrite=False, static=[])
+        hoomd.dump.gsd(filename=msd_tentau,
+                       period=None,
+                       group=all,
+                       overwrite=False,
+                       dynamic=['attribute', 'property', 'momentum'])
         os.close(2)
 
 hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
-hoomd.dump.gsd(name, period=dump_freq, group=all, overwrite=True, static=[])
+hoomd.dump.gsd(name,
+               period=dump_freq, group=all,
+               overwrite=True,
+               dynamic=['attribute', 'property', 'momentum'])
 
 # Don't have to instantiate the compute, already passed to integrator
 #hoomd.compute.thermo(group=gB)

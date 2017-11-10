@@ -8,87 +8,87 @@ set xlabel 'Time (tau)'
 set ylabel 'MSD'
 set format xy "10^{%L}"
 
-plot 'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-0',\
-	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-0',\
-	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-0',\
-	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-10',\
-	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-10',\
-	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-10',\
-	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-20',\
-	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-20',\
-	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-20',\
-	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-30',\
-	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-30',\
-	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-30',\
-	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-40',\
-	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-40',\
-	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-40',\
-	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-50',\
-	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-50',\
-	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-50',\
-	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-60',\
-	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-60',\
-	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-60',\
-	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-70',\
-	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-70',\
-	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-70',\
-	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-80',\
-	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-80',\
-	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-80',\
-	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-90',\
-	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-90',\
-	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-90',\
-	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-100',\
-	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-100',\
-	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-100',\
-	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-110',\
-	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-110',\
-	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-110',\
-	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-120',\
-	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-120',\
-	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-120',\
-	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-130',\
-	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-130',\
-	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-130',\
-	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-140',\
-	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-140',\
-	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-140',\
-	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-150',\
-	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-150',\
-	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-150',\
-	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-160',\
-	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-160',\
-	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-160',\
-	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-170',\
-	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-170',\
-	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-170',\
-	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-180',\
-	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-180',\
-	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-180',\
-	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-190',\
-	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-190',\
-	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-190',\
-	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-200',\
-	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-200',\
-	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-200',\
-	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-250',\
-	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-250',\
-	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-250',\
-	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-300',\
-	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-300',\
-	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-300',\
-	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-350',\
-	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-350',\
-	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-350',\
-	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-400',\
-	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-400',\
-	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-400',\
-	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-450',\
-	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-450',\
-	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-450',\
-	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:2 title 'tot-500',\
-	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:3 title 'liq-500',\
-	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:4 title 'gas-500',\
+plot 'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-0',\
+	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-0',\
+	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-0',\
+	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-10',\
+	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-10',\
+	'MSD_totals_ten_pa10_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-10',\
+	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-20',\
+	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-20',\
+	'MSD_totals_ten_pa20_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-20',\
+	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-30',\
+	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-30',\
+	'MSD_totals_ten_pa30_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-30',\
+	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-40',\
+	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-40',\
+	'MSD_totals_ten_pa40_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-40',\
+	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-50',\
+	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-50',\
+	'MSD_totals_ten_pa50_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-50',\
+	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-60',\
+	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-60',\
+	'MSD_totals_ten_pa60_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-60',\
+	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-70',\
+	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-70',\
+	'MSD_totals_ten_pa70_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-70',\
+	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-80',\
+	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-80',\
+	'MSD_totals_ten_pa80_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-80',\
+	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-90',\
+	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-90',\
+	'MSD_totals_ten_pa90_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-90',\
+	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-100',\
+	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-100',\
+	'MSD_totals_ten_pa100_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-100',\
+	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-110',\
+	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-110',\
+	'MSD_totals_ten_pa110_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-110',\
+	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-120',\
+	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-120',\
+	'MSD_totals_ten_pa120_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-120',\
+	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-130',\
+	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-130',\
+	'MSD_totals_ten_pa130_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-130',\
+	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-140',\
+	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-140',\
+	'MSD_totals_ten_pa140_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-140',\
+	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-150',\
+	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-150',\
+	'MSD_totals_ten_pa150_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-150',\
+	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-160',\
+	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-160',\
+	'MSD_totals_ten_pa160_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-160',\
+	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-170',\
+	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-170',\
+	'MSD_totals_ten_pa170_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-170',\
+	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-180',\
+	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-180',\
+	'MSD_totals_ten_pa180_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-180',\
+	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-190',\
+	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-190',\
+	'MSD_totals_ten_pa190_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-190',\
+	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-200',\
+	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-200',\
+	'MSD_totals_ten_pa200_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-200',\
+	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-250',\
+	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-250',\
+	'MSD_totals_ten_pa250_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-250',\
+	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-300',\
+	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-300',\
+	'MSD_totals_ten_pa300_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-300',\
+	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-350',\
+	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-350',\
+	'MSD_totals_ten_pa350_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-350',\
+	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-400',\
+	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-400',\
+	'MSD_totals_ten_pa400_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-400',\
+	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-450',\
+	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-450',\
+	'MSD_totals_ten_pa450_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-450',\
+	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:2 w lines title 'tot-500',\
+	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:3 w lines title 'liq-500',\
+	'MSD_totals_ten_pa500_pb${pb}_xa${xa}.txt' using 1:4 w lines title 'gas-500',\
 	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:($1/500) w lines title 'x^{1}',\
  	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:($1/50)**1.5 w lines title 'x^{1.5}',\
 	'MSD_totals_ten_pa0_pb${pb}_xa${xa}.txt' using 1:($1/15)**2 w lines title 'x^{2}'
