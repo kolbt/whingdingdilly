@@ -103,10 +103,11 @@ msd_ten += tsteps - last_ten + 110000
 #initialize system randomly, can specify GPU execution here
 
 hoomd.context.initialize()
+# attempting to initialize a high density with min_dist > 0.75 is unsuccesful
 system = hoomd.deprecated.init.create_random(N = part_num,
                                              phi_p = phi,
                                              name = 'A',
-                                             min_dist = 0.5,
+                                             min_dist = 0.75,
                                              seed = seed1,
                                              dimensions = 2)
 
@@ -143,8 +144,11 @@ lj.pair_coeff.set('A', 'B', epsilon=1.0, sigma=1.0)
 lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 
 #integrator type
-hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
-hoomd.run(10000)
+#hoomd.md.integrate.mode_minimize_fire(group=all, dt=0.00001, ftol=1e-2, Etol=1e-7)
+#fire = hoomd.md.integrate.mode_minimize_fire(dt=0.00001, ftol=1e-2, Etol=1e-7)
+#nve = integrate.nve(group=all)
+#hoomd.run(1000)
+#nve.disable()
 
 #run simulation with current settings here
 #hoomd.md.integrate.mode_standard(dt=0.000005)
