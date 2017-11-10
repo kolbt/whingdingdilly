@@ -180,12 +180,14 @@ if part_perc_a != 0 and part_perc_a != 100:
                           seed=seed4,
                           f_lst=activity_a,
                           rotation_diff=3.0,
-                          orientation_link=False)
+                          orientation_link=False,
+                          orientation_reverse_link=True)
     hoomd.md.force.active(group=gB,
                           seed=seed5,
                           f_lst=activity_b,
                           rotation_diff=3.0,
-                          orientation_link=False)
+                          orientation_link=False,
+                          orientation_reverse_link=True)
 else:
     if part_perc_a == 0:
         activity_b = []
@@ -199,7 +201,8 @@ else:
                               seed=seed5,
                               f_lst=activity_b,
                               rotation_diff=3.0,
-                              orientation_link=False)
+                              orientation_link=False,
+                              orientation_reverse_link=True)
     else:
         activity_a = []
         for i in range(0,part_num):
@@ -212,7 +215,8 @@ else:
                               seed=seed4,
                               f_lst=activity_a,
                               rotation_diff=3.0,
-                              orientation_link=False)
+                              orientation_link=False,
+                              orientation_reverse_link=True)
 
 #write dumps
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
