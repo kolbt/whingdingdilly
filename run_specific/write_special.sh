@@ -28,7 +28,7 @@ echo "GPU (y/n)?"
 read gpu
 
 if [ $gpu == "y" ]; then
-    hoomd_path='/nas/longleaf/home/kolbt/programs/mpi-gpu-enabled/hoomd-blue/build'
+    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_11_10_17/hoomd-blue/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
 fi
 

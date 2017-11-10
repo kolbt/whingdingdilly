@@ -239,7 +239,8 @@ hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
 hoomd.dump.gsd(name,
-               period=dump_freq, group=all,
+               period=dump_freq,
+               group=all,
                overwrite=True,
                dynamic=['attribute', 'property', 'momentum'])
 
