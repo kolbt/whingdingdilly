@@ -154,7 +154,7 @@ hoomd.md.integrate.brownian(group=all, kT=1.0, seed=seed2)
 hoomd.run(100000)
 
 #set the activity of each type
-np.random.seed(a=seed3)                         # seed for random orientations
+np.random.seed(seed3)                           # seed for random orientations
 angle = np.random.rand(part_num) * 2 * np.pi    # random number for particle orientation
 
 if part_perc_a != 0 and part_perc_a != 100:
