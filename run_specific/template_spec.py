@@ -107,7 +107,7 @@ hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = part_num,
                                              phi_p = phi,
                                              name = 'A',
-                                             min_dist = 0.75,
+                                             min_dist = 0.7,
                                              seed = seed1,
                                              dimensions = 2)
 
