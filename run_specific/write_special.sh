@@ -8,7 +8,7 @@ read answer
 
 if [ $answer == "y" ]; then
 #    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd-blue/build'
-    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_11_10_17/hoomd-blue/build'
+    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
     template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/template_spec.py'
@@ -28,7 +28,7 @@ echo "GPU (y/n)?"
 read gpu
 
 if [ $gpu == "y" ]; then
-    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_11_10_17/hoomd-blue/build'
+    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
 fi
 

@@ -7,4 +7,4 @@
 
 filename=$1
 
-python $filename # I want one gpu
+python $filename --mode=gpu # I want one gpu
