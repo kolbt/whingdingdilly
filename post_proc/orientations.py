@@ -2,6 +2,7 @@ import sys
 
 hoomd_path = str(sys.argv[4])
 gsd_path = str(sys.argv[5])
+file_path = str(sys.argv[6])
 
 # need to extract values from filename (pa, pb, xa) for naming
 part_perc_a = int(sys.argv[3])
@@ -36,7 +37,8 @@ def quat_to_theta(quat):
 
     return rad
 
-myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+myfile = str(file_path) + "/" + "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+print(myfile)
 
 f = hoomd.open(name=myfile, mode='rb')
 dumps = f.__len__()
