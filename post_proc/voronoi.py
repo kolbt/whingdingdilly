@@ -8,3 +8,5 @@ I want to compute the voronoi diagram to find nearest neighbors:
         bisectors of each triangle (one point in each triangle)
     5. Hypothetically, you now have a vornoi diagram...
 '''
+
+

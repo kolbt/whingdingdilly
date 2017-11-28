@@ -78,6 +78,8 @@ timesteps -= timesteps[0]
 
 ### I want to write a png with a circle at each position, the circle should be colored by it's orientation ###
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 min = -(float(box_data[0]/2))
