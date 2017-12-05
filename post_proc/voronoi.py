@@ -118,7 +118,7 @@ for iii in range(spacer):
             if mesh[iii][jjj][hhh][0] != 0:
                 count += 1
             else:
-                mesh[iii][jjj][0][0] = count    # number of particles stored in first index of each box
+                mesh[iii][jjj][0][0] = count    # number of particles: first index of each box
                 break
 
 ### Compute circles
