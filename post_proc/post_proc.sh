@@ -17,7 +17,8 @@ else
     submit='sh'
 fi
 
-for filename in $( ls pa*.gsd )
+#for filename in $( ls pa*.gsd )
+for filename in $( ls *pa*_0.png )
 do
 
     # pull parameters from filename

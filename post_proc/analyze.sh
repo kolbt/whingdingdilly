@@ -20,7 +20,11 @@ script_path=$6
 #python $script_path/MCS.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/MCSten.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/voronoi.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/active_pressure.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/active_pressure.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/binned_active_force.py $pa $pb $xa $hoomd_path $gsd_path
+ffmpeg -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
+ -vcodec libx264 -s 1856x1856 -pix_fmt yuv420p -threads 1\
+ orientation_pa${pa}_pb${pb}_xa${xa}.mp4
 
 # Orientation specific scripts
 #myfile=$(pwd)
