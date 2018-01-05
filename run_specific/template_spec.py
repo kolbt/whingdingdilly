@@ -222,28 +222,29 @@ else:
 name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 msd_name = "MSD_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 msd_tentau = "MSDten_pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+sqlite_name = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".sqlite"
 
 ### Dump for MSD ###
 # change this to units of tau?
-def dump_spec(timestep):
-    
-    if timestep in msd_dumps:
-        hoomd.dump.gsd(filename=msd_name,
-                       period=None,
-                       group=all,
-                       overwrite=False,
-                       dynamic=['attribute', 'property', 'momentum'])
-        os.close(2)
-
-    if timestep in msd_ten:
-        hoomd.dump.gsd(filename=msd_tentau,
-                       period=None,
-                       group=all,
-                       overwrite=False,
-                       dynamic=['attribute', 'property', 'momentum'])
-        os.close(2)
-
-hoomd.analyze.callback(callback = dump_spec, period = 1)
+#def dump_spec(timestep):
+#    
+#    if timestep in msd_dumps:
+#        hoomd.dump.gsd(filename=msd_name,
+#                       period=None,
+#                       group=all,
+#                       overwrite=False,
+#                       dynamic=['attribute', 'property', 'momentum'])
+#        os.close(2)
+#
+#    if timestep in msd_ten:
+#        hoomd.dump.gsd(filename=msd_tentau,
+#                       period=None,
+#                       group=all,
+#                       overwrite=False,
+#                       dynamic=['attribute', 'property', 'momentum'])
+#        os.close(2)
+#
+#hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
 hoomd.dump.gsd(name,
@@ -251,6 +252,10 @@ hoomd.dump.gsd(name,
                group=all,
                overwrite=True,
                dynamic=['attribute', 'property', 'momentum'])
+
+hoomd.dump.getar.simple(name, dump_freq, 'a',
+                        static=['dimensions', 'viz_static'],
+                        dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Don't have to instantiate the compute, already passed to integrator
 #hoomd.compute.thermo(group=gB)
