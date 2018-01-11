@@ -48,9 +48,9 @@ drag = boltz * temp / trans_diff    # computed drag coefficient
 # READ IN .GSD AND RAW DATA
 myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
 f = hoomd.open(name=myfile, mode='rb')
-start = 625
+start = 0
 dumps = f.__len__()
-dumps = 628
+#dumps = 72
 position_array = np.zeros((dumps), dtype=np.ndarray)        # array of position arrays
 type_array = np.zeros((dumps), dtype=np.ndarray)            # particle types
 box_data = np.zeros((dumps), dtype=np.ndarray)              # box dimensions
@@ -78,13 +78,16 @@ spacer = int(side * 2 / (box_width * diameter))                 # spacing betwee
 occ = 100                                                       # max occupancy of an index
 bin_part = np.zeros((dumps, spacer, spacer), dtype = np.int)    # total particles in bin
 bin_A = np.zeros((dumps, spacer, spacer), dtype = np.int)       # total A type in bin
+bin_B = np.zeros((dumps, spacer, spacer), dtype = np.int)       # total B type in bin
+norm_A = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of A
+norm_B = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of B
 
 for iii in range(start, dumps):
     
     points = position_array[iii]
     points[:][:][2] = 0
 
-    for jjj in range(len(part_num)):
+    for jjj in range(part_num):
         
         loc_x = int((points[jjj][0] + float_side) / (box_width * diameter)) # x index in mesh
         loc_y = int((points[jjj][1] + float_side) / (box_width * diameter)) # y index in mesh
@@ -94,12 +97,22 @@ for iii in range(start, dumps):
         if type_array[iii][jjj] == 0:
             bin_A[iii][loc_x][loc_y] += 1   # total number of A particles in bin
 
+    bin_B[iii] = bin_part[iii] - bin_A[iii]
+
 # Get total number of A particles
+tot_A = 0
+tot_B = 0
 for iii in range(0,part_num):
     if type_array[start][iii] == 0:
         tot_A += 1
+    else:
+        tot_B += 1
 
-bin_A /= tot_A
+for iii in range(start, dumps):
+    for jjj in range(spacer):
+        for kkk in range(spacer):
+            norm_A[iii][jjj][kkk] = float(bin_A[iii][jjj][kkk]) / float(tot_A)
+            norm_B[iii][jjj][kkk] = float(bin_B[iii][jjj][kkk]) / float(tot_B)
 
 # Let's plot it and take a look
 import matplotlib
@@ -111,7 +124,7 @@ max = (float(box_data[0]/2))
 
 current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
 for iii in range(start,dumps):
-    current_mesh = bin_A[iii].T
+    current_mesh = norm_A[iii].T
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.imshow(current_mesh, origin='lower')
@@ -122,3 +135,19 @@ for iii in range(start,dumps):
                 str(iii)+
                 '.png', dpi=1000)
     plt.close()
+
+current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
+for iii in range(start,dumps):
+    current_mesh = norm_B[iii].T
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    plt.imshow(current_mesh, origin='lower')
+    ax.set_aspect('equal')
+    plt.colorbar(orientation='vertical')
+    #    plt.clim(0,8)
+    plt.savefig('test_dense_B_'+
+                str(iii)+
+                '.png', dpi=1000)
+    plt.close()
+
+

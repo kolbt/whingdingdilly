@@ -25,10 +25,11 @@ script_path=$6
 #python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
 
 # Orientation specific scripts
-myfile=$(pwd)
-mkdir "pa${pa}_pb${pb}_xa${xa}_images"
+#myfile=$(pwd)
+#mkdir "pa${pa}_pb${pb}_xa${xa}_images"
 cd "pa${pa}_pb${pb}_xa${xa}_images"
-python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile
+#python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile
+# Need to run this with a space!
 ffmpeg -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
--vcodec libx264 -s 1856x1856 -pix_fmt yuv420p -threads 1\
-orientation_pa${pa}_pb${pb}_xa${xa}.mp4
+ -vcodec libx264 -s 1856x1856 -pix_fmt yuv420p -threads 1\
+ orientation_pa${pa}_pb${pb}_xa${xa}.mp4
