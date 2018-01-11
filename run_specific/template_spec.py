@@ -253,7 +253,7 @@ hoomd.dump.gsd(name,
                overwrite=True,
                dynamic=['attribute', 'property', 'momentum'])
 
-hoomd.dump.getar.simple(name, dump_freq, 'a',
+hoomd.dump.getar.simple(sqlite_name, dump_freq, 'a',
                         static=['dimensions', 'viz_static'],
                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
