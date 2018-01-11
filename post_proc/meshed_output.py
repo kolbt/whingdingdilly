@@ -47,10 +47,10 @@ def computeKE(v):
     vy = v[1]
     return vx**2 + vy**2
 
-boltz = 1
-temp = 1
-trans_diff = 1
-drag = boltz * temp / trans_diff
+boltz = 1                           # lj boltzmann constant
+temp = 1                            # temperature
+trans_diff = 1                      # translational diffusion coefficient
+drag = boltz * temp / trans_diff    # computed drag coefficient
 
 # READ IN .GSD AND RAW DATA
 myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
