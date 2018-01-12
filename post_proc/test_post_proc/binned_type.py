@@ -82,6 +82,7 @@ bin_B = np.zeros((dumps, spacer, spacer), dtype = np.int)       # total B type i
 norm_A = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of A
 norm_B = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of B
 
+load_bar.printLoadBar(0, dumps, prefix = "Progress (1 of 3):", suffix = "Complete")
 for iii in range(start, dumps):
     
     points = position_array[iii]
@@ -98,6 +99,7 @@ for iii in range(start, dumps):
             bin_A[iii][loc_x][loc_y] += 1   # total number of A particles in bin
 
     bin_B[iii] = bin_part[iii] - bin_A[iii]
+    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (1 of 3):", suffix = "Complete")
 
 # Get total number of A particles
 tot_A = 0
@@ -122,6 +124,7 @@ import matplotlib.pyplot as plt
 min = -(float(box_data[0]/2))
 max = (float(box_data[0]/2))
 
+load_bar.printLoadBar(0, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
 current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
 for iii in range(start,dumps):
     current_mesh = norm_A[iii].T
@@ -130,12 +133,14 @@ for iii in range(start,dumps):
     plt.imshow(current_mesh, origin='lower')
     ax.set_aspect('equal')
     plt.colorbar(orientation='vertical')
-    #    plt.clim(0,8)
+    plt.clim(0,0.0005)
     plt.savefig('test_dense_A_'+
                 str(iii)+
                 '.png', dpi=1000)
     plt.close()
+    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
 
+load_bar.printLoadBar(0, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
 current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
 for iii in range(start,dumps):
     current_mesh = norm_B[iii].T
@@ -144,10 +149,11 @@ for iii in range(start,dumps):
     plt.imshow(current_mesh, origin='lower')
     ax.set_aspect('equal')
     plt.colorbar(orientation='vertical')
-    #    plt.clim(0,8)
+    plt.clim(0,0.0005)
     plt.savefig('test_dense_B_'+
                 str(iii)+
                 '.png', dpi=1000)
     plt.close()
+    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
 
 

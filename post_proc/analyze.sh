@@ -31,5 +31,5 @@ cd "pa${pa}_pb${pb}_xa${xa}_images"
 #python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile
 # Need to run this with a space!
 ffmpeg -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
- -vcodec libx264 -s 1856x1856 -pix_fmt yuv420p -threads 1\
+ -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
  orientation_pa${pa}_pb${pb}_xa${xa}.mp4
