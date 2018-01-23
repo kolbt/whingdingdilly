@@ -48,8 +48,9 @@ drag = boltz * temp / trans_diff
 my_dt = 0.000001
 
 # Reading in the GSD file
-myfile = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
-f = hoomd.open(name=myfile, mode='rb')
+mygsd = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+mysqlite = "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".sqlite"
+f = hoomd.open(name=mygsd, mode='rb')
 start = 0
 dumps = f.__len__()
 stop = dumps
@@ -60,7 +61,7 @@ orientations = np.zeros((dumps), dtype=np.ndarray)          # orientations
 velocities = np.zeros((dumps), dtype=np.ndarray)            # velocities
 box_data = np.zeros((dumps), dtype=np.ndarray)              # box dimensions
 
-with hoomd.open(name=myfile, mode='rb') as t:               # open for reading
+with hoomd.open(name=mygsd, mode='rb') as t:                # open for reading
     snap = t[0]                                             # snap oth snapshot
     box_data = snap.configuration.box                       # get box dimensions
     for i in range(start, dumps):
@@ -75,7 +76,7 @@ pressure = np.zeros((dumps, part_num), dtype=np.float32)
 
 count = 0
 #load_bar.printLoadBar(0, dumps, prefix = "Progress:", suffix = "Complete")
-with gtar.GTAR('dump.sqlite', 'r') as traj:
+with gtar.GTAR(mysqlite, 'r') as traj:
     for (frame, (virial, velocity)) in traj.recordsNamed(['virial', 'velocity']):
         for part in range(len(velocity)):
             xx = float(virial[part][0])

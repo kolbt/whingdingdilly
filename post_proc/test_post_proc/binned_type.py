@@ -81,6 +81,7 @@ bin_A = np.zeros((dumps, spacer, spacer), dtype = np.int)       # total A type i
 bin_B = np.zeros((dumps, spacer, spacer), dtype = np.int)       # total B type in bin
 norm_A = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of A
 norm_B = np.zeros((dumps, spacer, spacer), dtype = np.float64)  # normalized number of B
+norm_AB = np.zeros((dumps, spacer, spacer), dtype = np.float64) # one png to show both densities?
 
 load_bar.printLoadBar(0, dumps, prefix = "Progress (1 of 3):", suffix = "Complete")
 for iii in range(start, dumps):
@@ -115,6 +116,8 @@ for iii in range(start, dumps):
         for kkk in range(spacer):
             norm_A[iii][jjj][kkk] = float(bin_A[iii][jjj][kkk]) / float(tot_A)
             norm_B[iii][jjj][kkk] = float(bin_B[iii][jjj][kkk]) / float(tot_B)
+            if bin_part[iii][jjj][kkk] >= 25:
+                norm_AB[iii][jjj][kkk] = norm_A[iii][jjj][kkk] - norm_B[iii][jjj][kkk]
 
 # Let's plot it and take a look
 import matplotlib
@@ -124,36 +127,52 @@ import matplotlib.pyplot as plt
 min = -(float(box_data[0]/2))
 max = (float(box_data[0]/2))
 
-load_bar.printLoadBar(0, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
-current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
-for iii in range(start,dumps):
-    current_mesh = norm_A[iii].T
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    plt.imshow(current_mesh, origin='lower')
-    ax.set_aspect('equal')
-    plt.colorbar(orientation='vertical')
-    plt.clim(0,0.0005)
-    plt.savefig('test_dense_A_'+
-                str(iii)+
-                '.png', dpi=1000)
-    plt.close()
-    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
-
 load_bar.printLoadBar(0, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
 current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
 for iii in range(start,dumps):
-    current_mesh = norm_B[iii].T
+    current_mesh = norm_AB[iii].T
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.imshow(current_mesh, origin='lower')
     ax.set_aspect('equal')
     plt.colorbar(orientation='vertical')
-    plt.clim(0,0.0005)
-    plt.savefig('test_dense_B_'+
+    plt.clim(0, 0.00025)
+    plt.savefig('test_dense_AB_'+
                 str(iii)+
                 '.png', dpi=1000)
     plt.close()
     load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
+
+#load_bar.printLoadBar(0, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
+#current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
+#for iii in range(start,dumps):
+#    current_mesh = norm_A[iii].T
+#    fig = plt.figure()
+#    ax = fig.add_subplot(111)
+#    plt.imshow(current_mesh, origin='lower')
+#    ax.set_aspect('equal')
+#    plt.colorbar(orientation='vertical')
+#    plt.clim(0,0.0005)
+#    plt.savefig('test_dense_A_'+
+#                str(iii)+
+#                '.png', dpi=1000)
+#    plt.close()
+#    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (2 of 3):", suffix = "Complete")
+#
+#load_bar.printLoadBar(0, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
+#current_mesh = np.zeros((spacer, spacer), dtype=np.float32)
+#for iii in range(start,dumps):
+#    current_mesh = norm_B[iii].T
+#    fig = plt.figure()
+#    ax = fig.add_subplot(111)
+#    plt.imshow(current_mesh, origin='lower')
+#    ax.set_aspect('equal')
+#    plt.colorbar(orientation='vertical')
+#    plt.clim(0,0.0005)
+#    plt.savefig('test_dense_B_'+
+#                str(iii)+
+#                '.png', dpi=1000)
+#    plt.close()
+#    load_bar.printLoadBar(iii+1, dumps, prefix = "Progress (3 of 3):", suffix = "Complete")
 
 
