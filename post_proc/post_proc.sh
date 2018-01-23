@@ -4,7 +4,8 @@ echo "Are you running on Longleaf (y/n)?"
 read answer
 
 if [ $answer == "y" ]; then
-    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build'
+#    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build'
+    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/post_proc'
     sedtype='sed'
