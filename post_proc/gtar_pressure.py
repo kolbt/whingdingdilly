@@ -109,9 +109,9 @@ for mmm in range(start,dumps):
         xs[iii] = position_array[mmm][iii][0]
         ys[iii] = position_array[mmm][iii][1]
 
-    plt.scatter(xs, ys, s=2.0, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
+    plt.scatter(xs, ys, s=0.75, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
     plt.colorbar()
-    #        plt.clim(0,10)
+    plt.clim(0,0.025)
     plt.xlim(min, max)
     plt.ylim(min, max)
     plt.savefig('tot_press_pa'+

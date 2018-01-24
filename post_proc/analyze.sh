@@ -22,7 +22,7 @@ script_path=$6
 #python $script_path/voronoi.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/meshed_output.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/per_particle_output.py $pa $pb $xa $hoomd_path $gsd_path
-#python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
 
 # Orientation specific scripts
 #myfile=$(pwd)
