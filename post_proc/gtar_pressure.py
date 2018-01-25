@@ -109,7 +109,7 @@ for mmm in range(start,dumps):
         xs[iii] = position_array[mmm][iii][0]
         ys[iii] = position_array[mmm][iii][1]
 
-    plt.scatter(xs, ys, s=1.5, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
+    plt.scatter(xs, ys, s=0.5, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
 #plt.colorbar()
     plt.clim(0,0.025)
     plt.xlim(min, max)
