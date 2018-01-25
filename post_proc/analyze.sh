@@ -36,5 +36,5 @@ python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
 #mv orientation_pa${pa}_pb${pb}_xa${xa}.mp4 ../orientation*
 
 ffmpeg -framerate 10 -i tot_press_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
- -vcodec libx264 -s 1280x960 -pix_fmt yuv420p -threads 1\
+ -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
  pressure_pa${pa}_pb${pb}_xa${xa}.mp4

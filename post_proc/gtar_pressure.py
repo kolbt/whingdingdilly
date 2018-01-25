@@ -84,7 +84,7 @@ with gtar.GTAR(mysqlite, 'r') as traj:
             v = velocity[part]
             ke_x, ke_y = computeKE(v)
             pressure[count][part] = computePressure(ke_x, ke_y, xx, yy)
-        #load_bar.printLoadBar(count+1, dumps, prefix = "Progress:", suffix = "Complete")
+#        load_bar.printLoadBar(count+1, dumps, prefix = "Progress:", suffix = "Complete")
         count += 1
 
 pressure /= ((float(box_data[0]))**2)
@@ -109,11 +109,14 @@ for mmm in range(start,dumps):
         xs[iii] = position_array[mmm][iii][0]
         ys[iii] = position_array[mmm][iii][1]
 
-    plt.scatter(xs, ys, s=0.75, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
-    plt.colorbar()
+    plt.scatter(xs, ys, s=1.5, c=pressure[mmm], cmap='viridis_r', edgecolors='none')
+#plt.colorbar()
     plt.clim(0,0.025)
     plt.xlim(min, max)
     plt.ylim(min, max)
+    plt.axes().get_xaxis().set_visible(False)
+    plt.axes().get_yaxis().set_visible(False)
+    plt.axes().set_aspect('equal')
     plt.savefig('tot_press_pa'+
                 str(pe_a) +
                 '_pb'+
