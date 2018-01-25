@@ -104,9 +104,12 @@ for mmm in range(0,dumps):
 
     #plt.scatter(xs, ys, s=0.5, c=rads[mmm], cmap = anglemap)
     plt.scatter(xs, ys, s=0.5, c=rads[mmm], cmap=plt.get_cmap('hsv'))
-    plt.colorbar()
+#    plt.colorbar()
     plt.xlim(min, max)
     plt.ylim(min, max)
+    plt.axes().get_xaxis().set_visible(False)
+    plt.axes().get_yaxis().set_visible(False)
+    plt.axes().set_aspect('equal')
     plt.savefig('orientation_pa'+ str(pe_a) +'_pb'+ str(pe_b) +'_xa'+ str(part_perc_a) +'_mvout_'+ str(mmm) +'.png', dpi=1000)
     plt.close()
 
