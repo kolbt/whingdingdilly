@@ -18,16 +18,21 @@ else
     submit='sh'
 fi
 
-for filename in $( ls pa*.gsd )
-#for filename in $( ls *pa*_0.png )
-do
+#for filename in $( ls pa*.gsd )
+##for filename in $( ls *pa*_0.png )
+#do
+#
+#    # pull parameters from filename
+#
+#    pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+#    pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
+#    xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+#
+#    $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path
+#
+#done
 
-    # pull parameters from filename
-
-    pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-    pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
-    xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
-
-    $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path
-
-done
+pa=100
+pb=500
+xa=50
+$submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path
