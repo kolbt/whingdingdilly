@@ -173,13 +173,14 @@ particle_radius = 0.50
 leave = 1
 while leave:
     # User inputs:
-    R1 = float(raw_input("R1: "))               # smallest circle
-    R2 = float(raw_input("R2: "))               # end outward alignment
-    R3 = float(raw_input("R3: "))               # start inward alignment
-    R4 = float(raw_input("R4: "))               # largest circle
-    sep_x = float(raw_input("HCP spacing: " ))  # HCP spacing
-    pe_a = float(raw_input("Activity A: " ))    # activity of species A
-    pe_b = float(raw_input("Activity B: " ))    # activity of species B
+    R1 = float(raw_input("R1: "))                   # smallest circle
+    R2 = float(raw_input("R2: "))                   # end outward alignment
+    R3 = float(raw_input("R3: "))                   # start inward alignment
+    R4 = float(raw_input("R4: "))                   # largest circle
+    sep_x = float(raw_input("HCP spacing: " ))      # HCP spacing
+    pe_a = float(raw_input("Activity A: " ))        # activity of species A
+    pe_b = float(raw_input("Activity B: " ))        # activity of species B
+    x_a = float(raw_input("Particle fraction A: " ))# particle fraction
     box_width = float(raw_input("Box width: "))
     box_lims = float(box_width / 2)
 
@@ -218,7 +219,7 @@ hoomd.context.initialize()
 snap = hoomd.data.make_snapshot(N = part_num,
                                 box = hoomd.data.boxdim(L=box_width,
                                                         dimensions = 2),
-                                particle_types = ['A'])
+                                particle_types = ['A','B'])
 
 # Set up placement locations for dense phase:
 
@@ -229,7 +230,8 @@ n = 0                           # column index (horizontal coord)
 m = 0                           # row index (vertical coord)
 row = 2                         # determines offset for x-coordinate
 offset = 0.45                   # x offset between rows
-activity_a = [None] * part_num  # instantiate activity list (holds orientation)
+activity_a = []                 # instantiate activity list (holds orientation)
+activity_b = []                 # instantiate activity list for type b
 part = np.zeros((3))            # temporarily holds (x,y,z) for each particle
 
 # Place dense phase particles:
@@ -251,15 +253,23 @@ while (start_y + m) < box_lims:
         
         if (R1 <= distance <= R4):                      # particle is in dense phase
             if (R1 <= distance <= R2):                  # particle is on inner edge
-                activity_a[ith] = orientOut(part, pe_a)
+                activity_b.append(orientOut(part, pe_a))
+                snap.particles.typeid[ith] = 1
             elif (R3 <= distance <= R4):                # particle is on outer edge
-                activity_a[ith] = orientIn(part, pe_a)
+                activity_a.append(orientIn(part, pe_a))
+                snap.particles.typeid[ith] = 0
             else:                                       # particle is in unaligned bulk
-                activity_a[ith] = orientRand(pe_a)
+                random = np.random.rand()
+                if random > x_a:                        # x_a gives particle bias
+                    activity_b.append(orientRand(pe_b))
+                    snap.particles.typeid[ith] = 1
+                else:
+                    activity_a.append(orientRand(pe_a))
+                    snap.particles.typeid[ith] = 0
             
             # Place position for particle and increment position
             snap.particles.position[ith] = part
-            snap.particles.typeid[ith] = 0
+            
             ith += 1
             n += sep_x
 
@@ -274,11 +284,30 @@ part_gas = part_num - part_dense
 dense_gas =\
     computeGasDensity(R4, R1, particle_radius, box_width, part_gas)
 
+'''
+Evidently, the thickness of the orientationally aligned edge greatly effects
+these computations for extreme values of x_a.  This script requires greater
+care in particle placement in the dense phase should it be used in extreme
+cases (x_a < 0.2 || x_a > 0.8).
+'''
+
+dense_A = len(activity_a)               # how many dense phase particles are type A
+dense_B = len(activity_b)               # how many dense phase particles are type A
+gas_A = int(x_a * part_num) - dense_A   # compute number of A in gas phase
+gas_B = int(part_num -\
+            dense_A -\
+            dense_B -\
+            gas_A)                      # leftover is gas_B
+
 print ""
 print "EXACT QUANTITIES:"
 print "Total number of particles:", part_num
 print "Dense phase particles:", part_dense
+print "Dense phase A:", dense_A
+print "Dense phase B:", dense_B
 print "Gas phase particles:", part_gas
+print "Gas phase A:", gas_A
+print "Gas phase B:", gas_B
 print "Gas phase density:", dense_gas
 print ""
 
@@ -348,7 +377,6 @@ while (ith < part_num):
     if r < 1.0:                         # restart while statement
         continue
 
-
     # This particle has no violations
     for nnn in range(0, occ):
         if mesh[loc_x][loc_y][nnn][0] == 0:             # find unoccupied spot
@@ -357,8 +385,16 @@ while (ith < part_num):
             break
 
     snap.particles.position[ith] = (x, y, 0)            # place random pos
-    activity_a[ith] = orientRand(pe_a)                  # place random orient
     ith += 1
+
+# Randomly assign types and orientations to gas phase
+for iii in range((part_dense + 1), part_num):
+    if iii <= (part_dense + 1 + gas_A):
+        snap.particles.typeid[iii] = 0
+        activity_a.append(orientRand(pe_a))
+    else:
+        snap.particles.typeid[iii] = 1
+        activity_b.append(orientRand(pe_b))
 
 # All particles have now been placed, run simulation
 system = hoomd.init.read_snapshot(snap)
@@ -390,18 +426,18 @@ hoomd.md.force.active(group=gA,
 
 hoomd.md.force.active(group=gB,
                       seed=9348,
-                      f_lst=activity_a,
+                      f_lst=activity_b,
                       rotation_diff=3.0,
                       orientation_link=False,
                       orientation_reverse_link=True)
 
-hoomd.dump.gsd('active_bubble_mix.gsd',
+hoomd.dump.gsd('bubble_pea_150_peb_500_xa50.gsd',
                period = 10000,
                group = all,
                overwrite = True,
                dynamic = ['attribute', 'property', 'momentum'])
 
-hoomd.run(10000000)
+hoomd.run(1000000)
 
 
 ######################################################################################
