@@ -149,6 +149,27 @@ for j in range(0, dumps):
     ### Find MSD for A, B individually, also total system ###
     #########################################################
 
+
+    '''
+    What does this code block do?
+    
+    index : points at the cluster id being examined
+    add_clust : increments for every particle found with the same ID
+    
+    If a particular index is found in the sorted cluster ID array
+    at least min_size times, then, this ID points at a valid
+    cluster (because it has enough particles).  This results in
+    an assignment of '1' for that index (True).  If the ID does
+    NOT occur at least size_min times, this cluster ID points to
+    and invalid cluster, and is assigned a value of '0' (False).
+    
+    Result: an array with indices that correspond to cluster IDS.
+    When you query this array for a specific index, you query if
+    a given ID points to a cluster (1) or not (0).
+    
+    Note: the query array defaults to 0 (not a cluster)
+    
+    '''
     sort_id = np.sort(ids)                              # array of IDs sorted small to large
     q_clust = np.zeros((how_many), dtype=np.ndarray)    # my binary 'is it clustered?' array
     index = 0                                           # index of the sorted array to look at
