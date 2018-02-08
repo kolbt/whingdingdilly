@@ -22,10 +22,11 @@ script_path=$6
 #python $script_path/voronoi.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/meshed_output.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/per_particle_output.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/phase_types.py $pa $pb $xa $hoomd_path $gsd_path
 
 # Orientation specific scripts
-myfile=$(pwd)
+#myfile=$(pwd)
 #mkdir "pa${pa}_pb${pb}_xa${xa}_images"
 #cd "pa${pa}_pb${pb}_xa${xa}_images"
 
@@ -38,6 +39,7 @@ myfile=$(pwd)
 # Move the movie once it's been made
 #mv orientation_pa${pa}_pb${pb}_xa${xa}.mp4 ../orientation*
 
-ffmpeg -framerate 10 -i tot_press_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
- -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
- pressure_pa${pa}_pb${pb}_xa${xa}.mp4
+#ffmpeg -framerate 10 -i tot_press_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
+# -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
+# pressure_pa${pa}_pb${pb}_xa${xa}.mp4
+

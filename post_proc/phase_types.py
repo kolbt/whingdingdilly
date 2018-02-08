@@ -46,10 +46,16 @@ from freud import cluster
 
 import numpy as np
 
+# File to read from
 in_file = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
 ".gsd"
+# File to write all data to
+all_file = "all_pa"+str(pe_a)+\
+"_pb"+str(pe_b)+\
+"_xa"+str(part_perc_a)+\
+".txt"
 
 f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 dumps = f.__len__()                     # get number of timesteps dumped
@@ -69,7 +75,7 @@ with hoomd.open(name=in_file, mode='rb') as t:
     for iii in range(start, end):
         snap = t[iii]                               # snapshot of frame
         types[iii] = snap.particles.typeid          # get types
-        positions[iii] = snap.particles.positions   # get positions
+        positions[iii] = snap.particles.position    # get positions
         timesteps[iii] = snap.configuration.step    # get timestep
 
 timesteps -= timesteps[0]       # get rid of brownian run time
@@ -87,7 +93,17 @@ my_clust = cluster.Cluster(box = f_box,                 # init cluster class
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
-min_size = 1000
+min_size = 1000         # minimum cluster size
+f = open(all_file, 'w') # write file headings
+f.write('Timestep'.center(10) + ' ' +\
+        'Gas_A'.center(10) + ' ' +\
+        'Gas_B'.center(10) + ' ' +\
+        'Gas_tot'.center(10) + ' ' +\
+        'Dense_A'.center(10) + ' ' +\
+        'Dense_B'.center(10) + ' ' +\
+        'Dense_tot'.center(10) + ' ' +\
+        'Lg_clust'.center(10) + '\n')
+f.close()
 
 for iii in range(start, end):
     
@@ -107,13 +123,15 @@ for iii in range(start, end):
     # Querry array, that tells whether cluster ID is of sufficient size
     q_clust = np.zeros((len(clust_size)), dtype = np.int)
     clust_num = 0   # number of clusters
+    l_clust = 0     # largest cluster
     
     for jjj in range(0, len(clust_size)):
-        if clust_size[jjj] > size_min:
+        if clust_size[jjj] > min_size:
             q_clust[jjj] = 1
             clust_num += 1
+        if clust_size[jjj] > l_clust:
+            l_clust = clust_size[jjj]
 
-    
     # Values to write out after computations are complete
     dense_num = 0   # number of particles in dense phase
     dense_A = 0     # number of A-particles in dense phase
@@ -124,60 +142,28 @@ for iii in range(start, end):
 
     for jjj in range(0, part_num):
         if q_clust[ids[jjj]] == 1:          # it's in the dense phase
-            dense_num
+            dense_num += 1
+            if typ[jjj] == 0:
+                dense_A += 1
+            else:
+                dense_B += 1
         else:                               # it's in the gas phase
+            gas_num += 1
+            if typ[jjj] == 0:
+                gas_A += 1
+            else:
+                gas_B += 1
 
-
+    # Values have been set, write to text files
+    f = open(all_file, 'a')
+    f.write(str(tst).center(10) + ' ' +\
+            str(gas_A).center(10) + ' ' +\
+            str(gas_B).center(10) + ' ' +\
+            str(gas_num).center(10) + ' ' +\
+            str(dense_A).center(10) + ' ' +\
+            str(dense_B).center(10) + ' ' +\
+            str(dense_num).center(10) + ' ' +\
+            str(l_clust).center(10) + '\n')
+    f.close()
 
 # CLUSTER_COM GIVES CENTER OF MASS!!!! YES!!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
