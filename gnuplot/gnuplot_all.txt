@@ -1,0 +1,8 @@
+set term pngcairo
+set output "${iname}.png"
+set key out right
+set xrange [0:200]
+set yrange [0:200000]
+set xlabel 'Time (tau)'
+set ylabel 'Number of Particles'
+plot for [col=2:8]'${iname}.txt' using 1:col with lines title columnheader 
