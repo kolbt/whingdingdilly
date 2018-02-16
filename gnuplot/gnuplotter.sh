@@ -2,21 +2,21 @@
 
 path1='/Users/kolbt/Desktop/compiled/whingdingdilly/gnuplot/'
 path2=$(pwd)
-xa=50
+xa=0
 pb=500
-pa=0
+pa=150
 
-while [ $pa -le 500 ]
+while [ $xa -le 100 ]
 do
 
     rep_name="all_pa${pa}_pb${pb}_xa${xa}"
 
-    cp ${path1}gnuplot_all.txt stats_pa${pa}.txt
-    gsed -i 's/\${iname}/'"${rep_name}"'/g' stats_pa${pa}.txt
+    cp ${path1}gnuplot_all.txt stats_xa${xa}.txt
+    gsed -i 's/\${iname}/'"${rep_name}"'/g' stats_xa${xa}.txt
 
-    gnuplot ${path2}/stats_pa${pa}.txt
+    gnuplot ${path2}/stats_xa${xa}.txt
 
-    pa=$(( $pa + 50 ))
+    xa=$(( $xa + 10 ))
 
 done
 
