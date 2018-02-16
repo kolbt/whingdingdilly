@@ -5,7 +5,7 @@ set xrange [0:200]
 set yrange [0:1]
 set xlabel 'Time (tau)'
 set ylabel 'Percent of A in Dense'
-plot 'all_pa150_pb500_xa0.txt' using 1:2 w lines title '0',\
+plot 'all_pa150_pb500_xa0.txt' using 1:5 w lines title '0',\
 	'all_pa150_pb500_xa10.txt' using 1:($5/20000) w lines title '0.1',\
 	'all_pa150_pb500_xa20.txt' using 1:($5/40000) w lines title '0.2',\
 	'all_pa150_pb500_xa30.txt' using 1:($5/60000) w lines title '0.3',\

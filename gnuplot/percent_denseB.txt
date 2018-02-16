@@ -15,4 +15,4 @@ plot 'all_pa150_pb500_xa0.txt' using 1:($6/200000) w lines title '0',\
 	'all_pa150_pb500_xa70.txt' using 1:($6/60000) w lines title '0.7',\
 	'all_pa150_pb500_xa80.txt' using 1:($6/40000) w lines title '0.8',\
 	'all_pa150_pb500_xa90.txt' using 1:($6/20000) w lines title '0.9',\
-	'all_pa150_pb500_xa100.txt' using 1:3 w lines title '1.0'
+	'all_pa150_pb500_xa100.txt' using 1:6 w lines title '1.0'
