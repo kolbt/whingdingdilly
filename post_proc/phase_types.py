@@ -115,7 +115,6 @@ for iii in range(start, end):
     # Run freud computations
     my_clust.computeClusters(pos)           # feed in position
     ids = my_clust.getClusterIdx()          # get id of each cluster
-    sort_id = np.sort(ids)                  # sorted ids, low-high
     
     c_props.computeProperties(pos, ids)     # find cluster properties
     clust_size = c_props.getClusterSizes()  # find cluster sizes
