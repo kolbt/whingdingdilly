@@ -109,7 +109,9 @@ f.write('Timestep'.center(10) + ' ' +\
         'Dense_tot'.center(10) + ' ' +\
         'Lg_clust'.center(10) + ' ' +\
         'DP_density'.center(10) + ' ' +\
-        'GP_density'.center(10) + '\n')
+        'GP_density'.center(10) + ' ' +\
+        'Clust_area'.center(10) + ' ' +\
+        'Gas_area'.center(10) + '\n')
 f.close()
 
 # Create mesh
@@ -196,7 +198,7 @@ for iii in range(start, end):
     a_clust = 0.0
     if dp_density != 0:
         a_clust = float(dense_num) / float(dp_density)  # area of cluster
-    a_gas = a_box - a_clust                             # area of gas
+    a_gas = float(a_box) - a_clust                      # area of gas
     gp_density = gas_num / a_gas                        # number density in gas
 
     # Values have been set, write to text files
@@ -210,7 +212,9 @@ for iii in range(start, end):
             str(dense_num).center(10) + ' ' +\
             str(l_clust).center(10) + ' ' +\
             '{0:.2f}'.format(dp_density).center(10) + ' ' +\
-            '{0:.2f}'.format(gp_density).center(10) + '\n')
+            '{0:.2f}'.format(gp_density).center(10) + ' ' +\
+            '{0:.2f}'.format(a_clust).center(10) + ' ' +\
+            '{0:.2f}'.format(a_gas).center(10) + '\n')
     f.close()
 
     mesh[:] = 0     # zero out the mesh
