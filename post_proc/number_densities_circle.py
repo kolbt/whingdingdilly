@@ -1,6 +1,6 @@
 '''
 #                           This is an 80 character line                       #
-PURE:  The intent of this file is to get out a few basic values as text files
+PURPOSE:  The intent of this file is to get out a few basic values as text files
 
                     File   :   Column 1    Column 2    Column 3    Column 4
      gas_pa#_pb#_xa#.txt   :   time        gas_A       gas_B       gas_total
@@ -67,6 +67,7 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
+end = 10
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -86,7 +87,7 @@ with hoomd.open(name=in_file, mode='rb') as t:
 timesteps -= timesteps[0]       # get rid of brownian run time
 
 # Get number of each type of particle
-part_num = len(types[start])
+part_num = len(types[0])
 part_A = int(part_num * part_frac_a)
 part_B = part_num - part_A
 
@@ -117,14 +118,21 @@ f.close()
 # Create mesh
 float_side = box_data[0] / 2.0
 side = float((int(box_data[0])+1)) / 2
-box_width = 5                                           # bin width
+box_width = 2                                           # bin width
 diameter = 1.0                                          # sigma
 while side % box_width != 0:                            # must be divisible
     side += 1                                           # make divisible by bin
 
 spacer = int(side * 2 / (box_width * diameter))         # number of bins
-mesh = np.zeros((spacer, spacer), dtype = np.int)       # array of each bin
+mesh = np.zeros((spacer, spacer), dtype = np.ndarray)   # array of each bin
 reset_mesh = np.zeros_like(mesh)                        # zero out mesh
+occ = 100                                               # max occupancy of bin
+test_occ = np.zeros((occ, 4))                           # occupation test index
+for j in range(0, spacer):
+    for k in range(0, spacer):
+        mesh[j][k] =  np.zeros_like(test_occ)
+        reset_mesh[j][k] = np.zeros_like(test_occ)
+
 
 load_bar.printLoadBar(0, end-start, prefix = "Progress: ", suffix = "Complete")
 for iii in range(start, end):
@@ -165,12 +173,18 @@ for iii in range(start, end):
 
     for jjj in range(0, part_num):
         
-        # Get the index of the mesh the particle belongs in
-        loc_x = int((pos[jjj][0] + float_side) / (box_width * diameter))
-        loc_y = int((pos[jjj][1] + float_side) / (box_width * diameter))
+        # get the index of the mesh the particle belongs in
+        loc_x = int((pos[iii][0] + float_side) / (box_width * diameter))
+        loc_y = int((pos[iii][1] + float_side) / (box_width * diameter))
         
-        # Add the particle to it's bin
-        mesh[loc_x][loc_y] += 1
+        # place the particle in the first unoccupied space in this quadrant list
+        for s in range(1, occ):                 # index 0 holds number in bin
+            if mesh[loc_x][loc_y][s][3] == 0:               # test occupancy
+                mesh[loc_x][loc_y][s][0] = pos[iii][0]      # x coord
+                mesh[loc_x][loc_y][s][1] = pos[iii][1]      # y coord
+                mesh[loc_x][loc_y][s][2] = iii              # particle id
+                mesh[loc_x][loc_y][s][3] = 1                # occupied flag
+                break
         
         if q_clust[ids[jjj]] == 1:          # it's in the dense phase
             dense_num += 1
@@ -187,15 +201,34 @@ for iii in range(start, end):
 
     for jjj in range(0, part_num):
         if q_clust[ids[jjj]] == 1:          # is in dense phase
-            # Indices of particle's bin
-            loc_x = int((pos[jjj][0] + float_side) / (box_width * diameter))
-            loc_y = int((pos[jjj][1] + float_side) / (box_width * diameter))
-            # Add it and surrounding particles to dp_density
-            dp_density += mesh[loc_x][loc_y]
+            # indices of particle's bin
+            loc_x = int((pos[iii][0] + float_side) / (box_width * diameter))
+            loc_y = int((pos[iii][1] + float_side) / (box_width * diameter))
+            # indices of surrounding bins
+            lft = loc_x - 1
+            rgt = loc_x + 1
+            bot = loc_y - 1
+            top = loc_y + 1
+            
+            # Compute distance between particles
+            for lll in range(lft, rgt + 1):         # left - right bins
+                for mmm in range(bot, top + 1):     # bottom - top bins
+                    if lll >= spacer:
+                        lll -= spacer
+                    if mmm >= spacer:
+                        mmm -= spacer
+                    for nnn in range(1, occ):
+                        if mesh[lll][mmm][nnn][3] == 0:
+                            break
+                        else:
+                            r = computeR(mesh[lll][mmm][nnn], pos[jjj])
+                            if r < dist_min:
+                                dp_density += 1
 
+    print(dp_density)
+    print(dense_num)
     dp_density /= float(dense_num)                      # avg number in each bin
-    dp_density /= (float(box_width*diameter)**2)        # normalize by bin area
-
+    dp_density /= (np.pi * ((dist_min * diameter)**2))  # avg cluster density
     a_clust = 0.0
     if dp_density != 0:
         a_clust = float(dense_num) / float(dp_density)  # area of cluster
@@ -216,7 +249,7 @@ for iii in range(start, end):
             '{0:.2f}'.format(gp_density).center(10) + '\n')
     f.close()
 
-    mesh[:] = 0     # zero out the mesh
+    mesh = reset_mesh
 
-    load_bar.printLoadBar(iii-start+1, end-start,
+    load_bar.printLoadBar(iii, end-start,
                           prefix = "Progress: ", suffix = "Complete")
