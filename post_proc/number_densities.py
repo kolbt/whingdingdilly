@@ -46,8 +46,6 @@ from freud import cluster
 
 import numpy as np
 
-from mypy import load_bar
-
 def computeR(part1, part2):
     return np.sqrt(((part2[0]-part1[0])**2)+((part2[1]-part1[1])**2))
 
@@ -126,7 +124,6 @@ spacer = int(side * 2 / (box_width * diameter))         # number of bins
 mesh = np.zeros((spacer, spacer), dtype = np.int)       # array of each bin
 reset_mesh = np.zeros_like(mesh)                        # zero out mesh
 
-load_bar.printLoadBar(0, end-start, prefix = "Progress: ", suffix = "Complete")
 for iii in range(start, end):
     
     # Get data from arrays
@@ -217,6 +214,3 @@ for iii in range(start, end):
     f.close()
 
     mesh[:] = 0     # zero out the mesh
-
-    load_bar.printLoadBar(iii-start+1, end-start,
-                          prefix = "Progress: ", suffix = "Complete")
