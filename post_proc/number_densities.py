@@ -192,8 +192,9 @@ for iii in range(start, end):
             # Add it and surrounding particles to dp_density
             dp_density += mesh[loc_x][loc_y]
 
-    dp_density /= float(dense_num)                      # avg number in each bin
-    dp_density /= (float(box_width*diameter)**2)        # normalize by bin area
+    if dense_num != 0:
+        dp_density /= float(dense_num)                  # avg number in each bin
+        dp_density /= (float(box_width*diameter)**2)    # normalize by bin area
 
     a_clust = 0.0
     if dp_density != 0:

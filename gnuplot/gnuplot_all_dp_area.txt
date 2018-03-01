@@ -1,0 +1,18 @@
+set term pngcairo
+set output "dp_area_pa150_pb500_xa_varied.png"
+set key out right
+set xrange [0:200]
+set yrange [0:110000]
+set xlabel 'Time (tau)'
+set ylabel 'Area of Dense Phase'
+plot 'all_pa150_pb500_xa0.txt' using 1:11 w lines title '0',\
+	'all_pa150_pb500_xa10.txt' using 1:11 w lines title '0.1',\
+	'all_pa150_pb500_xa20.txt' using 1:11 w lines title '0.2',\
+	'all_pa150_pb500_xa30.txt' using 1:11 w lines title '0.3',\
+	'all_pa150_pb500_xa40.txt' using 1:11 w lines title '0.4',\
+	'all_pa150_pb500_xa50.txt' using 1:11 w lines title '0.5',\
+	'all_pa150_pb500_xa60.txt' using 1:11 w lines title '0.6',\
+	'all_pa150_pb500_xa70.txt' using 1:11 w lines title '0.7',\
+	'all_pa150_pb500_xa80.txt' using 1:11 w lines title '0.8',\
+	'all_pa150_pb500_xa90.txt' using 1:11 w lines title '0.9',\
+	'all_pa150_pb500_xa100.txt' using 1:11 w lines title '1.0'
