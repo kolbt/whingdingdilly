@@ -1,0 +1,18 @@
+set term pngcairo
+set output "dp_density_pa_varied_mono.png"
+set key out right
+set xrange [0:200]
+set yrange [0:2]
+set xlabel 'Time (tau)'
+set ylabel 'Average Density of Dense Phase'
+plot 'all_pa0_pb0_xa100.txt' using 1:9 w lines title '0',\
+	'all_pa50_pb0_xa100.txt' using 1:9 w lines title '0.1',\
+	'all_pa100_pb0_xa100.txt' using 1:9 w lines title '0.2',\
+	'all_pa150_pb0_xa100.txt' using 1:9 w lines title '0.3',\
+	'all_pa200_pb0_xa100.txt' using 1:9 w lines title '0.4',\
+	'all_pa250_pb0_xa100.txt' using 1:9 w lines title '0.5',\
+	'all_pa300_pb0_xa100.txt' using 1:9 w lines title '0.6',\
+	'all_pa350_pb0_xa100.txt' using 1:9 w lines title '0.7',\
+	'all_pa400_pb0_xa100.txt' using 1:9 w lines title '0.8',\
+	'all_pa450_pb0_xa100.txt' using 1:9 w lines title '0.9',\
+	'all_pa500_pb0_xa100.txt' using 1:9 w lines title '1.0'
