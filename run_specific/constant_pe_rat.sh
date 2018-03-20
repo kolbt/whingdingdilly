@@ -47,7 +47,7 @@ pe_start=$(( 0 ))   # minimum pe value
 pe_max=$(( 150 ))   # maximum pe value
 
 # For constant activity ratio simulations
-pe_rat =$( bc <<< "0.3" )
+pe_rat=$(bc <<< "0.3")
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
