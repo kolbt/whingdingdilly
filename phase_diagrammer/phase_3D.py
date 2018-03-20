@@ -48,9 +48,9 @@ def plotCubeAt(pos=(0,0,0),ax=None, z_ind=0):
 
 '''
     The data you are drawing from is stacked in set Pe_B planes. So,
-    rows 1-10 (that's 11 rows) are all binary values which indicate
+    rows 1-11 (that's 11 rows) are all binary values which indicate
     phase separation ( 0 = no, 1 = yes) at Pe_B = 0.  Thus, rows 
-    11-21 are for Pe_B = 10 etc. etc. until Pe_B = 150 (16 total
+    12-22 are for Pe_B = 10 etc. etc. until Pe_B = 150 (16 total
     planes).
     
     Ultimately, Mathematica was better at this, check out 
