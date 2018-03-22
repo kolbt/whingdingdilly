@@ -39,7 +39,7 @@ for lll in range(0, 11):
 #kappa = 2.22
 #phi_min = 0.40
 
-kappa = 4.05
+kappa = 3.8
 phi_min = 0.6
 
 def solvePartFrac(PeA, PeB):
@@ -59,5 +59,7 @@ plt.xlabel('Activity A')
 plt.ylabel('Particle Fraction')
 plt.savefig('phase_diagram_pb' + str(PeB) + '.png', dpi=1000)
 plt.close()
+
+def findSpinodal()
 
 
