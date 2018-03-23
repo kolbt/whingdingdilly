@@ -55,7 +55,9 @@ def divergence(field):
     "return the divergence of a n-D field"
     return np.sum(np.gradient(field),axis=0)
 
-#def getOrientation()
+#def getOrientation(pos):
+#    "Takes x,y position, returns orientation"
+#    return rads[]
 
 # File to read from
 in_file = "pa"+str(pe_a)+\
@@ -95,12 +97,6 @@ part_num = len(types[start])
 part_A = int(part_num * part_frac_a)
 part_B = part_num - part_A
 
-# Convert orientation from quaternion to angle
-rads = np.zeros((end, part_num), dtype=np.float32)
-for iii in range(start,end):
-    for jjj in range(0,part_num):
-        rads[iii][jjj] = quat_to_theta(orient[iii][jjj])
-
 # Feed data into freud analysis software
 l_box = box_data[0]
 h_box = l_box / 2.0
@@ -116,18 +112,20 @@ xx, yy = np.mgrid[-h_box:h_box:500j, -h_box:h_box:500j]
 
 for iii in range(start, end):
     
+    # Convert orientation from quaternion to angle
+    rads = np.zeros((part_num), dtype=np.float32)
+    for jjj in range(0,part_num):
+        rads[iii][jjj] = quat_to_theta(orient[iii][jjj])
+    
     # Get data from arrays
     pos = positions[iii]
     pos = np.delete(pos, 2, 1)
     typ = types[iii]
     tst = timesteps[iii]
-    
-    print(pos.shape)
-    print(pos)
 
-    grid_z0 = griddata(pos, pos[:,0], (xx, yy), method='nearest')
-    grid_z1 = griddata(pos, pos[:,0], (xx, yy), method='linear')
-    grid_z2 = griddata(pos, pos[:,0], (xx, yy), method='cubic')
+    grid_z0 = griddata(pos, rads[:], (xx, yy), method='nearest')
+    grid_z1 = griddata(pos, rads[:], (xx, yy), method='linear')
+    grid_z2 = griddata(pos, rads[:], (xx, yy), method='cubic')
     
     plt.subplot(221)
     plt.imshow(pos.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
