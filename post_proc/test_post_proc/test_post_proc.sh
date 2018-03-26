@@ -17,6 +17,13 @@ else
     submit='sh'
 fi
 
+echo "Are you running on your laptop (y/n)?"
+read answer
+
+if [ $answer == "y" ]; then
+hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
+fi
+
 for filename in $( ls pa*.gsd )
 #for filename in $( ls *pa*_0.png )
 do

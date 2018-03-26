@@ -51,13 +51,9 @@ def quat_to_theta(quat):
     rad = math.atan2(y,x)/np.pi # gives values from [-1,1]
     return rad
 
-def divergence(field):
+def computeDivergence(field):
     "return the divergence of a n-D field"
     return np.sum(np.gradient(field),axis=0)
-
-#def getOrientation(pos):
-#    "Takes x,y position, returns orientation"
-#    return rads[]
 
 # File to read from
 in_file = "pa"+str(pe_a)+\
@@ -100,22 +96,19 @@ part_B = part_num - part_A
 # Feed data into freud analysis software
 l_box = box_data[0]
 h_box = l_box / 2.0
-#positions += h_box
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 
 # Make the meshgrid we'll feed in
-#xvalues = np.linspace(-h_box, h_box, num=500)
-#yvalues = xvalues
-#xx, yy = np.meshgrid(xvalues, yvalues)
-xx, yy = np.mgrid[-h_box:h_box:500j, -h_box:h_box:500j]
+interp = 100
+xx, yy = np.mgrid[-h_box:h_box:interp*1j, -h_box:h_box:interp*1j]
 
 for iii in range(start, end):
     
     # Convert orientation from quaternion to angle
     rads = np.zeros((part_num), dtype=np.float32)
     for jjj in range(0,part_num):
-        rads[iii][jjj] = quat_to_theta(orient[iii][jjj])
+        rads[jjj] = quat_to_theta(orient[iii][jjj])
     
     # Get data from arrays
     pos = positions[iii]
@@ -127,23 +120,51 @@ for iii in range(start, end):
     grid_z1 = griddata(pos, rads[:], (xx, yy), method='linear')
     grid_z2 = griddata(pos, rads[:], (xx, yy), method='cubic')
     
-    plt.subplot(221)
-    plt.imshow(pos.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
-    plt.plot(pos[:,0], pos[:,1], 'k.', ms=0.1)
-    plt.title('Original')
+#    plt.subplot(221)
+#    plt.imshow(pos.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
+#    plt.plot(pos[:,0], pos[:,1], 'k.', ms=0.1)
+#    plt.title('Original')
+#
+#    plt.subplot(222)
+
+    # Nearest interpolation looks like the best fit
+    plt.imshow(grid_z0.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+               cmap=plt.get_cmap('hsv'))
+    plt.title('Nearest Interpolation of Discrete Data')
     
-    plt.subplot(222)
-    plt.imshow(grid_z0.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
-    plt.title('Nearest')
-    
-    plt.subplot(223)
-    plt.imshow(grid_z1.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
-    plt.title('Linear')
-    
-    plt.subplot(224)
-    plt.imshow(grid_z2.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
-    plt.title('Cubic')
-    plt.gcf().set_size_inches(6, 6)
+#    plt.subplot(223)
+#    plt.imshow(grid_z1.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+#               cmap=plt.get_cmap('hsv'))
+#    plt.title('Linear')
+#
+#    plt.subplot(224)
+#    plt.imshow(grid_z2.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+#               cmap=plt.get_cmap('hsv'))
+#    plt.title('Cubic')
+#    plt.gcf().set_size_inches(6, 6)
+#    plt.show()
+
+    plt.savefig('interp' + str(interp) +
+                '_pa'+ str(pe_a) +
+                '_pb'+ str(pe_b) +
+                '_xa'+ str(part_perc_a) +
+                '_mvout_'+ str(iii) +
+                '.png', dpi=1000)
+    plt.close()
+
+    '''Okay, cool. Now that you have the extrapolated orientation you need to
+        compute the divergence on this mesh
+        
+        There are a few parameters you can tinker with to get this to work.
+        1.) interp: how fine the mesh is
+        2.) ck_rad: how many adjacent sites to compute divergence over
+    '''
+
+    diverge = (computeDivergence(grid_z0))
+    plt.imshow(diverge.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+               clim=(-3.0, 3.0))
+    plt.title('Divergence of Interpolated Orientation field')
+    plt.colorbar()
     plt.show()
 
 
