@@ -51,6 +51,20 @@ def quat_to_theta(quat):
     rad = math.atan2(y,x)/np.pi # gives values from [-1,1]
     return rad
 
+def quat_to_vector(quat):
+    "Takes quaternion, returns orientation vector"
+    x = quat[1]
+    y = quat[2]
+    my_orient = (x, y)
+    return my_orient
+
+def theta_to_vec(angle):
+    "Takes angle [-pi, pi], and returns (x, y) vector"
+    x = np.cos(angle)
+    y = np.sin(angle)
+    vec = (x, y)
+    return vec
+
 def computeDivergence(field):
     "return the divergence of a n-D field"
     return np.sum(np.gradient(field),axis=0)
@@ -103,12 +117,39 @@ f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 interp = 100
 xx, yy = np.mgrid[-h_box:h_box:interp*1j, -h_box:h_box:interp*1j]
 
+# TEST SECTION: MAKE SAMPLE VECTOR FIELD AND COMPUTE DIVERGENCE #
+
+# Make the vector field
+#T = np.arctan2(yy, xx)
+#R = 10 + np.sqrt((yy) ** 2 + (xx) ** 2)
+#U, V = R * np.cos(T), R * np.sin(T)
+#plt.quiver(xx, yy, U, V, R, alpha=.5)
+#plt.quiver(xx, yy, U, V, edgecolor='k', facecolor='None', linewidth=.5)
+#plt.xlim(-h_box, h_box)
+#plt.xticks(())
+#plt.ylim(-h_box, h_box)
+#plt.yticks(())
+#plt.show()
+#
+#diverge = (computeDivergence(grid_z0))
+#plt.imshow(diverge.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+#           clim=(-3.0, 3.0))
+#plt.title('Divergence of Interpolated Orientation field')
+#plt.colorbar()
+#plt.show()
+
+################### END TEST SECTION ############################
+
 for iii in range(start, end):
     
     # Convert orientation from quaternion to angle
     rads = np.zeros((part_num), dtype=np.float32)
     for jjj in range(0,part_num):
         rads[jjj] = quat_to_theta(orient[iii][jjj])
+    
+    vecs = np.zeros((part_num), dtype=np.ndarray)
+    for jjj in range(0,part_num):
+        vecs[jjj] = quat_to_vector(orient[iii][jjj])
     
     # Get data from arrays
     pos = positions[iii]
@@ -119,7 +160,21 @@ for iii in range(start, end):
     grid_z0 = griddata(pos, rads[:], (xx, yy), method='nearest')
     grid_z1 = griddata(pos, rads[:], (xx, yy), method='linear')
     grid_z2 = griddata(pos, rads[:], (xx, yy), method='cubic')
-    
+
+#    grid_z0 = griddata(pos, vecs[:], (xx, yy), method='nearest')
+#    x_comp = []
+#    y_comp = []
+#    for i in range(0, interp):
+#        for j in range(0, interp):
+#            print(grid_z0[i][j][0])
+#            x_comp.append(grid_z0[i][j][0])
+#            y_comp.append(grid_z0[i][j][1])
+#    plt.quiver(xx, yy, x_comp, y_comp)
+#    plt.title('Nearest Interpolation of Discrete Data')
+#    plt.show()
+#    grid_z1 = griddata(pos, vecs[:], (xx, yy), method='linear')
+#    grid_z2 = griddata(pos, vecs[:], (xx, yy), method='cubic')
+
 #    plt.subplot(221)
 #    plt.imshow(pos.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
 #    plt.plot(pos[:,0], pos[:,1], 'k.', ms=0.1)
@@ -128,10 +183,10 @@ for iii in range(start, end):
 #    plt.subplot(222)
 
     # Nearest interpolation looks like the best fit
-    plt.imshow(grid_z0.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
-               cmap=plt.get_cmap('hsv'))
-    plt.title('Nearest Interpolation of Discrete Data')
-    
+#    plt.imshow(grid_z0.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
+#               cmap=plt.get_cmap('hsv'))
+
+
 #    plt.subplot(223)
 #    plt.imshow(grid_z1.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
 #               cmap=plt.get_cmap('hsv'))
@@ -144,13 +199,13 @@ for iii in range(start, end):
 #    plt.gcf().set_size_inches(6, 6)
 #    plt.show()
 
-    plt.savefig('interp' + str(interp) +
-                '_pa'+ str(pe_a) +
-                '_pb'+ str(pe_b) +
-                '_xa'+ str(part_perc_a) +
-                '_mvout_'+ str(iii) +
-                '.png', dpi=1000)
-    plt.close()
+#    plt.savefig('interp' + str(interp) +
+#                '_pa'+ str(pe_a) +
+#                '_pb'+ str(pe_b) +
+#                '_xa'+ str(part_perc_a) +
+#                '_mvout_'+ str(iii) +
+#                '.png', dpi=1000)
+#    plt.close()
 
     '''Okay, cool. Now that you have the extrapolated orientation you need to
         compute the divergence on this mesh
@@ -159,12 +214,61 @@ for iii in range(start, end):
         1.) interp: how fine the mesh is
         2.) ck_rad: how many adjacent sites to compute divergence over
     '''
+    # Get gradient of angle scalar field
+    grad_radx, grad_rady = np.gradient(grid_z0)
+    
+    # Take the magnitude
+    grad_mag = grad_radx + grad_rady
 
-    diverge = (computeDivergence(grid_z0))
-    plt.imshow(diverge.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower',
-               clim=(-3.0, 3.0))
-    plt.title('Divergence of Interpolated Orientation field')
+
+    # Convert back to vectors
+    grad_vecx = np.zeros((interp, interp), dtype=np.float32)
+    grad_vecy = np.zeros((interp, interp), dtype=np.float32)
+    defect = np.zeros((interp, interp), dtype=np.int8)
+    for i in range(0, interp):
+        for j in range(0, interp):
+#            if grad_mag[i][j] > 1.0:
+#                grad_mag[i][j] -= 2.0
+#            if grad_mag[i][j] < -1.0:
+#                grad_mag[i][j] += 2.0
+            grad_vecx[i][j] = theta_to_vec(grad_mag[i][j]*np.pi)[0]
+            grad_vecy[i][j] = theta_to_vec(grad_mag[i][j]*np.pi)[1]
+            if -0.001 < grad_mag[i][j] < 0.001:
+                defect[i][j] = 1
+            if -0.9*2.0 > grad_mag[i][j] or grad_mag[i][j] > 0.9*2.0:
+                defect[i][j] = -1
+
+    diverge = np.pi * grad_mag
+#    plt.quiver(xx, yy, grad_vecx, grad_vecy)
+#    plt.show()
+
+#    plt.imshow(grad_rad.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
+#    plt.show()
+
+#    dx, dy = np.gradient(grid_z0)
+#    fig, axes = plt.subplots(nrows=1, ncols=2, sharex=True, sharey=True)
+#    for ax in axes.flat:
+#        im = ax.imshow(dx)
+#        im = ax.imshow(dy)
+#    plt.subplot(121)    # row columns number
+#    im = ax1.imshow(dx)
+#    plt.subplot(122)    # row columns number
+#    im = ax2.imshow(dy)
+#    fig.colorbar(im, ax=axes.ravel().tolist())
+#    plt.show()
+
+#    diverge = (computeDivergence(grid_z0))
+    plt.subplot(221)
+    plt.quiver(xx, yy, grad_vecx, grad_vecy)
+    plt.subplot(222)
+    plt.imshow(diverge.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
+               #clim=(-3.0, 3.0))
+#    plt.title('Divergence of Interpolated Orientation field')
     plt.colorbar()
+    plt.subplot(223)
+    plt.imshow(defect.T, extent=(-h_box,h_box,-h_box,h_box), origin='lower')
+    plt.subplot(224)
+    plt.plot(pos[:,0], pos[:,1], 'k.', ms=0.1)
     plt.show()
 
 
