@@ -219,6 +219,11 @@ for iii in range(start, end):
     
     # Take the magnitude
     grad_mag = grad_radx + grad_rady
+    for k in range(0, interp):
+        for l in range(0, interp):
+            if grad_mag[k][l] < 0:
+                grad_mag = 
+            else:
 
 
     # Convert back to vectors
@@ -227,15 +232,15 @@ for iii in range(start, end):
     defect = np.zeros((interp, interp), dtype=np.int8)
     for i in range(0, interp):
         for j in range(0, interp):
-#            if grad_mag[i][j] > 1.0:
-#                grad_mag[i][j] -= 2.0
-#            if grad_mag[i][j] < -1.0:
-#                grad_mag[i][j] += 2.0
+            if grad_mag[i][j] > 1.0:
+                grad_mag[i][j] -= 2.0
+            if grad_mag[i][j] < -1.0:
+                grad_mag[i][j] += 2.0
             grad_vecx[i][j] = theta_to_vec(grad_mag[i][j]*np.pi)[0]
             grad_vecy[i][j] = theta_to_vec(grad_mag[i][j]*np.pi)[1]
             if -0.001 < grad_mag[i][j] < 0.001:
                 defect[i][j] = 1
-            if -0.9*2.0 > grad_mag[i][j] or grad_mag[i][j] > 0.9*2.0:
+            if -0.999 > grad_mag[i][j] or grad_mag[i][j] > 0.999:
                 defect[i][j] = -1
 
     diverge = np.pi * grad_mag
