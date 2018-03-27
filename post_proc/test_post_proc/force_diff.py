@@ -70,8 +70,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-start = 155
-end = 160
+#start = 155
+#end = 160
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -140,11 +140,20 @@ for iii in range(start, end):
             binnedF[jjj][mmm] += getMagnitude(mesh[jjj][mmm])
 
     # Plot binned data using imshow
-    plt.imshow(binnedF.T, extent=(0,nBins,0,nBins), origin='lower')
+    plt.imshow(binnedF.T,
+               extent=(0,nBins,0,nBins),
+               origin='lower',
+               clim=(0,10000))
     plt.xticks(())
     plt.yticks(())
     plt.colorbar()
-    plt.show()
+    plt.savefig('nBins' + str(nBins) +
+                '_pa'+ str(pe_a) +
+                '_pb'+ str(pe_b) +
+                '_xa'+ str(part_perc_a) +
+                '_step_'+ str(iii) +
+                '.png', dpi=1000)
+    plt.close()
 
 
 
