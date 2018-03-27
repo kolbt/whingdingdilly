@@ -25,7 +25,9 @@ script_path=$6
 #python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/binned_type.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/compute_defects.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/force_diff.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/force_diff.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
+
 
 # Orientation specific scripts
 #myfile=$(pwd)

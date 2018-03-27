@@ -6,6 +6,12 @@ This is going to be SUPER easy
     -vectorize active force
     -sum force in each bin (this accounts for orientation)
     -take magnitude of summed quantity
+    
+    We'll plot this along with some other contributing heatmaps
+    1. Original sim
+    1. Binned orientation
+    3. Binned active force magnitudes
+    4. Magnitude of binned vector forces
 '''
 
 # Imports and loading the .gsd file
@@ -59,6 +65,13 @@ def getMagnitude(vecF):
     magF = np.sqrt((x**2)+(y**2))
     return magF
 
+# Make particle colormap
+cdict1 = {'0':  '#FF00FF',
+          '1':  '#39FF14'
+          }
+plt.register_cmap(name='Particles', data=cdict1)
+
+
 # File to read from
 in_file = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
@@ -70,8 +83,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-#start = 155
-#end = 160
+start = 155
+end = 160
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -116,6 +129,7 @@ for iii in range(start, end):
     
     # Easier accessors
     pos = positions[iii]
+    pos = np.delete(pos, 2, 1)
     typ = types[iii]
     dir = orient[iii]
     act_vec = np.zeros((part_num, 2), dtype=np.float32)
@@ -139,14 +153,49 @@ for iii in range(start, end):
         for mmm in range(0, nBins):
             binnedF[jjj][mmm] += getMagnitude(mesh[jjj][mmm])
 
+    fig = plt.figure()
+    cmap = plt.get_cmap('Particles')
+    # Plot the original simulation
+    ax = fig.add_subplot(221)
+    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=cmap, s=0.05, edgecolors='none')
+    plt.xticks(())
+    plt.yticks(())
+    plt.xlim(-h_box, h_box)
+    plt.ylim(-h_box, h_box)
+    ax.set_aspect('equal')
+
+    # Plot binned orientation
+    ax = fig.add_subplot(222)
+    ax.scatter(pos[:,0], pos[:,1], c=typ, s=0.05, edgecolors='none')
+    plt.xticks(())
+    plt.yticks(())
+    plt.xlim(-h_box, h_box)
+    plt.ylim(-h_box, h_box)
+    ax.set_aspect('equal')
+
+    # Plot binned summed force magnitudes
+    ax = fig.add_subplot(223)
+    ax.scatter(pos[:,0], pos[:,1], c=typ, s=0.05, edgecolors='none')
+    plt.xticks(())
+    plt.yticks(())
+    plt.xlim(-h_box, h_box)
+    plt.ylim(-h_box, h_box)
+    ax.set_aspect('equal')
+
     # Plot binned data using imshow
+    ax = fig.add_subplot(224)
     plt.imshow(binnedF.T,
                extent=(0,nBins,0,nBins),
                origin='lower',
                clim=(0,10000))
     plt.xticks(())
     plt.yticks(())
-    plt.colorbar()
+    cb = plt.colorbar()
+    cb.set_ticks([])
+    ax.set_aspect('equal')
+
+    # Figure name
+#    plt.show()
     plt.savefig('nBins' + str(nBins) +
                 '_pa'+ str(pe_a) +
                 '_pb'+ str(pe_b) +
