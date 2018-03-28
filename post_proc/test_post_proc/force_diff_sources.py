@@ -45,6 +45,7 @@ import numpy as np
 from scipy.interpolate import griddata
 
 import matplotlib.pyplot as plt
+from matplotlib import colors
 
 import math
 
@@ -66,11 +67,9 @@ def getMagnitude(vecF):
     return magF
 
 # Make particle colormap
-cdict1 = {'0':  '#FF00FF',
-          '1':  '#39FF14'
-          }
-plt.register_cmap(name='Particles', data=cdict1)
-
+#colorsList = [(255,0,255),(50,205,50)]
+colorsList = ['#FF00FF','#39FF14']
+my_cmap = colors.ListedColormap(colorsList)
 
 # File to read from
 in_file = "pa"+str(pe_a)+\
@@ -154,10 +153,9 @@ for iii in range(start, end):
             binnedF[jjj][mmm] += getMagnitude(mesh[jjj][mmm])
 
     fig = plt.figure()
-    cmap = plt.get_cmap('Particles')
     # Plot the original simulation
     ax = fig.add_subplot(221)
-    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=cmap, s=0.05, edgecolors='none')
+    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=my_cmap, s=0.05, edgecolors='none')
     plt.xticks(())
     plt.yticks(())
     plt.xlim(-h_box, h_box)
@@ -166,7 +164,7 @@ for iii in range(start, end):
 
     # Plot binned orientation
     ax = fig.add_subplot(222)
-    ax.scatter(pos[:,0], pos[:,1], c=typ, s=0.05, edgecolors='none')
+    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=my_cmap, s=0.05, edgecolors='none')
     plt.xticks(())
     plt.yticks(())
     plt.xlim(-h_box, h_box)
@@ -175,7 +173,7 @@ for iii in range(start, end):
 
     # Plot binned summed force magnitudes
     ax = fig.add_subplot(223)
-    ax.scatter(pos[:,0], pos[:,1], c=typ, s=0.05, edgecolors='none')
+    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=my_cmap, s=0.05, edgecolors='none')
     plt.xticks(())
     plt.yticks(())
     plt.xlim(-h_box, h_box)
@@ -195,14 +193,14 @@ for iii in range(start, end):
     ax.set_aspect('equal')
 
     # Figure name
-#    plt.show()
-    plt.savefig('nBins' + str(nBins) +
-                '_pa'+ str(pe_a) +
-                '_pb'+ str(pe_b) +
-                '_xa'+ str(part_perc_a) +
-                '_step_'+ str(iii) +
-                '.png', dpi=1000)
-    plt.close()
+    plt.show()
+#    plt.savefig('nBins' + str(nBins) +
+#                '_pa'+ str(pe_a) +
+#                '_pb'+ str(pe_b) +
+#                '_xa'+ str(part_perc_a) +
+#                '_step_'+ str(iii) +
+#                '.png', dpi=1000)
+#    plt.close()
 
 #ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
