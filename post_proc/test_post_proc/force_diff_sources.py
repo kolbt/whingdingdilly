@@ -49,7 +49,7 @@ from matplotlib import colors
 
 import math
 
-def quat_to_vector(quat, type):
+def quatToVector(quat, type):
     "Takes quaternion, returns orientation vector"
     if type == 0:
         mag = pe_a
@@ -61,10 +61,26 @@ def quat_to_vector(quat, type):
     return act_vec
 
 def getMagnitude(vecF):
+    "Take force vector, output magnitude"
     x = vecF[0]
     y = vecF[1]
     magF = np.sqrt((x**2)+(y**2))
     return magF
+
+def quatToAngle(quat):
+    "Take quaternion, output angle between [0, 2pi]"
+    x = quat[1]
+    y = quat[2]
+    theta = math.atan2(y, x)
+    theta += np.pi
+    return theta
+
+def vecToAngle(vec):
+    "Take vector, output angle between [-pi, pi]"
+    x = vec[0]
+    y = vec[1]
+    theta = math.atan2(y, x)
+    return theta
 
 # Make particle colormap
 #colorsList = [(255,0,255),(50,205,50)]
@@ -82,8 +98,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-start = 155
-end = 160
+#start = 155
+#end = 160
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -119,12 +135,16 @@ f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 nBins = 100
 sizeBin = l_box / nBins
 
-
-
 for iii in range(start, end):
 
     # Array to hold the magnitude of the binned force
     binnedF = np.zeros((nBins, nBins), dtype=np.float32)
+    # And binned orientation
+    binnedO = np.zeros((nBins, nBins), dtype=np.float32)
+    # And binned force magnitude
+    binnedM = np.zeros((nBins, nBins), dtype=np.float32)
+    # And occupancy of each index
+    binnedD = np.zeros((nBins, nBins), dtype=np.float32)
     
     # Easier accessors
     pos = positions[iii]
@@ -136,21 +156,31 @@ for iii in range(start, end):
 
     # Computes the x and y components of each particles' active force
     for jjj in range(0, part_num):
-        act_vec[jjj] = quat_to_vector(dir[jjj], typ[jjj])
+        act_vec[jjj] = quatToVector(dir[jjj], typ[jjj])
 
     # Take vector sum in each bin (will have x and y components)
     for jjj in range(0, part_num):
+        # Get mesh indices
         tmp_posX = pos[jjj][0] + h_box
         tmp_posY = pos[jjj][1] + h_box
         x_ind = int(tmp_posX / sizeBin)
         y_ind = int(tmp_posY / sizeBin)
+        # Sum vector active force
         mesh[x_ind][y_ind][0] += act_vec[jjj][0]
         mesh[x_ind][y_ind][1] += act_vec[jjj][1]
+        # Sum magnitude of each force
+        if typ[jjj] == 0:
+            binnedM[x_ind][y_ind] += pe_a
+        else:
+            binnedM[x_ind][y_ind] += pe_b
+        # Get occupancy of each index
+        binnedD[x_ind][y_ind] += 1
 
     # Take magnitude of each bin (removes directional component)
     for jjj in range(0, nBins):
         for mmm in range(0, nBins):
             binnedF[jjj][mmm] += getMagnitude(mesh[jjj][mmm])
+            binnedO[jjj][mmm] = vecToAngle(mesh[jjj][mmm])
 
     fig = plt.figure()
     # Plot the original simulation
@@ -161,24 +191,32 @@ for iii in range(start, end):
     plt.xlim(-h_box, h_box)
     plt.ylim(-h_box, h_box)
     ax.set_aspect('equal')
+    plt.title('Original')
 
     # Plot binned orientation
     ax = fig.add_subplot(222)
-    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=my_cmap, s=0.05, edgecolors='none')
+    plt.imshow(binnedO.T,
+               extent=(0,nBins,0,nBins),
+               origin='lower',
+               cmap=plt.get_cmap('hsv'))
     plt.xticks(())
     plt.yticks(())
-    plt.xlim(-h_box, h_box)
-    plt.ylim(-h_box, h_box)
+    cb = plt.colorbar()
+    cb.set_ticks([])
     ax.set_aspect('equal')
+    plt.title('Orientation')
 
     # Plot binned summed force magnitudes
     ax = fig.add_subplot(223)
-    ax.scatter(pos[:,0], pos[:,1], c=typ, cmap=my_cmap, s=0.05, edgecolors='none')
+    plt.imshow(binnedM.T,
+               extent=(0,nBins,0,nBins),
+               origin='lower')
     plt.xticks(())
     plt.yticks(())
-    plt.xlim(-h_box, h_box)
-    plt.ylim(-h_box, h_box)
+    cb = plt.colorbar()
+    cb.set_ticks([])
     ax.set_aspect('equal')
+    plt.title('Summed ||Force||')
 
     # Plot binned data using imshow
     ax = fig.add_subplot(224)
@@ -191,16 +229,17 @@ for iii in range(start, end):
     cb = plt.colorbar()
     cb.set_ticks([])
     ax.set_aspect('equal')
+    plt.title('Summed Vector Force')
 
     # Figure name
-    plt.show()
-#    plt.savefig('nBins' + str(nBins) +
-#                '_pa'+ str(pe_a) +
-#                '_pb'+ str(pe_b) +
-#                '_xa'+ str(part_perc_a) +
-#                '_step_'+ str(iii) +
-#                '.png', dpi=1000)
-#    plt.close()
+#    plt.show()
+    plt.savefig('nBins' + str(nBins) +
+                '_pa'+ str(pe_a) +
+                '_pb'+ str(pe_b) +
+                '_xa'+ str(part_perc_a) +
+                '_step_'+ str(iii) +
+                '.png', dpi=1000)
+    plt.close()
 
 #ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
@@ -209,3 +248,4 @@ for iii in range(start, end):
 #ffmpeg -framerate 10 -i nBins100_pa150_pb500_xa50_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
 # nBins100_pa150_pb500_xa50.mp4
+
