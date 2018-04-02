@@ -49,6 +49,8 @@ my_dt = 0.000001 * tau
 sim_length = runfor * tau
 # compute number of tsteps to achieve this
 tsteps = sim_length / my_dt
+#my_dt = 0.00005
+#tsteps = 50000000
 # calculate number of tsteps which are dumped
 dumps = tsteps/dump_freq
 
