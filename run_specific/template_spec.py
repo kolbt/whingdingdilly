@@ -156,6 +156,16 @@ lj.pair_coeff.set('B', 'B', epsilon=1.0, sigma=1.0)
 #hoomd.md.integrate.mode_standard(dt=0.000005)
 #hoomd.md.integrate.mode_standard(dt=0.0000005)
 hoomd.md.integrate.mode_standard(dt=my_dt)
+
+# Here's where you'll have to differentiate between particle types
+# -each group should get a different temperature
+# -Pe = 3 v_0 tau_r / sigma  OR  = v_0 sigma / D_t
+# -tau_r = 1 / D_r
+# -D_r = 3 D_t / sigma^2
+# -D_t = sigma^2 / tau_lj
+# -D_t = kbT / 3*pi*eta*sigma
+# -tau_lj = sigma^2 / epsilon * beta * D_t
+# -tau_brown = sigma^2 / D_t
 hoomd.md.integrate.brownian(group=all, kT=1.0, seed=seed2)
 hoomd.run(100000)
 
