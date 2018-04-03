@@ -8,7 +8,7 @@
     activity.
     
     So, we will maintain the ratio, F_p*sigma / epsilon = 1, while still using
-    the intrinsic swim speed to vary the Péclet number.  This method results
+    the intrinsic swim speed to vary the Peclet number.  This method results
     in a varying Lennard-Jones time unit, but as long as we correct for this
     and run for a set time (i.e. 200 tauLJ), then we should be fine.
     
