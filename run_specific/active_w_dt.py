@@ -49,17 +49,23 @@ tau_lj = ((sigma**2)*threeEtaPiSigma) / (epsilon)
 tau_lj = 1
 F_a = 24 * epsilon / sigma
 velocity = F_a * threeEtaPiSigma
-#velocity = (24 * sigma) / tau_lj
 
 def computekT(activity, velocity, sigma, threeEtaPiSigma):
     "This takes the activity I want and outputs the corresponding temperature"
     kT = (velocity * sigma * threeEtaPiSigma) / activity
     return kT
 
-kT_A = computekT(pe_a, velocity, sigma, threeEtaPiSigma)
-kT_B = computekT(pe_b, velocity, sigma, threeEtaPiSigma)
-D_r_A = 1.0 / kT_A
-D_r_B = 1.0 / kT_B
+kT_A = 1
+kT_B = 1
+
+if pe_a != 0:
+    kT_A = computekT(pe_a, velocity, sigma, threeEtaPiSigma)
+if pe_b != 0:
+    kT_B = computekT(pe_b, velocity, sigma, threeEtaPiSigma)
+
+# D_r = 3D_t / sigma^2 = (3*kT) / (3*eta*pi*sigma^3)
+D_r_A = 3.0 * kT_A / (threeEtaPiSigma*(sigma**2))
+D_r_B = 3.0 * kT_B / (threeEtaPiSigma*(sigma**2))
 
 # tau = sigma^2 / epsilon * beta * diff_t (this is the LJ time unit)
 # simplifies to: (sigma^2 * (3*pi*eta*sigma))  /  epsilon
