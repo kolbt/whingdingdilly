@@ -97,7 +97,7 @@ else:                               # B particles are Brownian
 
 epsAB = (epsA + epsB) / 2.0                 # AB interaction well depth
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-dt = 0.000001 * tauLJ                       # timestep size
+dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauLJ                  # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)             # how many tsteps to run
 
