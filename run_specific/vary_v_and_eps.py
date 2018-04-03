@@ -97,7 +97,7 @@ else:                               # B particles are Brownian
 
 epsAB = (epsA + epsB) / 2.0                 # AB interaction well depth
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-dt = 0.00005 * tauLJ                        # timestep size
+dt = 0.000001 * tauLJ                       # timestep size
 simLength = runFor * tauLJ                  # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)             # how many tsteps to run
 
@@ -106,7 +106,7 @@ hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = partNum,
                                              phi_p = phi,
                                              name = 'A',
-                                             min_dist = 0.7,
+                                             min_dist = 0.75,
                                              seed = seed1,
                                              dimensions = 2)
 # Add B-type particles
