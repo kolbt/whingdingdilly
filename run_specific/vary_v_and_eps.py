@@ -150,7 +150,7 @@ hoomd.run(100000)
 
 #set the activity of each type
 np.random.seed(seed3)                           # seed for random orientations
-angle = np.random.rand(part_num) * 2 * np.pi    # random particle orientation
+angle = np.random.rand(partNum) * 2 * np.pi    # random particle orientation
 
 # Case 1: Mixture
 if partPercA != 0 and partPercA != 100:
@@ -165,7 +165,7 @@ if partPercA != 0 and partPercA != 100:
     
     # Now assign B-type active force vectors (w/ peB)
     activity_b = []
-    for i in range(mid,part_num):
+    for i in range(mid,partNum):
         x = (np.cos(angle[i])) * peB
         y = (np.sin(angle[i])) * peB
         z = 0
@@ -189,7 +189,7 @@ else:
     # Case 2: All B system
     if partPercA == 0:
         activity_b = []
-        for i in range(0,part_num):
+        for i in range(0,partNum):
             x = (np.cos(angle[i])) * peB
             y = (np.sin(angle[i])) * peB
             z = 0
@@ -204,7 +204,7 @@ else:
     # Case 3: All A system
     else:
         activity_a = []
-        for i in range(0,part_num):
+        for i in range(0,partNum):
             x = (np.cos(angle[i])) * peA
             y = (np.sin(angle[i])) * peA
             z = 0
@@ -234,7 +234,7 @@ hoomd.dump.gsd(gsdName,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-hoomd.dump.getar.simple(sqliteName, dump_freq, 'a',
+hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
                         static=['dimensions', 'viz_static'],
                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
