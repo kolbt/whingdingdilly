@@ -51,6 +51,7 @@ threeEtaPiSigma = 1.0           # drag coefficient
 sigma = 1.0                     # particle diameter
 D_t = kT / threeEtaPiSigma      # translational diffusion constant
 D_r = (3.0 * D_t) / (sigma**2)  # rotational diffusion constant
+tauBrown = (sigma**2) / D_t     # brownian time scale (invariant)
 
 def computeVel(activity):
     "Given particle activity, output intrinsic swim speed"
@@ -101,8 +102,10 @@ epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
 epsB = epsA                                 # make sure all use this
 epsAB = epsA                                # make sure all use this
 dt = 0.00001 * tauLJ                        # timestep size
-simLength = runFor * tauLJ                  # how long to run (in tauLJ)
+simLength = runFor * tauB                   # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)             # how many tsteps to run
+numDumps = simLength * 2.0                  # dump data every 0.5 tauBrown
+dumpFreq = int(totTsteps / numDumps)        # normalized dump frequency
 
 # Initialize system
 hoomd.context.initialize()
