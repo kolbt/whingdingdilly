@@ -73,7 +73,7 @@ def computeTauLJ(epsilon):
     tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
     return tauLJ
 
-def getExponent(myNumber)
+def getExponent(myNumber):
     "Given a number give the power of 10 equivalent"
     exponent = 0
     while (myNumber >= 10):
