@@ -102,13 +102,14 @@ epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
 epsB = epsA                                 # make sure all use this
 epsAB = epsA                                # make sure all use this
 dt = 0.00001 * tauLJ                        # timestep size
-simLength = runFor * tauB                   # how long to run (in tauBrown)
+simLength = runFor * tauBrown               # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = float(simLength / 0.1)           # dump data every 0.1 tauBrown
+numDumps = float(simLength / 1.0)           # dump data every 1.0 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
 
 print "Tau in use:", tauLJ
+print "Timestep in use:", dt
 print "Epsilon in use:", epsAB
 print "Total number of timesteps:", totTsteps
 print "Total number of output frames:", numDumps
@@ -119,7 +120,7 @@ hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = partNum,
                                              phi_p = phi,
                                              name = 'A',
-                                             min_dist = 0.75,
+                                             min_dist = 0.65,
                                              seed = seed1,
                                              dimensions = 2)
 # Add B-type particles
