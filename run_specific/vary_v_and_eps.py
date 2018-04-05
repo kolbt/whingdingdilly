@@ -253,7 +253,7 @@ hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Run the simulation
-hoomd.run(totTsteps)
+hoomd.run(int(totTsteps))
 
 
 
