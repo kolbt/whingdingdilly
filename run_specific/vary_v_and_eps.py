@@ -101,13 +101,13 @@ tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
 epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
 epsB = epsA                                 # make sure all use this
 epsAB = epsA                                # make sure all use this
-dt = 0.00005 * tauLJ                        # timestep size
+dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)             # how many tsteps to run
 numDumps = float(simLength / 0.5)           # dump data every 0.5 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
-tstepSci = "{:.1e}".format(totTsteps)       # get scientific notation
+#tstepSci = "{:.1e}".format(totTsteps)       # get scientific notation
 
 print "Tau in use:", tauLJ
 print "Timestep in use:", dt
@@ -245,7 +245,7 @@ lastTen = "lastTen" + name + ".gsd"
 hoomd.dump.gsd(gsdName,
                period=dumpFreq,
                group=all,
-               overwrite=True,
+               overwrite=False,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
@@ -254,10 +254,10 @@ hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Run the simulation
-hoomd.run(tstepSci)
-
-
-
-
-
+breaker = 10
+runBit = totTsteps / breaker
+count = 0
+while (count < breaker):
+    hoomd.run(runBit)
+    count += 1
 
