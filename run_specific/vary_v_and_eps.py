@@ -73,6 +73,14 @@ def computeTauLJ(epsilon):
     tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
     return tauLJ
 
+def getExponent(myNumber)
+    "Given a number give the power of 10 equivalent"
+    exponent = 0
+    while (myNumber >= 10):
+        exponent += 1
+        myNumber /= 10
+    return exponent
+
 # Compute parameters from activities
 if peA != 0:                        # A particles are NOT Brownian
     vA = computeVel(peA)
@@ -107,6 +115,8 @@ totTsteps = int(simLength / dt)             # how many tsteps to run
 numDumps = float(simLength / 0.5)           # dump data every 0.5 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
+tstepExp = getExponent(totTsteps)           # get scientific notation exponent
+inRun = "10e" + str(tstepExp)
 
 print "Tau in use:", tauLJ
 print "Timestep in use:", dt
@@ -253,7 +263,7 @@ hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Run the simulation
-hoomd.run(int(totTsteps))
+hoomd.run(inRun)
 
 
 
