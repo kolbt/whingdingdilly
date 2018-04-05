@@ -120,7 +120,7 @@ hoomd.context.initialize()
 system = hoomd.deprecated.init.create_random(N = partNum,
                                              phi_p = phi,
                                              name = 'A',
-                                             min_dist = 0.65,
+                                             min_dist = 0.70,
                                              seed = seed1,
                                              dimensions = 2)
 # Add B-type particles
