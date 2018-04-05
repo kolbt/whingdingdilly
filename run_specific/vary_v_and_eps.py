@@ -104,8 +104,15 @@ epsAB = epsA                                # make sure all use this
 dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauB                   # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = simLength * 2.0                  # dump data every 0.5 tauBrown
-dumpFreq = int(totTsteps / numDumps)        # normalized dump frequency
+numDumps = float(simLength / 0.1)           # dump data every 0.1 tauBrown
+dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
+dumpFreq = int(dumpFreq)                    # ensure this is an integer
+
+print "Tau in use:", tauLJ
+print "Epsilon in use:", epsAB
+print "Total number of timesteps:", totTsteps
+print "Total number of output frames:", numDumps
+print "File dump frequency:", dumpFreq
 
 # Initialize system
 hoomd.context.initialize()
