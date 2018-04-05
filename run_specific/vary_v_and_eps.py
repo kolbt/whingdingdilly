@@ -101,7 +101,7 @@ tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
 epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
 epsB = epsA                                 # make sure all use this
 epsAB = epsA                                # make sure all use this
-dt = 0.00001 * tauLJ                        # timestep size
+dt = 0.00005 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)             # how many tsteps to run
 numDumps = float(simLength / 0.5)           # dump data every 0.5 tauBrown
