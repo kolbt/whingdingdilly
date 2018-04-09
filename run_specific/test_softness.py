@@ -43,40 +43,57 @@ for i in range(1, len(rangeR)):
         myEvals[3][0] = rangeR[i]
         myEvals[3][1] = nDeriv[i-1]
 
+#print(myEvals)
+dotted = np.zeros_like(rangeR, dtype=np.float32)
+dotted2x = np.zeros_like(rangeR)
+#dotted2x[:] = 2.0**(float(1/6))
+dotted2x[:] = 1.122
+dotted2y = np.zeros_like(rangeR)
+count = -100
+for i in range(0, len(dotted2y)):
+    dotted2y[i] = count
+    count += 1
 
-print(myEvals)
-
-plt.plot(rangeR, potLJ)
-plt.xlim(0,5)
+plt.plot(rangeR, potLJ,
+         label=r'$U_{LJ}(r)=4\epsilon\left[\left(\frac{\sigma}{r}\right)^{12}-\left(\frac{\sigma}{r}\right)^{6}\right]$')
+plt.plot(rangeR, dotted, linestyle='--', label=r'$U_{LJ}=0$')
+plt.plot(dotted2x, dotted2y, linestyle='--', label=r'$r_{cut}=2^{\frac{1}{6}}\sigma$')
+plt.xlim(0.5,5)
 plt.ylim(-1.1,2)
-plt.xlabel(r'$\frac{r}{\sigma}$')
-plt.ylabel(r'$U_{Lennard-Jones}$')
-plt.show()
+plt.xlabel(r'$\frac{r}{\sigma}$', fontsize=20)
+plt.ylabel(r'$U_{Lennard-Jones}$', fontsize=20)
+plt.legend(fontsize=20)
+plt.tight_layout()
+plt.savefig('LJ_potential_eps1.png', dpi=1000)
+plt.close()
 
 #plt.plot(rangeR, forLJ)
-plt.plot(rangeR, nDeriv)
+plt.plot(rangeR, nDeriv, label=r'$F_{LJ}=-\frac{dU_{LJ}}{dr}$')
 
-plt.scatter(myEvals[0][0], myEvals[0][1])
+plt.scatter(myEvals[0][0], myEvals[0][1], label=r'$F_{LJ}=2F_{Active}$')
 plt.text(myEvals[0][0] + 0.01, myEvals[0][1] - 25,
          ("{0:.2f}".format(myEvals[0][0]), "{0:.0f}".format(myEvals[0][1])))
 
-plt.scatter(myEvals[1][0], myEvals[1][1])
+plt.scatter(myEvals[1][0], myEvals[1][1], label=r'$F_{LJ}=F_{Active}$')
 plt.text(myEvals[1][0] + 0.01, myEvals[1][1],
          ("{0:.2f}".format(myEvals[1][0]), "{0:.0f}".format(myEvals[1][1])))
 
-plt.scatter(myEvals[2][0], myEvals[2][1])
+plt.scatter(myEvals[2][0], myEvals[2][1], label=r'$F_{LJ}(\sigma)$')
 plt.text(myEvals[2][0] - 0.03, myEvals[2][1] + 25,
          ("{0:.2f}".format(myEvals[2][0]), "{0:.0f}".format(myEvals[2][1])))
 
-plt.scatter(myEvals[3][0], myEvals[3][1])
+plt.scatter(myEvals[3][0], myEvals[3][1], label=r'$F_{LJ}=0$')
 plt.text(myEvals[3][0] - 0.045, myEvals[3][1] + 25,
          ("{0:.2f}".format(myEvals[3][0]), "{0:.0f}".format(myEvals[3][1])))
 
 plt.xlim(0.77,1.14)
 plt.ylim(-1,1010)
-plt.xlabel(r'$\frac{r}{\sigma}$')
-plt.ylabel(r'$F_{Lennard-Jones}$')
-plt.show()
+plt.xlabel(r'$\frac{r}{\sigma}$', fontsize=20)
+plt.ylabel(r'$F_{Lennard-Jones}$', fontsize=20)
+plt.legend(fontsize=20)
+plt.tight_layout()
+plt.savefig('LJ_force_eps1.png', dpi=1000)
+plt.close()
 
 #def effectiveSigma(Fp):
 #    "Read in the force, compute effective diameter (r)"

@@ -65,7 +65,7 @@ def computeActiveForce(velocity):
 
 def computeEps(activeForce):
     "Given particle activity, output repulsion well depth"
-    epsilon = activeForce * sigma
+    epsilon = activeForce * sigma / 24.0
     return epsilon
 
 def computeTauLJ(epsilon):
