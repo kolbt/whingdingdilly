@@ -229,7 +229,8 @@ else:
 # Get filenames for various file types
 name = "pa" + str(peA) +\
 "_pb" + str(peB) +\
-"_xa" + str(partPercA)
+"_xa" + str(partPercA) +\
+"_ep" + str(eps)
 
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
