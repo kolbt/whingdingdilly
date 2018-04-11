@@ -136,7 +136,7 @@ do
 
         while [ $eps_count -le $eps_max ] # loop through epsilon at constant activity and particle fraction
         do
-            infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
+            infile=pa${pe_count}_pb${pe_b}_xa${x_count}_eps${eps_count}.py          # set unique infile name
             $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
             $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
             $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
