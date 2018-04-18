@@ -51,10 +51,13 @@ timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 orientations = np.zeros((dumps), dtype=np.ndarray)      # orientations
 velocities = np.zeros((dumps), dtype=np.ndarray)
 
+start = 243
+stop = 262
+
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
     box_data = snap.configuration.box                   # get box dimensions
-    for i in range(0,dumps):
+    for i in range(start, stop):
         snap = t[i]                                     # take snap of each dump
         type_array[i] = snap.particles.typeid
         position_array[i] = snap.particles.position     # store all particle positions
@@ -62,10 +65,10 @@ with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
         orientations[i] = snap.particles.orientation    # store the orientation of all particles
         velocities[i] = snap.particles.velocity         #store the velocity of all particles
 
-part_num = len(type_array[0])
+part_num = len(type_array[start])
 rads = np.zeros((dumps, part_num), dtype=np.float32)    # orientations as angles
 
-for iii in range(0,dumps):
+for iii in range(start, stop):
     for jjj in range(0,part_num):
         rads[iii][jjj] = quat_to_theta(orientations[iii][jjj])
 
@@ -95,9 +98,6 @@ blue = '#0000ff'
 anglemap = col.LinearSegmentedColormap.from_list('anglemap', [black, red, blue, black], N=265, gamma=1)
 plt.register_cmap(cmap=anglemap)
 
-start = 243
-stop = 262
-
 for mmm in range(start, stop):
     xs = np.zeros((part_num), dtype = np.float32)
     ys = np.zeros((part_num), dtype = np.float32)
@@ -106,7 +106,7 @@ for mmm in range(start, stop):
         ys[iii] = position_array[mmm][iii][1]
 
     #plt.scatter(xs, ys, s=0.5, c=rads[mmm], cmap = anglemap)
-    plt.scatter(xs, ys, s=0.5, c=rads[mmm], cmap=plt.get_cmap('hsv'))
+    plt.scatter(xs, ys, s=0.25, c=rads[mmm], cmap=plt.get_cmap('hsv'), edgecolors='none')
 #    plt.colorbar()
     plt.xlim(min, max)
     plt.ylim(min, max)
