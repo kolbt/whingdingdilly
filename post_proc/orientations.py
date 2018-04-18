@@ -51,8 +51,8 @@ timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 orientations = np.zeros((dumps), dtype=np.ndarray)      # orientations
 velocities = np.zeros((dumps), dtype=np.ndarray)
 
-start = 243
-stop = 262
+start = 288
+stop = 348
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
