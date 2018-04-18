@@ -34,7 +34,7 @@ script_path=$6
 # CoM_pa${pa}_pb${pb}_xa${xa}.mp4
 
 # Orientation specific scripts
-#myfile=$(pwd)
+myfile=$(pwd)
 #mkdir "pa${pa}_pb${pb}_xa${xa}_images"
 #cd "pa${pa}_pb${pb}_xa${xa}_images"
 
@@ -52,9 +52,9 @@ python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile
 # pressure_pa${pa}_pb${pb}_xa${xa}.mp4
 
 # Movies for binned vector force
-ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
- -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
- nBins100_pa${pa}_pb${pb}_xa${xa}.mp4
-
-rm nBins100_pa${pa}_pb${pb}_xa${xa}*.png
+#ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
+# -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
+# nBins100_pa${pa}_pb${pb}_xa${xa}.mp4
+#
+#rm nBins100_pa${pa}_pb${pb}_xa${xa}*.png
 
