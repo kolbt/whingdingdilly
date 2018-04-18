@@ -95,7 +95,10 @@ blue = '#0000ff'
 anglemap = col.LinearSegmentedColormap.from_list('anglemap', [black, red, blue, black], N=265, gamma=1)
 plt.register_cmap(cmap=anglemap)
 
-for mmm in range(0,dumps):
+start = 243
+stop = 262
+
+for mmm in range(start, stop):
     xs = np.zeros((part_num), dtype = np.float32)
     ys = np.zeros((part_num), dtype = np.float32)
     for iii in range(0,part_num):
