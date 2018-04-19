@@ -51,8 +51,8 @@ timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 orientations = np.zeros((dumps), dtype=np.ndarray)      # orientations
 velocities = np.zeros((dumps), dtype=np.ndarray)
 
-start = 155
-stop = 156
+start = 600
+stop = 602
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot
@@ -107,7 +107,7 @@ for mmm in range(start, stop):
 
     #plt.scatter(xs, ys, s=0.5, c=rads[mmm], cmap = anglemap)
     plt.scatter(xs, ys, s=0.25, c=rads[mmm], cmap=plt.get_cmap('hsv'), edgecolors='none')
-    plt.colorbar()
+#    plt.colorbar()
     plt.xlim(min, max)
     plt.ylim(min, max)
     plt.axes().get_xaxis().set_visible(False)
