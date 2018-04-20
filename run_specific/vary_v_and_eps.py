@@ -250,9 +250,9 @@ hoomd.dump.gsd(gsdName,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
-                        static=['dimensions', 'viz_static'],
-                        dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
+#hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
+#                        static=['dimensions', 'viz_static'],
+#                        dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Run the simulation
 hoomd.run(totTsteps)
