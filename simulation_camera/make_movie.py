@@ -39,7 +39,7 @@ vp = ovito.dataset.viewports.active_vp
 
 rs = RenderSettings(
     filename = outfile + ".mp4",
-    size = (600,600),
+    size = (1000,1000),
     background_color = (1.0, 1.0, 1.0),
     range = RenderSettings.Range.ANIMATION,
     renderer = OpenGLRenderer()
