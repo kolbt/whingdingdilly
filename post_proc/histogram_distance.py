@@ -46,6 +46,8 @@ from scipy.interpolate import griddata
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
+import seaborn as sns
+sns.set(color_codes=True)
 
 import math
 
@@ -61,12 +63,20 @@ in_file = "pa"+str(pe_a)+\
 "_xa"+str(part_perc_a)+\
 ".gsd"
 
+# File base
+b_file = "pa"+str(pe_a)+\
+"_pb"+str(pe_b)+\
+"_xa"+str(part_perc_a)
+
 f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 end = 2
+
+start = 400
+end = 402
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -97,8 +107,13 @@ a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 
 # Make the mesh
-nBins = 100
+nBins = 200
 sizeBin = l_box / nBins
+r_cut = 1.122
+#sizeBin = r_cut
+#nBins = int(l_box / sizeBin)
+
+print(sizeBin)
 
 for iii in range(start, end):
     
@@ -109,6 +124,12 @@ for iii in range(start, end):
     pos = positions[iii]
     pos = np.delete(pos, 2, 1)
     typ = types[iii]
+    
+    # Instantiate pair-wise lists
+    ALL = []
+    AA = []
+    BB = []
+    AB = []
 
     # Put particles in their respective bins
     for jjj in range(0, part_num):
@@ -119,6 +140,11 @@ for iii in range(start, end):
         y_ind = int(tmp_posY / sizeBin)
         # Append particle id to appropriate bin
         binParts[x_ind][y_ind].append(jjj)
+
+    countALL = 0
+    countAA = 0
+    countBB = 0
+    countAB = 0
 
     # Compute distance, each pair will be counted twice
     for jjj in range(0, part_num):
@@ -140,8 +166,8 @@ for iii in range(start, end):
         v_list = [b_bin, y_ind, t_bin]  # list of vertical bin indices
 
         # Loop through all bins
-        for h in len(h_list):
-            for v in len(v_list):
+        for h in range(0, len(h_list)):
+            for v in range(0, len(v_list)):
                 # Take care of periodic wrapping for position
                 wrapX = 0.0
                 wrapY = 0.0
@@ -154,17 +180,63 @@ for iii in range(start, end):
                 if v == 2 and v_list[v] == 0:
                     wrapY += l_box
                 # Compute distance between particles
-                for b in len(binParts[h][v]):
-                    ref = binParts[h][v][b]
+                for b in range(0, len(binParts[h_list[h]][v_list[v]])):
+                    ref = binParts[h_list[h]][v_list[v]][b]
                     r = getDistance(pos[jjj],
                                     pos[ref][0] + wrapX,
                                     pos[ref][1] + wrapY)
-                    if r <= 1.122:
+                    
+                    # If LJ potential is on, store into a list (omit self)
+                    if 0.1 < r <= r_cut:
+                        ALL.append(r)                       # All particles
+                        countALL += 1
+                        if typ[jjj] == 0 and typ[ref] == 0:   # AA distance
+                            AA.append(r)
+                            countAA += 1
+                        elif typ[jjj] == 1 and typ[ref] == 1: # BB distance
+                            BB.append(r)
+                            countBB += 1
+                        else:                               # AB distance
+                            AB.append(r)
+                            countAB += 1
 
+    popALL = len(ALL)
+    popAA = len(AA)
+    popAB = len(AB)
+    popBB = len(BB)
 
     # Plot histogram of data
+    sns.distplot(ALL, bins=100)
+    plt.savefig('ALL_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+    plt.close()
 
+    sns.distplot(AA, bins=100)
+    plt.savefig('AA_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+    plt.close()
 
+    sns.distplot(AB, bins=100)
+    plt.savefig('AB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+    plt.close()
+
+    sns.distplot(BB, bins=100)
+    plt.savefig('BB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+    plt.close()
+
+#    plt.hist(ALL, bins=100)
+#    plt.savefig('ALL_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.hist(AA, bins=100)
+#    plt.savefig('AA_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.hist(AB, bins=100)
+#    plt.savefig('AB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+#    plt.close()
+#    
+#    plt.hist(BB, bins=100)
+#    plt.savefig('BB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
+#    plt.close()
 
 
 
