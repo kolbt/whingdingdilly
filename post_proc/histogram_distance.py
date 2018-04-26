@@ -188,37 +188,38 @@ for iii in range(start, end):
                     
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
-                        ALL.append(r)                       # All particles
+                        ALL.append(r)                           # All particles
                         countALL += 1
-                        if typ[jjj] == 0 and typ[ref] == 0:   # AA distance
+                        if typ[jjj] == 0 and typ[ref] == 0:     # AA distance
                             AA.append(r)
                             countAA += 1
-                        elif typ[jjj] == 1 and typ[ref] == 1: # BB distance
+                        elif typ[jjj] == 1 and typ[ref] == 1:   # BB distance
                             BB.append(r)
                             countBB += 1
-                        else:                               # AB distance
+                        else:                                   # AB distance
                             AB.append(r)
                             countAB += 1
 
-    popALL = len(ALL)
-    popAA = len(AA)
-    popAB = len(AB)
-    popBB = len(BB)
+    popALL = len(ALL) / 2
+    popAA = len(AA) / 2
+    popAB = len(AB) / 2
+    popBB = len(BB) / 2
 
     # Plot histogram of data
-    sns.distplot(ALL, bins=100)
+    sns.distplot(ALL, norm_hist=True, bins=100)
     plt.savefig('ALL_' + b_file + "_" + str(iii) + '.png', dpi=1000)
     plt.close()
 
-    sns.distplot(AA, bins=100)
+    # This normalizes the plot so that the area under the curve is = 1
+    sns.distplot(AA, norm_hist=True, bins=100)
     plt.savefig('AA_' + b_file + "_" + str(iii) + '.png', dpi=1000)
     plt.close()
 
-    sns.distplot(AB, bins=100)
+    sns.distplot(AB, norm_hist=True, bins=100)
     plt.savefig('AB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
     plt.close()
 
-    sns.distplot(BB, bins=100)
+    sns.distplot(BB, norm_hist=True, bins=100)
     plt.savefig('BB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
     plt.close()
 
