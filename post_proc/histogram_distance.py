@@ -73,10 +73,9 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-end = 2
 
-start = 400
-end = 402
+#start = 400
+#end = 402
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -107,13 +106,19 @@ a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 
 # Make the mesh
-nBins = 200
-sizeBin = l_box / nBins
+#nBins = 200
+#sizeBin = l_box / nBins
 r_cut = 1.122
-#sizeBin = r_cut
-#nBins = int(l_box / sizeBin)
+sizeBin = r_cut
+nBins = int(l_box / sizeBin)
+nBins += 1                      # account for integer rounding
 
 print(sizeBin)
+# Instantiate lists here to sum temporally
+ALL = []
+AA = []
+BB = []
+AB = []
 
 for iii in range(start, end):
     
@@ -126,10 +131,10 @@ for iii in range(start, end):
     typ = types[iii]
     
     # Instantiate pair-wise lists
-    ALL = []
-    AA = []
-    BB = []
-    AB = []
+#    ALL = []
+#    AA = []
+#    BB = []
+#    AB = []
 
     # Put particles in their respective bins
     for jjj in range(0, part_num):
@@ -140,11 +145,6 @@ for iii in range(start, end):
         y_ind = int(tmp_posY / sizeBin)
         # Append particle id to appropriate bin
         binParts[x_ind][y_ind].append(jjj)
-
-    countALL = 0
-    countAA = 0
-    countBB = 0
-    countAB = 0
 
     # Compute distance, each pair will be counted twice
     for jjj in range(0, part_num):
@@ -189,55 +189,57 @@ for iii in range(start, end):
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
                         ALL.append(r)                           # All particles
-                        countALL += 1
                         if typ[jjj] == 0 and typ[ref] == 0:     # AA distance
                             AA.append(r)
-                            countAA += 1
                         elif typ[jjj] == 1 and typ[ref] == 1:   # BB distance
                             BB.append(r)
-                            countBB += 1
                         else:                                   # AB distance
                             AB.append(r)
-                            countAB += 1
 
-    popALL = len(ALL) / 2
-    popAA = len(AA) / 2
-    popAB = len(AB) / 2
-    popBB = len(BB) / 2
+popALL = len(ALL) / 2
+popAA = len(AA) / 2
+popAB = len(AB) / 2
+popBB = len(BB) / 2
 
-    # Plot histogram of data
-    sns.distplot(ALL, norm_hist=True, bins=100)
-    plt.savefig('ALL_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-    plt.close()
+fig, ax = plt.subplots()
+plt.hist(ALL, bins=100)
+plt.text(0.60, 0.95,
+         "Computed for: " + str(popALL)+" pairs",
+         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.savefig('ALL_' + b_file + "_" + '.png', dpi=1000)
+plt.close()
 
-    # This normalizes the plot so that the area under the curve is = 1
-    sns.distplot(AA, norm_hist=True, bins=100)
-    plt.savefig('AA_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-    plt.close()
+fig, ax = plt.subplots()
+plt.hist(AA, bins=100)
+plt.text(0.60, 0.95,
+         "Computed for: " + str(popAA)+" pairs",
+         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.savefig('AA_' + b_file + "_" + '.png', dpi=1000)
+plt.close()
 
-    sns.distplot(AB, norm_hist=True, bins=100)
-    plt.savefig('AB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-    plt.close()
+fig, ax = plt.subplots()
+plt.hist(AB, bins=100)
+plt.text(0.60, 0.95,
+         "Computed for: " + str(popAB)+" pairs",
+         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.savefig('AB_' + b_file + "_" + '.png', dpi=1000)
+plt.close()
 
-    sns.distplot(BB, norm_hist=True, bins=100)
-    plt.savefig('BB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-    plt.close()
-
-#    plt.hist(ALL, bins=100)
-#    plt.savefig('ALL_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-#    plt.close()
-#    
-#    plt.hist(AA, bins=100)
-#    plt.savefig('AA_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-#    plt.close()
-#    
-#    plt.hist(AB, bins=100)
-#    plt.savefig('AB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-#    plt.close()
-#    
-#    plt.hist(BB, bins=100)
-#    plt.savefig('BB_' + b_file + "_" + str(iii) + '.png', dpi=1000)
-#    plt.close()
+fig, ax = plt.subplots()
+plt.hist(BB, bins=100)
+plt.text(0.60, 0.95,
+         "Computed for: " + str(popBB)+" pairs",
+         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.savefig('BB_' + b_file + "_" + '.png', dpi=1000)
+plt.close()
 
 
 
