@@ -43,6 +43,7 @@ from freud import cluster
 
 import numpy as np
 from scipy.interpolate import griddata
+from scipy import stats
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -74,8 +75,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 
-#start = 400
-#end = 402
+start = dumps - 1
+#end = 401
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -185,6 +186,7 @@ for iii in range(start, end):
                     r = getDistance(pos[jjj],
                                     pos[ref][0] + wrapX,
                                     pos[ref][1] + wrapY)
+                    r = round(r, 4) # round value to 4 decimal places
                     
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
@@ -201,51 +203,89 @@ popAA = len(AA) / 2
 popAB = len(AB) / 2
 popBB = len(BB) / 2
 
+# Compute statistics for all interactions
+avgALL = np.mean(ALL)
+medianALL = np.median(ALL)
+modeALL = stats.mode(ALL)
+modeALL = modeALL[0][0]
+
+# Compute statistics for AA interactions
+avgAA = np.mean(AA)
+medianAA = np.median(AA)
+modeAA = stats.mode(AA)
+modeAA = modeAA[0][0]
+
+# Compute statistics for AB interactions
+avgAB = np.mean(AB)
+medianAB = np.median(AB)
+modeAB = stats.mode(AB)
+modeAB = modeAB[0][0]
+
+# Compute statistics for BB interactions
+avgBB = np.mean(BB)
+medianBB = np.median(BB)
+modeBB = stats.mode(BB)
+modeBB = modeBB[0][0]
+
+# Set width of each bin for plotting
+binwidth = 0.005
+
+# Plot data for all particles
 fig, ax = plt.subplots()
-plt.hist(ALL, bins=100)
-plt.text(0.60, 0.95,
+plt.hist(ALL, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.axvline(x=avgALL, c='k', label="Average: " + str(round(avgALL, 3)))
+plt.axvline(x=medianALL, c='g', label="Median: " + str(round(medianALL, 3)))
+plt.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
+plt.text(0.0, 0.95,
          "Computed for: " + str(popALL)+" pairs",
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
-plt.savefig('ALL_' + b_file + "_" + '.png', dpi=1000)
+plt.legend(loc='upper right')
+plt.savefig('ALL_' + b_file + '.png', dpi=1000)
 plt.close()
 
+# Plot data for AA interactions
 fig, ax = plt.subplots()
-plt.hist(AA, bins=100)
-plt.text(0.60, 0.95,
+plt.hist(AA, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.axvline(x=avgAA, c='k', label="Average: " + str(round(avgAA, 3)))
+plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
+plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
+plt.text(0.0, 0.95,
          "Computed for: " + str(popAA)+" pairs",
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
-plt.savefig('AA_' + b_file + "_" + '.png', dpi=1000)
+plt.legend(loc='upper right')
+plt.savefig('AA_' + b_file + '.png', dpi=1000)
 plt.close()
 
+# Plot data for AB interactions
 fig, ax = plt.subplots()
-plt.hist(AB, bins=100)
-plt.text(0.60, 0.95,
+plt.hist(AB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.axvline(x=avgAB, c='k', label="Average: " + str(round(avgAB, 3)))
+plt.axvline(x=medianAB, c='g', label="Median: " + str(round(medianAB, 3)))
+plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
+plt.text(0.0, 0.95,
          "Computed for: " + str(popAB)+" pairs",
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
-plt.savefig('AB_' + b_file + "_" + '.png', dpi=1000)
+plt.legend(loc='upper right')
+plt.savefig('AB_' + b_file + '.png', dpi=1000)
 plt.close()
 
+# Plot data for BB interactions
 fig, ax = plt.subplots()
-plt.hist(BB, bins=100)
-plt.text(0.60, 0.95,
+plt.hist(BB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.axvline(x=avgBB, c='k', label="Average: " + str(round(avgBB, 3)))
+plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
+plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
+plt.text(0.0, 0.95,
          "Computed for: " + str(popBB)+" pairs",
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
-plt.savefig('BB_' + b_file + "_" + '.png', dpi=1000)
+plt.legend(loc='upper right')
+plt.savefig('BB_' + b_file + '.png', dpi=1000)
 plt.close()
-
-
-
-
-
-
-
-
-
