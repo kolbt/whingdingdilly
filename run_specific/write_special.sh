@@ -34,6 +34,13 @@ if [ $gpu == "y" ]; then
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
 fi
 
+echo "Distinct epsilon values?"
+read distEps
+
+if [ $distEps == "y" ]; then
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/multiple_epsilons.py'
+fi
+
 # Default values for simulations
 part_num=$(( 15000 ))
 phi=$(( 60 ))

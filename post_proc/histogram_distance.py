@@ -75,7 +75,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 
-start = dumps - 1
+# Run for last 20 tsteps?
+start = dumps - 20
 #end = 401
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
@@ -122,6 +123,8 @@ BB = []
 AB = []
 
 for iii in range(start, end):
+    
+    print(iii)
     
     # Mesh array
     binParts = [ [ [] for b in range(nBins) ] for a in range(nBins) ]
