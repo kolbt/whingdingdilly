@@ -45,6 +45,8 @@ import numpy as np
 from scipy.interpolate import griddata
 from scipy import stats
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import seaborn as sns
