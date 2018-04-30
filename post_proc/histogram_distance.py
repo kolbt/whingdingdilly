@@ -115,7 +115,7 @@ sizeBin = r_cut
 nBins = int(l_box / sizeBin)
 nBins += 1                      # account for integer rounding
 
-print(sizeBin)
+#print(sizeBin)
 # Instantiate lists here to sum temporally
 ALL = []
 AA = []
@@ -123,8 +123,6 @@ BB = []
 AB = []
 
 for iii in range(start, end):
-    
-    print(iii)
     
     # Mesh array
     binParts = [ [ [] for b in range(nBins) ] for a in range(nBins) ]
@@ -134,7 +132,7 @@ for iii in range(start, end):
     pos = np.delete(pos, 2, 1)
     typ = types[iii]
     
-    # Instantiate pair-wise lists
+    # Instantiate pair-wise lists (no time-average)
 #    ALL = []
 #    AA = []
 #    BB = []
@@ -201,30 +199,29 @@ for iii in range(start, end):
                         else:                                   # AB distance
                             AB.append(r)
 
-popALL = len(ALL) / 2
-popAA = len(AA) / 2
-popAB = len(AB) / 2
-popBB = len(BB) / 2
-
 # Compute statistics for all interactions
+popALL = len(ALL) / 2
 avgALL = np.mean(ALL)
 medianALL = np.median(ALL)
 modeALL = stats.mode(ALL)
 modeALL = modeALL[0][0]
 
 # Compute statistics for AA interactions
+popAA = len(AA) / 2
 avgAA = np.mean(AA)
 medianAA = np.median(AA)
 modeAA = stats.mode(AA)
 modeAA = modeAA[0][0]
 
 # Compute statistics for AB interactions
+popAB = len(AB) / 2
 avgAB = np.mean(AB)
 medianAB = np.median(AB)
 modeAB = stats.mode(AB)
 modeAB = modeAB[0][0]
 
 # Compute statistics for BB interactions
+popBB = len(BB) / 2
 avgBB = np.mean(BB)
 medianBB = np.median(BB)
 modeBB = stats.mode(BB)
