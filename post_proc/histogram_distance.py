@@ -17,8 +17,8 @@ What this file does:
 # Imports and loading the .gsd file
 import sys
 
-pe_a = int(sys.argv[1])                     # activity A
-pe_b = int(sys.argv[2])                     # activity B
+peA = int(sys.argv[1])                     # activity A
+peB = int(sys.argv[2])                     # activity B
 part_perc_a = int(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
@@ -54,21 +54,80 @@ sns.set(color_codes=True)
 
 import math
 
+# Set some constants
+kT = 1.0                        # temperature
+threeEtaPiSigma = 1.0           # drag coefficient
+sigma = 1.0                     # particle diameter
+D_t = kT / threeEtaPiSigma      # translational diffusion constant
+D_r = (3.0 * D_t) / (sigma**2)  # rotational diffusion constant
+tauBrown = (sigma**2) / D_t     # brownian time scale (invariant)
+
 # Any functions I'll need go here
 def getDistance(point1, point2x, point2y):
     "Find the distance between two points"
     distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
     return distance
 
+def computeVel(activity):
+    "Given particle activity, output intrinsic swim speed"
+    velocity = (activity * sigma) / (3 * (1/D_r))
+    return velocity
+
+def computeActiveForce(velocity):
+    "Given particle activity, output repulsion well depth"
+    activeForce = velocity * threeEtaPiSigma
+    return activeForce
+
+def computeEps(activeForce):
+    "Given particle activity, output repulsion well depth"
+    epsilon = activeForce * sigma / 24.0
+    return epsilon
+
+def computeTauLJ(epsilon):
+    "Given epsilon, compute lennard-jones time unit"
+    tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
+    return tauLJ
+
+def getLJForce(r, epsilon):
+    "Given a distance compute the force being experienced"
+    ljForce = 48*epsilon*(((sigma**12)/(r**13))-((sigma**6)/(r**7)))
+    return ljForce
+
+# Compute parameters from activities
+if peA != 0:                        # A particles are NOT Brownian
+    vA = computeVel(peA)
+    FpA = computeActiveForce(vA)
+    epsA = computeEps(FpA)
+    tauA = computeTauLJ(epsA)
+else:                               # A particles are Brownian
+    vA = 0.0
+    FpA = 0.0
+    epsA = kT
+    tauA = computeTauLJ(epsA)
+
+if peB != 0:                        # B particles are NOT Brownian
+    vB = computeVel(peB)
+    FpB = computeActiveForce(vB)
+    epsB = computeEps(FpB)
+    tauB = computeTauLJ(epsB)
+else:                               # B particles are Brownian
+    vB = 0.0
+    FpB = 0.0
+    epsB = kT
+    tauB = computeTauLJ(epsB)
+
+eps = (epsA if (epsA >= epsB) else epsB)    # use the larger epsilon
+Fp = (FpA if (FpA >= FpB) else FpB)         # use the larger active force
+
 # File to read from
-in_file = "pa"+str(pe_a)+\
-"_pb"+str(pe_b)+\
+in_file = "pa"+str(peA)+\
+"_pb"+str(peB)+\
 "_xa"+str(part_perc_a)+\
 ".gsd"
 
 # File base
-b_file = "pa"+str(pe_a)+\
-"_pb"+str(pe_b)+\
+b_file = "pa"+str(peA)+\
+"_pb"+str(peB)+\
 "_xa"+str(part_perc_a)
 
 f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
@@ -203,6 +262,8 @@ for iii in range(start, end):
 
 # Compute statistics for all interactions
 popALL = len(ALL) / 2
+minALL = min(ALL)
+maxFALL = getLJForce(minALL, eps)
 avgALL = np.mean(ALL)
 medianALL = np.median(ALL)
 modeALL = stats.mode(ALL)
@@ -210,6 +271,8 @@ modeALL = modeALL[0][0]
 
 # Compute statistics for AA interactions
 popAA = len(AA) / 2
+minAA = min(AA)
+maxFAA = getLJForce(minAA, eps)
 avgAA = np.mean(AA)
 medianAA = np.median(AA)
 modeAA = stats.mode(AA)
@@ -217,6 +280,8 @@ modeAA = modeAA[0][0]
 
 # Compute statistics for AB interactions
 popAB = len(AB) / 2
+minAB = min(AB)
+maxFAB = getLJForce(minAB, eps)
 avgAB = np.mean(AB)
 medianAB = np.median(AB)
 modeAB = stats.mode(AB)
@@ -224,6 +289,8 @@ modeAB = modeAB[0][0]
 
 # Compute statistics for BB interactions
 popBB = len(BB) / 2
+minBB = min(BB)                 # smallest distance
+maxFBB = getLJForce(minBB, eps) # corresponds to largest force
 avgBB = np.mean(BB)
 medianBB = np.median(BB)
 modeBB = stats.mode(BB)
@@ -241,6 +308,12 @@ plt.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
 plt.text(0.0, 0.95,
          "Computed for: " + str(popALL)+" pairs",
          transform=ax.transAxes)
+plt.text(0.0, 0.90,
+         "Maximum force: " + str(round(maxFALL,-1)),
+         transform=ax.transAxes)
+plt.text(0.0, 0.85,
+         "Fast Active Force: " + str(round(Fp,0)),
+         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
@@ -255,6 +328,12 @@ plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
 plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAA)+" pairs",
+         transform=ax.transAxes)
+plt.text(0.0, 0.90,
+         "Maximum force: " + str(round(maxFAA,-1)),
+         transform=ax.transAxes)
+plt.text(0.0, 0.85,
+         "Fast Active Force: " + str(round(Fp,0)),
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
@@ -271,6 +350,12 @@ plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAB)+" pairs",
          transform=ax.transAxes)
+plt.text(0.0, 0.90,
+         "Maximum force: " + str(round(maxFAB,-1)),
+         transform=ax.transAxes)
+plt.text(0.0, 0.85,
+         "Fast Active Force: " + str(round(Fp,0)),
+         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
@@ -285,6 +370,12 @@ plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
 plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
 plt.text(0.0, 0.95,
          "Computed for: " + str(popBB)+" pairs",
+         transform=ax.transAxes)
+plt.text(0.0, 0.90,
+         "Maximum force: " + str(round(maxFBB,-1)),
+         transform=ax.transAxes)
+plt.text(0.0, 0.85,
+         "Fast Active Force: " + str(round(Fp,0)),
          transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
