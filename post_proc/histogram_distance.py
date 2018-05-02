@@ -137,7 +137,7 @@ start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 
 # Run for last 20 tsteps?
-start = dumps - 20
+start = dumps - 2
 #end = 401
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
@@ -296,15 +296,20 @@ medianBB = np.median(BB)
 modeBB = stats.mode(BB)
 modeBB = modeBB[0][0]
 
-# Set width of each bin for plotting
-binwidth = 0.005
+
+xmin = 0.80
+xmax = r_cut
+ymin = 0
+ymax = 20
 
 # Plot data for all particles
 fig, ax = plt.subplots()
-plt.hist(ALL, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.hist(ALL, bins=50, normed=True)
 plt.axvline(x=avgALL, c='k', label="Average: " + str(round(avgALL, 3)))
 plt.axvline(x=medianALL, c='g', label="Median: " + str(round(medianALL, 3)))
 plt.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popALL)+" pairs",
          transform=ax.transAxes)
@@ -322,10 +327,12 @@ plt.close()
 
 # Plot data for AA interactions
 fig, ax = plt.subplots()
-plt.hist(AA, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.hist(AA,  bins=50, normed=True)
 plt.axvline(x=avgAA, c='k', label="Average: " + str(round(avgAA, 3)))
 plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
 plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAA)+" pairs",
          transform=ax.transAxes)
@@ -343,10 +350,12 @@ plt.close()
 
 # Plot data for AB interactions
 fig, ax = plt.subplots()
-plt.hist(AB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.hist(AB,  bins=50, normed=True)
 plt.axvline(x=avgAB, c='k', label="Average: " + str(round(avgAB, 3)))
 plt.axvline(x=medianAB, c='g', label="Median: " + str(round(medianAB, 3)))
 plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAB)+" pairs",
          transform=ax.transAxes)
@@ -364,10 +373,12 @@ plt.close()
 
 # Plot data for BB interactions
 fig, ax = plt.subplots()
-plt.hist(BB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+plt.hist(BB,  bins=50, normed=True)
 plt.axvline(x=avgBB, c='k', label="Average: " + str(round(avgBB, 3)))
 plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
 plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popBB)+" pairs",
          transform=ax.transAxes)
@@ -382,3 +393,90 @@ ax.set(xlabel='Center-to-center distance $(\delta$)',
 plt.legend(loc='upper right')
 plt.savefig('BB_' + b_file + '.png', dpi=1000)
 plt.close()
+
+## Set width of each bin for plotting
+#binwidth = 0.005
+#
+## Plot data for all particles
+#fig, ax = plt.subplots()
+#plt.hist(ALL, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+#plt.axvline(x=avgALL, c='k', label="Average: " + str(round(avgALL, 3)))
+#plt.axvline(x=medianALL, c='g', label="Median: " + str(round(medianALL, 3)))
+#plt.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
+#plt.text(0.0, 0.95,
+#         "Computed for: " + str(popALL)+" pairs",
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFALL,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+#ax.set(xlabel='Center-to-center distance $(\delta$)',
+#       ylabel='Number of particles')
+#plt.legend(loc='upper right')
+#plt.savefig('ALL_' + b_file + '.png', dpi=1000)
+#plt.close()
+#
+## Plot data for AA interactions
+#fig, ax = plt.subplots()
+#plt.hist(AA, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+#plt.axvline(x=avgAA, c='k', label="Average: " + str(round(avgAA, 3)))
+#plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
+#plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
+#plt.text(0.0, 0.95,
+#         "Computed for: " + str(popAA)+" pairs",
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFAA,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+#ax.set(xlabel='Center-to-center distance $(\delta$)',
+#       ylabel='Number of particles')
+#plt.legend(loc='upper right')
+#plt.savefig('AA_' + b_file + '.png', dpi=1000)
+#plt.close()
+#
+## Plot data for AB interactions
+#fig, ax = plt.subplots()
+#plt.hist(AB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+#plt.axvline(x=avgAB, c='k', label="Average: " + str(round(avgAB, 3)))
+#plt.axvline(x=medianAB, c='g', label="Median: " + str(round(medianAB, 3)))
+#plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
+#plt.text(0.0, 0.95,
+#         "Computed for: " + str(popAB)+" pairs",
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFAB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+#ax.set(xlabel='Center-to-center distance $(\delta$)',
+#       ylabel='Number of particles')
+#plt.legend(loc='upper right')
+#plt.savefig('AB_' + b_file + '.png', dpi=1000)
+#plt.close()
+#
+## Plot data for BB interactions
+#fig, ax = plt.subplots()
+#plt.hist(BB, bins=np.arange(min(ALL), max(ALL) + binwidth, binwidth))
+#plt.axvline(x=avgBB, c='k', label="Average: " + str(round(avgBB, 3)))
+#plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
+#plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
+#plt.text(0.0, 0.95,
+#         "Computed for: " + str(popBB)+" pairs",
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFBB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+#ax.set(xlabel='Center-to-center distance $(\delta$)',
+#       ylabel='Number of particles')
+#plt.legend(loc='upper right')
+#plt.savefig('BB_' + b_file + '.png', dpi=1000)
+#plt.close()
