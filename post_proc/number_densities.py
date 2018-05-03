@@ -204,7 +204,7 @@ for iii in range(start, end):
 
     # Values have been set, write to text files
     f = open(all_file, 'a')
-    f.write(('{0:.2f}'.format(tst*0.000001)).center(10) + ' ' +\
+    f.write(('{0:.2f}'.format(tst)).center(10) + ' ' +\
             str(gas_A).center(10) + ' ' +\
             str(gas_B).center(10) + ' ' +\
             str(gas_num).center(10) + ' ' +\
