@@ -26,9 +26,9 @@ if [ $answer == "y" ]; then
 fi
 
 
-for filename in $( ls pa*.gsd )
+#for filename in $( ls pa*.gsd )
 #for filename in $( ls *pa*_0.png )
-#for filename in $( ls all_pa*.txt )
+for filename in $( ls all_pa*.txt )
 do
 
     # pull parameters from filename
