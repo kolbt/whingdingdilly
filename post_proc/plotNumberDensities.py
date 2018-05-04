@@ -98,7 +98,7 @@ lgClust,\
 dpDensity,\
 gpDensity,\
 dpArea,\
-gpArea= np.loadtxt(inTxt, skiprows=1, unpack=True)
+gpArea = np.loadtxt(inTxt, skiprows=1, unpack=True)
 
 # Get adjusted time units
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
