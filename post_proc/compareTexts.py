@@ -239,7 +239,7 @@ plt.ylabel('Dense Phase Area')
 plt.savefig('dpArea.png', dpi=1000)
 plt.close()
 
-
+# Steady state values
 
 
 
