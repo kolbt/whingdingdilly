@@ -240,11 +240,267 @@ plt.savefig('dpArea.png', dpi=1000)
 plt.close()
 
 # Steady state values
+ssGasA = np.zeros((len(txtFiles)), dtype=np.float64)
+ssGasB = np.zeros((len(txtFiles)), dtype=np.float64)
+ssGasAll = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDenseA = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDenseB = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDenseAll = np.zeros((len(txtFiles)), dtype=np.float64)
+ssLgClust = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDPDensity = np.zeros((len(txtFiles)), dtype=np.float64)
+ssGPDensity = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDPArea = np.zeros((len(txtFiles)), dtype=np.float64)
+ssGPArea = np.zeros((len(txtFiles)), dtype=np.float64)
 
+# Get steady state values (last 100 dumps)
+for i in range(0, len(txtFiles)):
+    ssGasA[i] = np.mean(gasA[i][-100:-1])
+    ssGasB[i] = np.mean(gasB[i][-100:-1])
+    ssGasAll[i] = np.mean(gasAll[i][-100:-1])
+    ssDenseA[i] = np.mean(denseA[i][-100:-1])
+    ssDenseB[i] = np.mean(denseB[i][-100:-1])
+    ssDenseAll[i] = np.mean(denseAll[i][-100:-1])
+    ssLgClust[i] = np.mean(lgClust[i][-100:-1])
+    ssDPDensity[i] = np.mean(dpDensity[i][-100:-1])
+    ssGPDensity[i] = np.mean(gpDensity[i][-100:-1])
+    ssDPArea[i] = np.mean(dpArea[i][-100:-1])
+    ssGPArea[i] = np.mean(gpArea[i][-100:-1])
 
+# Plot as a function of activity OR activity ratio
 
+# Gas Phase #####################
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssGasA[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssGasA[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssGasA[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
 
+plt.ylabel('Steady-State Fraction of A-Particles in Gas')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_gasA.png', dpi=1000)
+plt.close()
 
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssGasB[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssGasB[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssGasB[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
 
+plt.ylabel('Steady-State Fraction of B-Particles in Gas')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_gasB.png', dpi=1000)
+plt.close()
 
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssGasAll[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssGasAll[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssGasAll[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Fraction of All Particles in Gas')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_gasAll.png', dpi=1000)
+plt.close()
+
+# Dense Phase ###################
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssDenseA[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssDenseA[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssDenseA[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Fraction of A-Particles in Dense Phase')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_denseA.png', dpi=1000)
+plt.close()
+
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssDenseB[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssDenseB[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssDenseB[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Fraction of B-Particles in Dense Phase')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_denseB.png', dpi=1000)
+plt.close()
+
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssDenseAll[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssDenseAll[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssDenseAll[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Fraction of All Particles in Dense Phase')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_denseAll.png', dpi=1000)
+plt.close()
+
+# Largest Cluster ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssLgClust[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssLgClust[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssLgClust[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Largest Cluster Size')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_dpDensity.png', dpi=1000)
+plt.close()
+
+# Cluster Density ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssDPDensity[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssDPDensity[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssDPDensity[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Dense Phase Density')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_dpDensity.png', dpi=1000)
+plt.close()
+
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssGPDensity[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssGPDensity[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssGPDensity[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Gas Phase Density')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_gpDensity.png', dpi=1000)
+plt.close()
+
+# Cluster Area ##################
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssDPArea[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssDPArea[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssDPArea[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Dense Phase Area')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_dpArea.png', dpi=1000)
+plt.close()
+
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssGPArea[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssGPArea[i], label=str(peA[i]))
+        plt.xlabel(r'Activity')
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssGPArea[i], label=str(ratio))
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Gas Phase Area')
+plt.legend()
+#plt.ylim(0,1)
+plt.savefig('SteadyState_gpArea.png', dpi=1000)
+plt.close()
 
