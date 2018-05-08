@@ -98,8 +98,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-#start = 155
-#end = 160
+start = 155
+end = 160
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -191,7 +191,7 @@ for iii in range(start, end):
     plt.xlim(-h_box, h_box)
     plt.ylim(-h_box, h_box)
     ax.set_aspect('equal')
-    plt.title('Original')
+#    plt.title('Original')
 
     # Plot binned orientation
     ax = fig.add_subplot(222)
@@ -201,10 +201,10 @@ for iii in range(start, end):
                cmap=plt.get_cmap('hsv'))
     plt.xticks(())
     plt.yticks(())
-    cb = plt.colorbar()
-    cb.set_ticks([])
+#    cb = plt.colorbar()
+#    cb.set_ticks([])
     ax.set_aspect('equal')
-    plt.title('Orientation')
+#    plt.title('Orientation')
 
     # Plot binned summed force magnitudes
     ax = fig.add_subplot(223)
@@ -213,10 +213,10 @@ for iii in range(start, end):
                origin='lower')
     plt.xticks(())
     plt.yticks(())
-    cb = plt.colorbar()
-    cb.set_ticks([])
+#    cb = plt.colorbar()
+#    cb.set_ticks([])
     ax.set_aspect('equal')
-    plt.title('Summed ||Force||')
+#    plt.title('Summed ||Force||')
 
     # Plot binned data using imshow
     ax = fig.add_subplot(224)
@@ -226,10 +226,10 @@ for iii in range(start, end):
                clim=(0,10000))
     plt.xticks(())
     plt.yticks(())
-    cb = plt.colorbar()
-    cb.set_ticks([])
+#    cb = plt.colorbar()
+#    cb.set_ticks([])
     ax.set_aspect('equal')
-    plt.title('Summed Vector Force')
+#    plt.title('Summed Vector Force')
 
     # Figure name
 #    plt.show()
