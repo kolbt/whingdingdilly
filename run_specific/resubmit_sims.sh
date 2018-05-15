@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# Before running this file you need to make a directory that has all the python files
-# that you want to resubmit
-
 current=$( date "+%m_%d_%y" )
 this_path=$( pwd )
 
@@ -33,10 +30,25 @@ if [ $gpu == "y" ]; then
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
 fi
 
-for infile in $(ls *.py)
+# Run from the directory where the slurm files are
+for file in $(ls slurm-*)
 do
 
-    $submit $script_path $infile
+    count=$(grep -c "run complete" $file)
+    if [ $count -eq 1 ]; then
+        echo $file
+        # Grab the python file that you need to resubmit
+        pa=$(grep -a -m 1 -h 'pa' $file | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+        pb=$(grep -a -m 1 -h '_pb' $file | $sedtype 's/^.*_pb\([0-9]*\)_.*/\1/')
+        xa=$(grep -a -m 1 -h '_xa' $file | $sedtype 's/^.*_xa\([0-9]*\)..*/\1/')
+        infile=pa${pa}_pb${pb}_xa${xa}.py
+        echo $infile
+#        $submit $script_path $infile
+    fi
 
 done
+
+
+
+
 
