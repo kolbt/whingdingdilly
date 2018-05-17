@@ -84,17 +84,16 @@ l_box = box_data[0]
 h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
-radialDF = freud.density.RDF(10.0, 0.1, 0.6)
+radialDF = freud.density.RDF(10.0, 0.1)
 
 for iii in range(start, end):
     
     # Easier accessors
     pos = positions[iii]
-    pos = np.delete(pos, 2, 1)
     typ = types[iii]
     dir = orient[iii]
 
-    radialDF.compute(f_box, pos[iii], pos[iii], nlist=None)
+    radialDF.compute(f_box, pos[iii], pos[iii])
     myRDF = radialDF.getRDF()
     plt.hist(myRDF)
     plt.show()
