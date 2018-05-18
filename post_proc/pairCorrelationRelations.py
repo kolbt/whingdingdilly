@@ -34,7 +34,7 @@ from freud import density
 from freud import cluster
 
 import numpy as np
-from scipy.interpolate import griddata
+from scipy.fftpack import fft, ifft
 
 import matplotlib.pyplot as plt
 from matplotlib import colors
@@ -52,8 +52,8 @@ dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
-start = 232
-end = 234
+start = 2
+end = 3
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -84,7 +84,20 @@ l_box = box_data[0]
 h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
-radialDF = freud.density.RDF(10.0, 0.1)
+
+nBins = 1000
+widthBin = 0.005
+searchRange = nBins * widthBin
+radialDF = freud.density.RDF(searchRange, widthBin)
+
+#r = np.arange(0.0, searchRange, widthBin)
+#k = np.arange(0.0, )
+
+N = nBins                       # number of samples
+T = widthBin                    # spacing between samples
+r = np.linspace(0.0, N*T, N)    # 0 through searchRange with Nbins
+# // is floor division, adjusts to left in number line
+k = np.linspace(0.0, 1.0/(2.0*T), N//2)
 
 for iii in range(start, end):
     
@@ -93,10 +106,59 @@ for iii in range(start, end):
     typ = types[iii]
     dir = orient[iii]
 
-    radialDF.compute(f_box, pos[iii], pos[iii])
+    radialDF.compute(f_box, pos, pos)
     myRDF = radialDF.getRDF()
-    plt.hist(myRDF)
+    sFact = fft(myRDF)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(231)
+    plt.plot(r, myRDF)
+    plt.xlim(0.0, searchRange)
+    plt.ylim(0.0)
+    plt.xlabel(r'r $(\sigma)$')
+    plt.ylabel(r'g(r)')
+    plt.title("Pair correlation function")
+
+    ax = fig.add_subplot(232)
+    plt.plot(k, 2.0/N * np.abs(sFact[0:N//2]))
+    plt.xlabel(r'$q\sigma$')
+    plt.ylabel(r'S(q)')
+    plt.title("SciPy linspace Method")
+
+    ax = fig.add_subplot(233)
+    plt.loglog(1/r, np.abs(sFact))
+    plt.xlabel(r'$q\sigma^{-1}$')
+    plt.ylabel(r'S(q)')
+    plt.title("Wavevector = inverse distance (loglog)")
+
+    ax = fig.add_subplot(234)
+    plt.plot(1/r, np.abs(sFact))
+    plt.xlabel(r'$q\sigma^{-1}$')
+    plt.ylabel(r'S(q)')
+    plt.title("Wavevector = inverse distance")
+
+    ax = fig.add_subplot(235)
+    plt.plot(r, np.abs(sFact))
+    plt.xlabel(r'$q\sigma$')
+    plt.ylabel(r'S(q)')
+    plt.title("Wavevector = distance")
+
+    ax = fig.add_subplot(236)
+    plt.loglog(r, np.abs(sFact))
+    plt.xlabel(r'$q\sigma$')
+    plt.ylabel(r'S(q)')
+#    plt.ylim(0, 200)
+    plt.title("Wavevector = distance (loglog)")
     plt.show()
+
+    plt.plot(1/r, np.abs(sFact))
+    plt.xlabel(r'$q(\sigma^{-1})$')
+    plt.ylabel(r'S(q)')
+#    plt.xlim(0, 10)
+#    plt.ylim(0, 200)
+    plt.title("Wavevector = inverse distance")
+    plt.show()
+
 
 #ffmpeg -framerate 10 -i nBins100_pa150_pb500_xa50_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
