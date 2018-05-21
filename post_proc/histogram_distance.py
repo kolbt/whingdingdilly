@@ -313,12 +313,12 @@ plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popALL)+" pairs",
          transform=ax.transAxes)
-plt.text(0.0, 0.90,
-         "Maximum force: " + str(round(maxFALL,-1)),
-         transform=ax.transAxes)
-plt.text(0.0, 0.85,
-         "Fast Active Force: " + str(round(Fp,0)),
-         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFALL,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
@@ -336,12 +336,12 @@ plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAA)+" pairs",
          transform=ax.transAxes)
-plt.text(0.0, 0.90,
-         "Maximum force: " + str(round(maxFAA,-1)),
-         transform=ax.transAxes)
-plt.text(0.0, 0.85,
-         "Fast Active Force: " + str(round(Fp,0)),
-         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFAA,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
@@ -359,12 +359,12 @@ plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popAB)+" pairs",
          transform=ax.transAxes)
-plt.text(0.0, 0.90,
-         "Maximum force: " + str(round(maxFAB,-1)),
-         transform=ax.transAxes)
-plt.text(0.0, 0.85,
-         "Fast Active Force: " + str(round(Fp,0)),
-         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFAB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
@@ -382,12 +382,12 @@ plt.ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popBB)+" pairs",
          transform=ax.transAxes)
-plt.text(0.0, 0.90,
-         "Maximum force: " + str(round(maxFBB,-1)),
-         transform=ax.transAxes)
-plt.text(0.0, 0.85,
-         "Fast Active Force: " + str(round(Fp,0)),
-         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFBB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
        ylabel='Number of particles')
 plt.legend(loc='upper right')
