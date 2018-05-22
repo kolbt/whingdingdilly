@@ -79,7 +79,7 @@ do
         # Get frame number
         frame=$(echo $image | $sedtype 's/^.*frame_\([0-9]*\)..*/\1/')
         # Check if wall frame exists, if not, create it
-        wallFrame="wall_${frame}_pa${pa}_pb${pb}_xa${xa}.png"
+        wallFrame="wall_${frame}.png"
         if [ ! -f ${wallFrame} ]; then
             python ${script_path}/makeWallFrame.py ${wallFrame}
         fi
