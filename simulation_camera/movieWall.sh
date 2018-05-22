@@ -48,6 +48,10 @@ do
     pa=$(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
     pb=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
     xa=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+    # Make an individual ffmpeg movie
+    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_frame_%04d.png\
+     -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p\
+     -threads 1 pa${pa}_pb${pb}_xa${xa}.mp4
 
     # Get the png's index
     if [ ${var} == "pa" ]; then
@@ -93,3 +97,17 @@ do
 done
 
 # This will make a movie using the wall pngs, via ffmpeg
+ffmpeg -framerate 10 -i wall_%04d.png\
+ -vcodec libx264 -s 2000x1500 -pix_fmt yuv420p\
+ -threads 1 wallOut.mp4
+
+ffmpeg -framerate 10 -i wall_%04d.png\
+ -vcodec libx264 -s 1600x1200 -pix_fmt yuv420p\
+ -threads 1 wallOutmedium.mp4
+
+ffmpeg -framerate 10 -i wall_%04d.png\
+ -vcodec libx264 -s 1000x750 -pix_fmt yuv420p\
+ -threads 1 wallOutsmall.mp4
+
+# Get rid of the source pngs
+rm wall_*.png

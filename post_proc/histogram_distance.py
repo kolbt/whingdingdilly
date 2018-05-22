@@ -137,7 +137,7 @@ start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 
 # Run for last 20 tsteps?
-start = dumps - 20
+start = dumps - 10
 #end = 401
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
