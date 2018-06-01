@@ -23,23 +23,37 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors
-import seaborn as sns
-sns.set(color_codes=True)
-
 import math
+
+sigma=1.0
+# The old model
+epsilon = 1.0
+
+# The new model
+def computeEps(activity):
+    "Given particle activity, output repulsion well depth"
+    epsilon = activity * sigma / 24.0
+    return epsilon
 
 # Function that'll grab my parameters from the filenames
 def getFromTxt(fname, first, last):
-    "Takes a string, text before and after desired text, outs text between"
+    """Takes a string, text before and after desired text, outs text between"""
     start = fname.index( first ) + len( first )
     end = fname.index( last, start )
     myTxt = fname[start:end]
     return float(myTxt)
+
 # Computes distance
 def getDistance(point1, point2x, point2y):
-    "Find the distance between two points"
+    """"Find the distance between two points"""
     distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
     return distance
+
+# Computes force given distance with LJ potential
+def computeLJForce(r, eps_in):
+    """Given a distance, computes the force"""
+    forceLJ = 4*eps_in*((12*(sigma**12)*(r**-13))-(6*(sigma**12)*(r**-7)))
+    return forceLJ
 
 # Grab the command line arguments
 gsdPath = sys.argv[3]
@@ -58,6 +72,11 @@ for i in range(0, len(gsdFiles)):
     peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
     peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
     xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+
+epsilonA = computeEps(peA)
+epsilonB = computeEps(peB)
+epsHS = np.zeros(len(peA), dtype=np.float64)
+for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilon[B]
 
 partFracA = xA/100.0    # Particle fraction
 mode = []               # List to store modes in
@@ -184,37 +203,79 @@ for i in range(0, len(gsdFiles)):
     modeALL = round(modeALL[0][0], 4)
     mode.append(modeALL)
 
-# Plot everything at once
-print('Activity is {} and mode is {}'.format(peA, mode))
-
-# Get stuff for filenames
-minPeA = min(peA)
-maxPeA = max(peA)
-minPeB = min(peB)
-maxPeB = max(peB)
-minxA = min(xA)
-maxxA = max(xA)
+# Compute LJ values from mode values to get experienced force
+ljForce = np.zeros(len(mode), dtype=np.float64)
+for i in range(0, len(mode)):
+    ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
 
 # If activity A is non-zero
 if (any(peA)):
-    plt.scatter(peA, mode)
+
+    # Need a plot with two axes
+    fig = plt.figure(facecolor='w', edgecolor='k', frameon=True)
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twinx()
+    # Label y-axes and format colors
+    ax1.set_ylabel(r'Effective Diameter $(\sigma)$')
+    ax1.yaxis.label.set_color('b')
+    ax2.set_ylabel(r'Corresponding $F_{LJ}$')
+    ax2.yaxis.label.set_color('k')
+    # Data for second axis
+    ax2.plot(peA, ljForce, 'k.')
+    # Invert the axis
+    ylims = ax2.get_ylim()
+    ax2.set_ylim([ylims[1], ylims[0]])
+    # Set ticks
+    ax1.tick_params('y', colors='b')
+    ax2.tick_params('y', colors='k')
+    # Turn off gridlines
+    plt.setp(ax1.get_yticklabels(), visible=True)
+    plt.setp(ax2.get_yticklabels(), visible=True)
+
+    # Data for first axis
+    ax1.plot(peA, mode, 'b.')
     plt.xlabel('Activity A')
-    plt.ticklabel_format(useOffset=False)
-    plt.ylabel(r'Effective Diameter $(\sigma)$')
-    plt.savefig('peA_vs_sigma.png', dpi=1000)
+    plt.xlim(min(peA), max(peA))
+    plt.savefig('peA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
     plt.close()
+
 # If activity B is non-zero, plot ratio
 if (any(peB)):
+
+    # Need a plot with two axes
+    fig = plt.figure(facecolor='w', edgecolor='k', frameon=True)
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twinx()
+    # Label y-axes and format colors
+    ax1.set_ylabel(r'Effective Diameter $(\sigma)$')
+    ax1.yaxis.label.set_color('b')
+    ax2.set_ylabel(r'Corresponding $F_{LJ}$')
+    ax2.yaxis.label.set_color('k')
+    # Data for second axis
     peR = peA.astype(float) / peB.astype(float)
-    plt.scatter(peR, mode)
+    ax2.plot(peR, ljForce, 'k.')
+    # Invert second y axis
+    ylims = ax2.get_ylim()
+    ax2.set_ylim([ylims[1], ylims[0]])
+    # Set ticks
+    ax1.tick_params('y', colors='b')
+    ax2.tick_params('y', colors='k')
+    # Turn off gridlines
+    plt.setp(ax1.get_yticklabels(), visible=True)
+    plt.setp(ax2.get_yticklabels(), visible=True)
+
+    # Data for first axis
+    ax1.plot(peR, mode, 'b.')
     plt.xlabel('Activity Ratio')
-    plt.ylabel(r'Effective Diameter $(\sigma)$')
-    plt.savefig('peRatio_vs_sigma.png', dpi=1000)
+    plt.xlim(min(peR), max(peR))
+    plt.savefig('peRatio_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
     plt.close()
+
 # If particle fraction is varied
 if (any(xA - xA[0])):
-    plt.scatter(xA, mode)
-    plt.xlabel('Activity')
-    plt.ylabel(r'Effective Diameter $(\sigma)$')
-    plt.savefig('xA_vs_sigma.png', dpi=1000)
+    # Data for first axis
+    ax1.plot(xA, mode, 'b.')
+    plt.xlabel('Particle Fraction')
+    plt.xlim(min(xA), max(xA))
+    plt.savefig('xA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
     plt.close()
