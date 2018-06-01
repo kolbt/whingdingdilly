@@ -181,8 +181,40 @@ for i in range(0, len(gsdFiles)):
 
     # Compute avg mode and append to list
     modeALL = stats.mode(ALL)
+    modeALL = round(modeALL[0][0], 4)
     mode.append(modeALL)
 
 # Plot everything at once
-plt.plot(peA, mode)
-plt.show()
+print('Activity is {} and mode is {}'.format(peA, mode))
+
+# Get stuff for filenames
+minPeA = min(peA)
+maxPeA = max(peA)
+minPeB = min(peB)
+maxPeB = max(peB)
+minxA = min(xA)
+maxxA = max(xA)
+
+# If activity A is non-zero
+if (any(peA)):
+    plt.scatter(peA, mode)
+    plt.xlabel('Activity A')
+    plt.ticklabel_format(useOffset=False)
+    plt.ylabel(r'Effective Diameter $(\sigma)$')
+    plt.savefig('peA_vs_sigma.png', dpi=1000)
+    plt.close()
+# If activity B is non-zero, plot ratio
+if (any(peB)):
+    peR = peA.astype(float) / peB.astype(float)
+    plt.scatter(peR, mode)
+    plt.xlabel('Activity Ratio')
+    plt.ylabel(r'Effective Diameter $(\sigma)$')
+    plt.savefig('peRatio_vs_sigma.png', dpi=1000)
+    plt.close()
+# If particle fraction is varied
+if (any(xA - xA[0])):
+    plt.scatter(xA, mode)
+    plt.xlabel('Activity')
+    plt.ylabel(r'Effective Diameter $(\sigma)$')
+    plt.savefig('xA_vs_sigma.png', dpi=1000)
+    plt.close()
