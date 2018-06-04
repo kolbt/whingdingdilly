@@ -76,7 +76,7 @@ for i in range(0, len(gsdFiles)):
 epsilonA = computeEps(peA)
 epsilonB = computeEps(peB)
 epsHS = np.zeros(len(peA), dtype=np.float64)
-for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilon[B]
+for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
 
 partFracA = xA/100.0    # Particle fraction
 mode = []               # List to store modes in
@@ -205,8 +205,10 @@ for i in range(0, len(gsdFiles)):
 
 # Compute LJ values from mode values to get experienced force
 ljForce = np.zeros(len(mode), dtype=np.float64)
+phiEff = np.zeros(len(mode), dtype=np.float64)
 for i in range(0, len(mode)):
     ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
+    phiEff[i] = mode[i] * 0.6   # Compute effective are fraction from the mode
 
 # If activity A is non-zero
 if (any(peA)):
@@ -215,11 +217,14 @@ if (any(peA)):
     fig = plt.figure(facecolor='w', edgecolor='k', frameon=True)
     ax1 = fig.add_subplot(111)
     ax2 = ax1.twinx()
+    ax3 = ax1.twinx()
     # Label y-axes and format colors
     ax1.set_ylabel(r'Effective Diameter $(\sigma)$')
     ax1.yaxis.label.set_color('b')
     ax2.set_ylabel(r'Corresponding $F_{LJ}$')
     ax2.yaxis.label.set_color('k')
+    ax3.set_ylabel(r'$\phi_{Effective}$')
+    ax3.yaxis.label.set_color('b')
     # Data for second axis
     ax2.plot(peA, ljForce, 'k.')
     # Invert the axis
@@ -228,15 +233,21 @@ if (any(peA)):
     # Set ticks
     ax1.tick_params('y', colors='b')
     ax2.tick_params('y', colors='k')
+    ax3.tick_params('y', colors='b')
     # Turn off gridlines
     plt.setp(ax1.get_yticklabels(), visible=True)
     plt.setp(ax2.get_yticklabels(), visible=True)
 
     # Data for first axis
     ax1.plot(peA, mode, 'b.')
+    ax3.plot(peA, phiEff, 'b.')
+    # ax3.set_yticks(np.linspace(ax3.get_yticks()[0], ax3.get_yticks()[-1], len(ax1.get_yticks())))
+    ax3.spines['left'].set_position(('axes', -0.2))
+    ax3.yaxis.set_label_position('left')
+    ax3.yaxis.set_ticks_position('left')
     plt.xlabel('Activity A')
     plt.xlim(min(peA), max(peA))
-    plt.savefig('peA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
+    plt.savefig('peA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, bbox_inches='tight', dpi=1000)
     plt.close()
 
 # If activity B is non-zero, plot ratio
@@ -246,11 +257,14 @@ if (any(peB)):
     fig = plt.figure(facecolor='w', edgecolor='k', frameon=True)
     ax1 = fig.add_subplot(111)
     ax2 = ax1.twinx()
+    ax3 = ax1.twinx()
     # Label y-axes and format colors
     ax1.set_ylabel(r'Effective Diameter $(\sigma)$')
     ax1.yaxis.label.set_color('b')
     ax2.set_ylabel(r'Corresponding $F_{LJ}$')
     ax2.yaxis.label.set_color('k')
+    ax3.set_ylabel(r'$\phi_{Effective}$')
+    ax3.yaxis.label.set_color('b')
     # Data for second axis
     peR = peA.astype(float) / peB.astype(float)
     ax2.plot(peR, ljForce, 'k.')
@@ -260,12 +274,18 @@ if (any(peB)):
     # Set ticks
     ax1.tick_params('y', colors='b')
     ax2.tick_params('y', colors='k')
+    ax3.tick_params('y', colors='b')
     # Turn off gridlines
     plt.setp(ax1.get_yticklabels(), visible=True)
     plt.setp(ax2.get_yticklabels(), visible=True)
 
     # Data for first axis
     ax1.plot(peR, mode, 'b.')
+    ax3.plot(peA, phiEff, 'b.')
+    # Move the axis to the left
+    ax3.spines['left'].set_position(('axes', -0.2))
+    ax3.yaxis.set_label_position('left')
+    ax3.yaxis.set_ticks_position('left')
     plt.xlabel('Activity Ratio')
     plt.xlim(min(peR), max(peR))
     plt.savefig('peRatio_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
