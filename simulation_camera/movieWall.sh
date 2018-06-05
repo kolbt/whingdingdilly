@@ -49,9 +49,9 @@ do
     pb=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
     xa=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
     # Make an individual ffmpeg movie
-    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_frame_%04d.png\
-     -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p\
-     -threads 1 pa${pa}_pb${pb}_xa${xa}.mp4
+#    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_frame_%04d.png\
+#     -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p\
+#     -threads 1 pa${pa}_pb${pb}_xa${xa}.mp4
 
     # Get the png's index
     if [ ${var} == "pa" ]; then

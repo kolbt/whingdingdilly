@@ -207,8 +207,8 @@ for i in range(0, len(gsdFiles)):
 ljForce = np.zeros(len(mode), dtype=np.float64)
 phiEff = np.zeros(len(mode), dtype=np.float64)
 for i in range(0, len(mode)):
-    # ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
-    ljForce[i] = computeLJForce(mode[i], epsilon)   # this is epsilon = 1 case
+     ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
+         #ljForce[i] = computeLJForce(mode[i], epsilon)   # this is epsilon = 1 case
     phiEff[i] = mode[i] * 0.6   # Compute effective are fraction from the mode
 
 # If activity A is non-zero
@@ -289,7 +289,7 @@ if (any(peB)):
     ax3.yaxis.set_ticks_position('left')
     plt.xlabel('Activity Ratio')
     plt.xlim(min(peR), max(peR))
-    plt.savefig('peRatio_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
+    plt.savefig('peRatio_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, bbox_inches='tight', dpi=1000)
     plt.close()
 
 # If particle fraction is varied
@@ -328,5 +328,5 @@ if (any(xA - xA[0])):
     ax3.yaxis.set_ticks_position('left')
     plt.xlabel('Particle Fraction')
     plt.xlim(min(xA), max(xA))
-    plt.savefig('xA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
+    plt.savefig('xA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, bbox_inches='tight', dpi=1000)
     plt.close()
