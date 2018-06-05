@@ -16,6 +16,11 @@ Designations Explained:
           dense_B : number of B-type particles in dense phase
       dense_total : total number of dense phase particles
           l_clust : largest individual cluster
+       dp_density : density of dense phase
+       gp_density : density of gas phase
+          dp_area : area of dense phase
+          gp_area : area of gas phase
+              mcs : mean cluster size
 '''
 
 import sys
@@ -111,7 +116,8 @@ f.write('Timestep'.center(10) + ' ' +\
         'DP_density'.center(10) + ' ' +\
         'GP_density'.center(10) + ' ' +\
         'Clust_area'.center(10) + ' ' +\
-        'Gas_area'.center(10) + '\n')
+        'Gas_area'.center(10) + ' ' +\
+        'MCS'.center(10)+ '\n')
 f.close()
 
 # Create mesh
@@ -161,6 +167,7 @@ for iii in range(start, end):
     gas_B = 0       # number of B-particles in gas phase
     dp_density = 0  # density of dense phase
     gp_density = 0  # density of gas phase
+    mcs = 0         # mean cluster size
 
     for jjj in range(0, part_num):
         
@@ -195,6 +202,7 @@ for iii in range(start, end):
     if dense_num != 0:
         dp_density /= float(dense_num)                  # avg number in each bin
         dp_density /= (float(box_width*diameter)**2)    # normalize by bin area
+        mcs = dense_num / clust_num                     # compute mean cluster size
 
     a_clust = 0.0
     if dp_density != 0:
@@ -215,7 +223,8 @@ for iii in range(start, end):
             '{0:.2f}'.format(dp_density).center(10) + ' ' +\
             '{0:.2f}'.format(gp_density).center(10) + ' ' +\
             '{0:.2f}'.format(a_clust).center(10) + ' ' +\
-            '{0:.2f}'.format(a_gas).center(10) + '\n')
+            '{0:.2f}'.format(a_gas).center(10) + ' ' +\
+            + '\n')
     f.close()
 
     mesh[:] = 0     # zero out the mesh
