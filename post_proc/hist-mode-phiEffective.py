@@ -207,7 +207,8 @@ for i in range(0, len(gsdFiles)):
 ljForce = np.zeros(len(mode), dtype=np.float64)
 phiEff = np.zeros(len(mode), dtype=np.float64)
 for i in range(0, len(mode)):
-    ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
+    # ljForce[i] = computeLJForce(mode[i], epsHS[i])  # switch to 'epsilon' if old method
+    ljForce[i] = computeLJForce(mode[i], epsilon)   # this is epsilon = 1 case
     phiEff[i] = mode[i] * 0.6   # Compute effective are fraction from the mode
 
 # If activity A is non-zero
@@ -281,7 +282,7 @@ if (any(peB)):
 
     # Data for first axis
     ax1.plot(peR, mode, 'b.')
-    ax3.plot(peA, phiEff, 'b.')
+    ax3.plot(peR, phiEff, 'b.')
     # Move the axis to the left
     ax3.spines['left'].set_position(('axes', -0.2))
     ax3.yaxis.set_label_position('left')
@@ -293,8 +294,38 @@ if (any(peB)):
 
 # If particle fraction is varied
 if (any(xA - xA[0])):
+    # Make plot with 3 axes
+    fig = plt.figure(facecolor='w', edgecolor='k', frameon=True)
+    ax1 = fig.add_subplot(111)
+    ax2 = ax1.twinx()
+    ax3 = ax1.twinx()
+    # Label y-axes and format colors
+    ax1.set_ylabel(r'Effective Diameter $(\sigma)$')
+    ax1.yaxis.label.set_color('b')
+    ax2.set_ylabel(r'Corresponding $F_{LJ}$')
+    ax2.yaxis.label.set_color('k')
+    ax3.set_ylabel(r'$\phi_{Effective}$')
+    ax3.yaxis.label.set_color('b')
+    # Data for second axis
+    ax2.plot(xA, ljForce, 'k.')
+    # Invert second y axis
+    ylims = ax2.get_ylim()
+    ax2.set_ylim([ylims[1], ylims[0]])
+    # Set ticks
+    ax1.tick_params('y', colors='b')
+    ax2.tick_params('y', colors='k')
+    ax3.tick_params('y', colors='b')
+    # Turn off gridlines
+    plt.setp(ax1.get_yticklabels(), visible=True)
+    plt.setp(ax2.get_yticklabels(), visible=True)
+
     # Data for first axis
     ax1.plot(xA, mode, 'b.')
+    ax3.plot(xA, phiEff, 'b.')
+    # Move the axis to the left
+    ax3.spines['left'].set_position(('axes', -0.2))
+    ax3.yaxis.set_label_position('left')
+    ax3.yaxis.set_ticks_position('left')
     plt.xlabel('Particle Fraction')
     plt.xlim(min(xA), max(xA))
     plt.savefig('xA_vs_sigma.png', facecolor='w', edgecolor='k', frameon=True, dpi=1000)
