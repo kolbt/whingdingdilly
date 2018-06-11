@@ -90,22 +90,22 @@ do
         done
 
     elif [ ${var} == "pb" ]; then
-        for iii in {sortVar[@]}; do
-            if [ ${sortVar[$iii]} == ${pb} ]; then
+        for iii in ${!sortVar[@]}; do
+            if [ "${sortVar[$iii]}" == "${pb}" ]; then
                 pos=$iii
             fi
         done
 
     elif [ ${var} == "xa" ]; then
-        for iii in {sortVar[@]}; do
-            if [ ${sortVar[$iii]} == ${xa} ]; then
+        for iii in ${!sortVar[@]}; do
+            if [ "${sortVar[$iii]}" == "${xa}" ]; then
                 pos=$iii
             fi
         done
 
     elif [ ${var} == "ep" ]; then
-        for iii in {sortVar[@]}; do
-            if [ ${sortVar[$iii]} == ${ep} ]; then
+        for iii in ${!sortVar[@]}; do
+            if [ "${sortVar[$iii]}" == "${ep}" ]; then
                 pos=$iii
         fi
     done
@@ -113,7 +113,7 @@ do
     fi
 
     # Place image on wall composite
-    for image in $(ls pa${pa}_pb${pb}_xa${xa}_frame_*.png)
+    for image in $(ls pa${pa}_pb${pb}_xa${xa}*frame_*.png)
     do
 
         # Get frame number
