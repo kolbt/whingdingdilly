@@ -3,19 +3,37 @@
 script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 sedtype='gsed'
 
+echo "Varying epsilon directly? (Y/n)"
+read answer
+
 pa=()
 pb=()
 xa=()
 
-# Read filenames for parameters
-for sim in $(ls pa*.gsd)
-do
+if [ ${answer} == "n" ]; then
+    # Read filenames for parameters
+    for sim in $(ls pa*.gsd)
+    do
 
-    pa+=($(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/'))
-    pb+=($(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/'))
-    xa+=($(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/'))
+        pa+=($(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/'))
+        pb+=($(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/'))
+        xa+=($(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/'))
 
-done
+    done
+
+elif [ ${answer} == "Y" ]; then
+    ep=()
+    # Read filenames for parameters
+    for sim in $(ls pa*.gsd)
+    do
+
+        pa+=($(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/'))
+        pb+=($(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/'))
+        xa+=($(echo $sim | $sedtype 's/^.*xa\([0-9]*\)_.*/\1/'))
+        ep+=($(echo $sim | $sedtype 's/^.*ep\([0-9]*\)..*/\1/'))
+
+    done
+fi
 
 # See what parameter is changing
 
@@ -31,6 +49,9 @@ elif [ ${pb[0]} -ne ${pb[1]} ]; then
 elif [ ${xa[0]} -ne ${xa[1]} ]; then
     var="xa"
     IFS=$'\n' sortVar=($(sort -g <<<"${xa[*]}"))
+elif [ ${ep[0]} -ne ${ep[1]} ]; then
+    var="ep"
+    IFS=$'\n' sortVar=($(sort -g <<<"${ep[*]}"))
 fi
 
 # You'll assign x,y position using this sorted array
@@ -44,10 +65,17 @@ do
 
     # Make png series for a simulation
     ovitos ${script_path}/pngSeries.py ${sim}
-    # Get everything before the file extension
-    pa=$(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-    pb=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
-    xa=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+    if [ ${answer} == "n" ]; then
+        # Get everything before the file extension
+        pa=$(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+        pb=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
+        xa=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+    elif [ ${answer} == "Y" ]; then
+        pa=$(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+        pb=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
+        xa=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)_.*/\1/')
+        ep=$(echo $sim | $sedtype 's/^.*ep\([0-9]*\)..*/\1/')
+    fi
     # Make an individual ffmpeg movie
 #    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_frame_%04d.png\
 #     -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p\
@@ -60,6 +88,7 @@ do
                 pos=$iii
             fi
         done
+
     elif [ ${var} == "pb" ]; then
         for iii in {sortVar[@]}; do
             if [ ${sortVar[$iii]} == ${pb} ]; then
@@ -73,6 +102,13 @@ do
                 pos=$iii
             fi
         done
+
+    elif [ ${var} == "ep" ]; then
+        for iii in {sortVar[@]}; do
+            if [ ${sortVar[$iii]} == ${ep} ]; then
+                pos=$iii
+        fi
+    done
 
     fi
 
