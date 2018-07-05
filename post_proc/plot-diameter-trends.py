@@ -37,14 +37,22 @@ fBB,\
 phiEff = np.loadtxt(inTxt, skiprows=1, unpack=True)
 
 # Everything is going on one plot
-''' Plot stats
+''' Plot data
 x-axis: activity Ratio
 y-axis: effective area fraction
 color: activity of fast species
 shape: particle fraction
 '''
 
-plt.scatter(peR, phiEff)
+#for loop for color
+for i in range(0, len(peFast)):
+    
+    #for loop for shape
+    for j in range(0, len(xSlow)):
+        
+        #plot the point
+        plt.scatter(peR, phiEff)
+
 plt.ylim(0.45, 0.60)
 plt.xlabel(r'$Pe_{Ratio}$')
 plt.ylabel(r'$\phi_{Effective}$')
