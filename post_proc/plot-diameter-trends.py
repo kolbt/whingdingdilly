@@ -16,6 +16,22 @@ Data:   PeA PeB PeR xA Ep sigT sigAA sigAB sigBB fT fAA fAB fBB phiEff
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
+import colorsys
+
+# Color generator
+def getColorScheme(numColors):
+    '''Generate a colorscheme'''
+    colors = []
+    r = 0
+    g = 0
+    b = 0
+    step = float(1.0 / numColors)
+    for i in range(0, numColors):
+        colors.append((r, g, b))
+        r += step
+        g += step
+        b += step
+    return colors
 
 # File to pull data from
 inTxt = "effective_particle_radius.txt"
@@ -49,55 +65,73 @@ peRs = []
 for i in range(0, len(peR)):
     if not (peR[i] in peRs):
         peRs.append(peR[i])
+peRs = sorted(peRs)
 
 # Get distinct PeFast values
 peFast = []
 for i in range(0, len(peB)):
     if not (peB[i] in peFast):
         peFast.append(peB[i])
-# colors = np.arange(0, len(peFast))
+peFast = sorted(peFast)
 
 # Get distinct xSlow values
 xSlow = []
 for i in range(0, len(xA)):
     if not (xA[i] in xSlow):
         xSlow.append(xA[i])
-# shapes = np.arange(0, len(xSlow))
+xSlow = sorted(xSlow)
 
-# # Loop through PeR
-# for h in range(0, len(peR)):
-#     # Get index for PeFast/ set color
-#     color = 0
-#     for i in range (0, len(peFast)):
-#         if peB[h] == peFast[i]:
-#             color = i
-#     # Get index for xSlow/ set shape
-#     shape = 0
-#     for i in range(0, len(xSlow)):
-#         if xA[h] == xSlow[i]:
-#             shape = i
-#     plt.scatter(peR[h], phiEff[h], c=color, s=shape)
+numLines = (len(xSlow) * len(peFast))
+linepeR = [ [] for x in xrange(0, numLines) ]
+linephiEff = [ [] for x in xrange(0, numLines) ]
+key = np.zeros(numLines, dtype=np.ndarray)
 
-# Need to connect lines that have same PeFast and xSlow
-lines = np.zeros( (len(peFast) * len(xSlow), len(peRs) ), dtype=np.float64)
+dataNum = len(phiEff)
+count = 0
+for i in range(0, len(xSlow)):
+    constxSlow = xSlow[i]
+    for j in range(0, len(peFast)):
+        constpeFast = peFast[j]
+        key[count] = (constxSlow, constpeFast)
+        for k in range(0, len(peRs)):
+            tmpPeR = peRs[k]
+            for l in range(0, dataNum):
+                if xA[l] == constxSlow and peB[l] == constpeFast and peR[l] == tmpPeR:
+                    linepeR[count].append(peR[l])
+                    linephiEff[count].append(phiEff[l])
+        count += 1
 
-# Loop through all data points
-for i in range(0, phiEff):
-    for i in range(0, )
+# Get colorscheme of appropriate length
+colorNum = len(peFast)
+color = getColorScheme(colorNum)
+# Initialize symbol list
+symbols =['o', 'v', 's', 'D', '*', 'h', 'p', '8', '+']
+# Get shift list
+shift = np.zeros(len(xSlow), dtype=np.float64)
+step = 0.015
+shift -= step * 0.5 * len(xSlow)
+for i in range(0, len(shift)):
+    shift[i] += step * i
 
+for i in range(0, numLines):
+    myLabel = "({}, {})".format(key[i][0]/100.0, key[i][1])
+    # if for color (pefast)
+    for j in range(0, len(peFast)):
+        if key[i][1] == peFast[j]:
+            cInd = j
+    # if for symbol (xSlow)
+    for j in range(0, len(xSlow)):
+        if key[i][0] == xSlow[j]:
+            sInd = j
+    # Plot it
+    plt.plot(linepeR[i] + shift[sInd], linephiEff[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
 
-
-# #for loop for color
-# for i in range(0, len(peFast)):
-#     #for loop for shape
-#     for j in range(0, len(xSlow)):
-#         #plot the point
-#         plt.scatter(peR[g], phiEff[h], c=colors[i], s=shapes[j])
-
-plt.ylim(0.45, 0.60)
+#plt.ylim(0.45, 0.60)
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
 plt.xlabel(r'$Pe_{Ratio}$')
 plt.ylabel(r'$\phi_{Effective}$')
-plt.show()
+#plt.tight_layout()
+plt.savefig('diameter-trends.png', bbox_inches='tight', dpi=1000)
 
 
 
