@@ -236,9 +236,13 @@ for i in range(0, len(gsdFiles)):
     phiEff = modeALL * 0.6                      # Effective area fraction phi=0.6
 
     # AA
-    modeAA = stats.mode(AA)
-    modeAA = round(modeAA[0][0], 4)
-    fAA = computeLJForce(modeAA, epsHS[i])
+    try:
+        modeAA = stats.mode(AA)
+        modeAA = round(modeAA[0][0], 4)
+        fAA = computeLJForce(modeAA, epsHS[i])
+    except:
+        modeAA = 0.0
+        fAA = 0.0
 
     # AB
     try:
@@ -250,11 +254,15 @@ for i in range(0, len(gsdFiles)):
         fAB = 0.0
 
     # BB
-    modeBB = stats.mode(BB)
-    modeBB = round(modeBB[0][0], 4)
-    fBB = computeLJForce(modeBB, epsHS[i])
+    try:
+        modeBB = stats.mode(BB)
+        modeBB = round(modeBB[0][0], 4)
+        fBB = computeLJForce(modeBB, epsHS[i])
+    except:
+        modeBB = 0.0
+        fBB = 0.0
 
-    # Monodisperse?
+    # Monodisperse? Done with exceptions above
     # modeAB = 0
     # modeBB = 0
     # fAB = 0
