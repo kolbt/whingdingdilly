@@ -241,9 +241,13 @@ for i in range(0, len(gsdFiles)):
     fAA = computeLJForce(modeAA, epsHS[i])
 
     # AB
-    modeAB = stats.mode(AB)
-    modeAB = round(modeAB[0][0], 4)
-    fAB = computeLJForce(modeAB, epsHS[i])
+    try:
+        modeAB = stats.mode(AB)
+        modeAB = round(modeAB[0][0], 4)
+        fAB = computeLJForce(modeAB, epsHS[i])
+    except:
+        modeAB = 0.0
+        fAB = 0.0
 
     # BB
     modeBB = stats.mode(BB)
