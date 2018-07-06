@@ -5,10 +5,10 @@ read answer
 
 if [ $answer == 'y' ]; then
     echo "Clusters are dope"
-    sedtype='gsed'
+    sedtype='sed'
 elif [ $answer == 'n' ]; then
     echo "Classic desktop... laptop?"
-    sedtype='sed'
+    sedtype='gsed'
 fi
 
 for file in $(ls slurm-*)
