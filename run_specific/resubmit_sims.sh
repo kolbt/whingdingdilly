@@ -31,7 +31,7 @@ if [ $gpu == "y" ]; then
 fi
 
 # Run from the directory where the slurm files are
-for file in $(ls slurm-*)
+for file in $(ls slurm-233*)
 do
 
     count=$(grep -c "run complete" $file)
@@ -42,6 +42,7 @@ do
         xa=$(grep -a -m 1 -h '_xa' $file | $sedtype 's/^.*_xa\([0-9]*\)..*/\1/')
         infile=pa${pa}_pb${pb}_xa${xa}.py
         $submit $script_path $infile
+        rm $file
     fi
 
 done
