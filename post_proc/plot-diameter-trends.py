@@ -33,6 +33,18 @@ def getColorScheme(numColors):
         b += step
     return colors
 
+# Second option
+import colorsys
+
+def getDistinctColors(n):
+    list = []
+    huePartition = 1.0 / (n + 1)
+    for value in range(0, n):
+        val = huePartition * value
+        (r, g, b) = colorsys.hsv_to_rgb(val, 1.0, 1.0)
+        list.append((r, g, b))
+    return list
+
 # File to pull data from
 inTxt = "effective_particle_radius.txt"
 
@@ -103,7 +115,8 @@ for i in range(0, len(xSlow)):
 
 # Get colorscheme of appropriate length
 colorNum = len(peFast)
-color = getColorScheme(colorNum)
+# color = getColorScheme(colorNum)
+color = getDistinctColors(colorNum)
 # Initialize symbol list
 symbols =['o', 'v', 's', 'D', '*', 'h', 'p', '8', '+']
 # Get shift list
@@ -126,7 +139,7 @@ for i in range(0, numLines):
     # Plot it
     plt.plot(linepeR[i] + shift[sInd], linephiEff[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
 
-#plt.ylim(0.45, 0.60)
+plt.ylim(0.46, 0.61)
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
 plt.xlabel(r'$Pe_{Ratio}$')
 plt.ylabel(r'$\phi_{Effective}$')
