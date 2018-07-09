@@ -139,7 +139,7 @@ for i in range(0, numLines):
     # Plot it
     plt.plot(linepeR[i] + shift[sInd], linephiEff[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
 
-plt.ylim(0.46, 0.61)
+plt.ylim(0.44, 0.61)
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
 plt.xlabel(r'$Pe_{Ratio}$')
 plt.ylabel(r'$\phi_{Effective}$')

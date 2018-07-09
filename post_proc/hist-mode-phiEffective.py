@@ -116,7 +116,7 @@ for i in range(0, len(gsdFiles)):
     f = hoomd.open(name=gsdFiles[i], mode='rb') # open gsd file with hoomd
     dumps = f.__len__()                         # get number of frames
     # Start and stop frames
-    start = dumps - 1   # gives first frame to read
+    start = dumps - 10  # gives first frame to read
     end = dumps         # gives last frame to read
     # Instantiate necessary arrays
     positions = np.zeros((end), dtype=np.ndarray)   # array of positions
@@ -283,7 +283,7 @@ for i in range(0, len(gsdFiles)):
             '{0:.0f}'.format(fAA).center(10) + ' ' + \
             '{0:.0f}'.format(fAB).center(10) + ' ' + \
             '{0:.0f}'.format(fBB).center(10) + ' ' + \
-            '{0:.2f}'.format(phiEff).center(10) + \
+            '{0:.3f}'.format(phiEff).center(10) + \
             '\n')
     f.close()
 
