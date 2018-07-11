@@ -1,14 +1,9 @@
-
-#!/usr/bin/env python2
 '''
 #                           This is an 80 character line                       #
 INTENT: take text file data and plot it.  Saving both the text files and the
 plots allows for simple replotting without recalculating.
-
 Note: I'll need to generate another file which compares between simulations
-
 Data:   PeA PeB PeR xA Ep sigT sigAA sigAB sigBB fT fAA fAB fBB phiEff
-
 ( 1.) Read data into arrays
 ( 2.) Put it ALL in one plot
 ( 3.) Do a little dance
@@ -98,9 +93,6 @@ xSlow = sorted(xSlow)
 numLines = (len(xSlow) * len(peFast))
 linepeR = [ [] for x in xrange(0, numLines) ]
 linephiEff = [ [] for x in xrange(0, numLines) ]
-lineAA = [ [] for x in xrange(0, numLines) ]
-lineAB = [ [] for x in xrange(0, numLines) ]
-lineBB = [ [] for x in xrange(0, numLines) ]
 key = np.zeros(numLines, dtype=np.ndarray)
 
 dataNum = len(phiEff)
@@ -116,9 +108,6 @@ for i in range(0, len(xSlow)):
                 if xA[l] == constxSlow and peB[l] == constpeFast and peR[l] == tmpPeR:
                     linepeR[count].append(peR[l])
                     linephiEff[count].append(phiEff[l])
-                    lineAA[count].append(modeAA[l])
-                    lineAB[count].append(modeAB[l])
-                    lineBB[count].append(modeBB[l])
         count += 1
 
 # Get colorscheme of appropriate length
@@ -134,14 +123,6 @@ shift -= step * 0.5 * len(xSlow)
 for i in range(0, len(shift)):
     shift[i] += step * i
 
-
-
-### Plot as a figure of four plots
-fig = plt.figure()
-
-### Data for all interactions
-ax = fig.add_subplot(221)
-
 for i in range(0, numLines):
     myLabel = "({}, {})".format(key[i][0]/100.0, key[i][1])
     # if for color (pefast)
@@ -156,76 +137,8 @@ for i in range(0, numLines):
     plt.plot(linepeR[i] + shift[sInd], linephiEff[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
 
 plt.ylim(0.44, 0.61)
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
+plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
 plt.xlabel(r'$Pe_{Ratio}$')
 plt.ylabel(r'$\phi_{Effective}$')
-plt.title(r'All')
-
-### Data for AA interactions
-ax = fig.add_subplot(222)
-
-for i in range(0, numLines):
-    myLabel = "({}, {})".format(key[i][0]/100.0, key[i][1])
-    # if for color (pefast)
-    for j in range(0, len(peFast)):
-        if key[i][1] == peFast[j]:
-            cInd = j
-    # if for symbol (xSlow)
-    for j in range(0, len(xSlow)):
-        if key[i][0] == xSlow[j]:
-            sInd = j
-    # Plot it
-    plt.plot(linepeR[i] + shift[sInd], lineAA[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
-
-plt.ylim(0.74, 1.0)
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
-plt.xlabel(r'$Pe_{Ratio}$')
-plt.ylabel(r'$\sigma_{Effective}$')
-plt.title(r'AA')
-
-### Data for AB interactions
-ax = fig.add_subplot(223)
-
-for i in range(0, numLines):
-    myLabel = "({}, {})".format(key[i][0]/100.0, key[i][1])
-    # if for color (pefast)
-    for j in range(0, len(peFast)):
-        if key[i][1] == peFast[j]:
-            cInd = j
-    # if for symbol (xSlow)
-    for j in range(0, len(xSlow)):
-        if key[i][0] == xSlow[j]:
-            sInd = j
-    # Plot it
-    plt.plot(linepeR[i] + shift[sInd], lineAB[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
-
-plt.ylim(0.74, 1.0)
-# plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
-plt.xlabel(r'$Pe_{Ratio}$')
-plt.ylabel(r'$\sigma_{Effective}$')
-plt.title(r'AB')
-
-
-### Data for BB interactions
-ax = fig.add_subplot(224)
-
-for i in range(0, numLines):
-    myLabel = "({}, {})".format(key[i][0]/100.0, key[i][1])
-    # if for color (pefast)
-    for j in range(0, len(peFast)):
-        if key[i][1] == peFast[j]:
-            cInd = j
-    # if for symbol (xSlow)
-    for j in range(0, len(xSlow)):
-        if key[i][0] == xSlow[j]:
-            sInd = j
-    # Plot it
-    plt.plot(linepeR[i] + shift[sInd], lineBB[i], c=color[cInd], marker=symbols[sInd], label=myLabel)
-
-plt.ylim(0.74, 1.0)
-ax.legend(loc='center left', bbox_to_anchor=(1, 1.25), title=r'$(x_{slow}, Pe_{fast})$')
-plt.xlabel(r'$Pe_{Ratio}$')
-plt.ylabel(r'$\sigma_{Effective}$')
-plt.title(r'BB')
-plt.tight_layout()
-plt.savefig('diameter-trends-pairwise.png', bbox_inches='tight', dpi=1000)
+#plt.tight_layout()
+plt.savefig('diameter-trends.png', bbox_inches='tight', dpi=1000)
