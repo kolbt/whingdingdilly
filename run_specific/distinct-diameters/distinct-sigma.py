@@ -22,21 +22,21 @@ import os
 # Read in bash arguments
 hoomdPath = "${hoomd_path}"     # path to hoomd-blue
 gsdPath = "${gsd_path}"         # path to gsd
-runFor = ${runfor}              # simulation length (in tauLJ)
-dumpFreq = ${dump_freq}         # how often to dump data
-partPercA = ${part_frac_a}      # percentage of A particles
+runFor = 200             # simulation length (in tauLJ)
+dumpFreq = 200000        # how often to dump data
+partPercA = 50    # percentage of A particles
 partFracA = float(partPercA) / 100.0
-peA = ${pe_a}                   # activity of A particles
-peB = ${pe_b}                   # activity of B particles
-partNum = ${part_num}           # total number of particles
-phi = ${phi}                    # system area fraction
+peA = 500                   # activity of A particles
+peB = 150                   # activity of B particles
+partNum = 200000           # total number of particles
+phi = 0.46                    # system area fraction
 phi = float(phi)/100.0
 
-seed1 = ${seed1}                # seed for position
-seed2 = ${seed2}                # seed for bd equilibration
-seed3 = ${seed3}                # seed for initial orientations
-seed4 = ${seed4}                # seed for A activity
-seed5 = ${seed5}                # seed for B activity
+seed1 = 2848               # seed for position
+seed2 = 7970                # seed for bd equilibration
+seed3 = 82598                # seed for initial orientations
+seed4 = 1393                # seed for A activity
+seed5 = 315                # seed for B activity
 
 # Remaining imports
 sys.path.append(hoomdPath)
@@ -47,31 +47,30 @@ import numpy as np
 
 # Set some constants
 kT = 1.0                        # temperature
-threeEtaPi = 1.0                # drag coefficient w/o diameter
-sigma1 = 1.0                    # particle diameter 1
-sigma2 = 0.74                   # particle diameter 2
+threeEtaPiSigma = 1.0           # drag coefficient
+sigma = 1.0                     # particle diameter
 D_t = kT / threeEtaPiSigma      # translational diffusion constant
 D_r = (3.0 * D_t) / (sigma**2)  # rotational diffusion constant
 tauBrown = (sigma**2) / D_t     # brownian time scale (invariant)
 
-def computeVel(activity, sigma):
+def computeVel(activity):
     "Given particle activity, output intrinsic swim speed"
     velocity = (activity * sigma) / (3 * (1/D_r))
     return velocity
 
-def computeActiveForce(velocity, sigma):
+def computeActiveForce(velocity):
     "Given particle activity, output repulsion well depth"
-    activeForce = velocity * threeEtaPi * sigma
+    activeForce = velocity * threeEtaPiSigma
     return activeForce
 
-def computeEps(activeForce, sigma):
+def computeEps(activeForce):
     "Given particle activity, output repulsion well depth"
     epsilon = activeForce * sigma / 24.0
     return epsilon
 
-def computeTauLJ(epsilon, sigma):
+def computeTauLJ(epsilon):
     "Given epsilon, compute lennard-jones time unit"
-    tauLJ = ((sigma**2) * threeEtaPi * sigma) / epsilon
+    tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
     return tauLJ
 
 # Compute parameters from activities
@@ -154,11 +153,12 @@ Nb = len(gB)
 
 # Define potential between pairs
 nl = hoomd.md.nlist.cell()
-lj = hoomd.md.pair.lj(r_cut=2**(1/6), nlist=nl)
+lj = hoomd.md.pair.lj(r_cut=(2**(1/6))*0.772, nlist=nl)
 lj.set_params(mode='shift')
-lj.pair_coeff.set('A', 'A', epsilon=epsA, sigma=1.0)
-lj.pair_coeff.set('A', 'B', epsilon=epsAB, sigma=1.0)
-lj.pair_coeff.set('B', 'B', epsilon=epsB, sigma=1.0)
+# Reduced the radii, using HS potential
+lj.pair_coeff.set('A', 'A', epsilon=24, sigma=0.772)
+lj.pair_coeff.set('A', 'B', epsilon=24, sigma=0.770)
+lj.pair_coeff.set('B', 'B', epsilon=24, sigma=0.767)
 
 # General integration parameters
 hoomd.md.integrate.mode_standard(dt=dt)
