@@ -94,7 +94,7 @@ else:                               # B particles are Brownian
     tauB = computeTauLJ(eps)
 
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-dt = 0.000001 * tauLJ                        # timestep size
+dt = 0.000005 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)             # how many tsteps to run
