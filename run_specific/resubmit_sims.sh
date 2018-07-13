@@ -30,24 +30,46 @@ if [ $gpu == "y" ]; then
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
 fi
 
+echo "Epsilon in filename? (y/n)"
+read iseps
+
 # Run from the directory where the slurm files are
-for file in $(ls slurm-233*)
-do
+if [ $iseps == "n" ]; then
+    for file in $(ls slurm-*)
+    do
 
-    count=$(grep -c "run complete" $file)
-    if [ $count -eq 1 ]; then
-        # Grab the python file that you need to resubmit
-        pa=$(grep -a -m 1 -h 'pa' $file | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-        pb=$(grep -a -m 1 -h '_pb' $file | $sedtype 's/^.*_pb\([0-9]*\)_.*/\1/')
-        xa=$(grep -a -m 1 -h '_xa' $file | $sedtype 's/^.*_xa\([0-9]*\)..*/\1/')
-        infile=pa${pa}_pb${pb}_xa${xa}.py
-        $submit $script_path $infile
-        rm $file
-    fi
+        count=$(grep -c "run complete" $file)
+        if [ $count -eq 1 ]; then
+            # Grab the python file that you need to resubmit
+            pa=$(grep -a -m 1 -h 'pa' $file | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+            pb=$(grep -a -m 1 -h '_pb' $file | $sedtype 's/^.*_pb\([0-9]*\)_.*/\1/')
+            xa=$(grep -a -m 1 -h '_xa' $file | $sedtype 's/^.*_xa\([0-9]*\)..*/\1/')
+            infile=pa${pa}_pb${pb}_xa${xa}.py
+            $submit $script_path $infile
+            rm $file
+        fi
 
-done
+    done
+fi
 
+# If epsilon is in the filename
+if [ $iseps == "y" ]; then
+    for file in $(ls slurm-*)
+    do
 
+        count=$(grep -c "run complete" $file)
+        if [ $count -eq 1 ]; then
+            # Grab the python file that you need to resubmit
+            pa=$(grep -a -m 1 -h 'pa' $file | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+            pb=$(grep -a -m 1 -h '_pb' $file | $sedtype 's/^.*_pb\([0-9]*\)_.*/\1/')
+            xa=$(grep -a -m 1 -h '_xa' $file | $sedtype 's/^.*_xa\([0-9]*\)_.*/\1/')
+            ep=$(grep -a -m 1 -h '_eps' $file | $sedtype 's/^.*_eps\([0-9]*\)..*/\1/')
+            infile=pa${pa}_pb${pb}_xa${xa}_eps${ep}.py
+            $submit $script_path $infile
+            rm $file
+        fi
 
+    done
+fi
 
 
