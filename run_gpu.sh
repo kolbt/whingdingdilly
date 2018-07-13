@@ -4,7 +4,6 @@
 #SBATCH --partition=gpu                     # partition to run on
 #SBATCH --nodes=1                           # run on one node
 #SBATCH --time=11-00:00                     # time (D-HH:MM)
-#SBATCH --mem=64G                           # memory requested
 
 filename=$1
 
