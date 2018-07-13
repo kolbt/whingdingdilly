@@ -20,8 +20,8 @@ import sys
 import os
 
 # Read in bash arguments
-hoomdPath = "${hoomd_path}"     # path to hoomd-blue
-gsdPath = "${gsd_path}"         # path to gsd
+hoomdPath = "/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build"     # path to hoomd-blue
+gsdPath = "/nas/longleaf/home/kolbt/programs/gsd/build"         # path to gsd
 runFor = 200             # simulation length (in tauLJ)
 dumpFreq = 200000        # how often to dump data
 partPercA = 50    # percentage of A particles
