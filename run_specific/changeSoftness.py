@@ -102,6 +102,27 @@ numDumps = float(simLength / 0.05)           # dump data every 0.1 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
 
+# Get the early times for MSD output
+# Time intervals I want, in tauBrown
+times = [ 0.00001,
+          0.00010,
+          0.00100,
+          0.01000,
+          0.10000,
+          1.00000 ]
+# Instantiate array for dumping timesteps
+logDump = np.zeros((len(times) - 1) * 9)
+
+# Little loop to give the desired values
+count = 0
+for i in range(0, len(times) - 1 ):
+    vals = np.arange(times[i], times[i + 1], times[i])
+    for j in range(0, len(vals)):
+        logDump[count] = vals[j]
+        count += 1
+
+logDump /= dt
+
 print "Brownian tau in use:", tauBrown
 print "Lennard-Jones tau in use:", tauLJ
 print "Timestep in use:", dt
@@ -235,6 +256,7 @@ name = "pa" + str(peA) +\
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
 MSDName = "MSD" + name + ".gsd"
+logName = "log_" + name + ".gsd"
 lastTen = "lastTen" + name + ".gsd"
 
 hoomd.dump.gsd(gsdName,
@@ -244,9 +266,30 @@ hoomd.dump.gsd(gsdName,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
-                        static=['dimensions', 'viz_static'],
-                        dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
+### Dump for MSD ###
+def dump_spec(timestep):
+
+   if timestep in logDump:
+       hoomd.dump.gsd(filename=logName,
+                      period=None,
+                      group=all,
+                      overwrite=False,
+                      dynamic=['attribute', 'property', 'momentum'])
+       os.close(2)
+
+hoomd.analyze.callback(callback = dump_spec, period = 1)
+####################
+
+hoomd.dump.gsd(logName,
+               period=dumpFreq,
+               group=all,
+               overwrite=False,
+               phase=-1,
+               dynamic=['attribute', 'property', 'momentum'])
+
+# hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
+#                         static=['dimensions', 'viz_static'],
+#                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
 
 # Run the simulation
 hoomd.run(totTsteps)
