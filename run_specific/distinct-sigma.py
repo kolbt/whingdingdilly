@@ -28,8 +28,8 @@ partPercA = 50    # percentage of A particles
 partFracA = float(partPercA) / 100.0
 peA = 500                   # activity of A particles
 peB = 150                   # activity of B particles
-partNum = 100000           # total number of particles
-phi = 0.46                    # system area fraction
+partNum = 200000           # total number of particles
+phi = 46                    # system area fraction
 phi = float(phi)/100.0
 
 seed1 = 2848               # seed for position
