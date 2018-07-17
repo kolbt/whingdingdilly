@@ -4,7 +4,7 @@
 #SBATCH --mem=20000                         # increase memory request (a gig)
 #SBATCH -t 1-00:00                          # time (D-HH:MM)
 
-txtFiles=("$@")
 script='/nas/longleaf/home/kolbt/whingdingdilly/phase_diagrammer/write-phase-txt.py'
+txtFiles=("$@")
 
 python $script ${txtFiles[@]}
