@@ -280,23 +280,7 @@ def dump_spec(timestep):
 hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
-hoomd.dump.gsd(logName,
-               period=dumpFreq,
-               group=all,
-               overwrite=False,
-               phase=-1,
-               dynamic=['attribute', 'property', 'momentum'])
-
-# hoomd.dump.getar.simple(sqliteName, dumpFreq, 'a',
-#                         static=['dimensions', 'viz_static'],
-#                         dynamic=['viz_aniso_dynamic', 'virial', 'velocity'])
-
 # Run the simulation
 hoomd.run(totTsteps)
-#breaker = 10
-#runBit = totTsteps / breaker
-#count = 0
-#while (count < breaker):
-#    hoomd.run(runBit)
-#    count += 1
+
 
