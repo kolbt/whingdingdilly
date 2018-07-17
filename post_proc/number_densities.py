@@ -225,8 +225,7 @@ for iii in range(start, end):
             '{0:.2f}'.format(dp_density).center(10) + ' ' +\
             '{0:.2f}'.format(gp_density).center(10) + ' ' +\
             '{0:.2f}'.format(a_clust).center(10) + ' ' +\
-            '{0:.2f}'.format(a_gas).center(10) + ' ' +\
-            + '\n')
+            '{0:.2f}'.format(a_gas).center(10) + '\n')
     f.close()
 
     mesh[:] = 0     # zero out the mesh
