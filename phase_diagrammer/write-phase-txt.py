@@ -54,10 +54,10 @@ except:
     peR = np.zeros(len(txtFiles))
 
 # Pairwise potential data (overwritten in this case)
-epsilonA = computeEps(peA)
-epsilonB = computeEps(peB)
+# epsilonA = computeEps(peA)
+# epsilonB = computeEps(peB)
 epsHS = np.zeros(len(peA), dtype=np.float64)
-for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
+# for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
 epsHS[:] = ep[:] # only if you've set epsilon explicitly
 partFracA = xA/100.0    # Particle fraction
 
