@@ -14,9 +14,6 @@ This file:
 # Imports and loading the .gsd file
 import sys
 import numpy as np
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import math
 
 # Function that'll grab my parameters from the filenames
