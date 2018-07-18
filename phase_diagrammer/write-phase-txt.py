@@ -54,8 +54,10 @@ epsHS[:] = ep[:] # only if you've set epsilon explicitly
 partFracA = xA/100.0    # Particle fraction
 
 # Requirement to be consider phase separated
-sizeMin =
-timeMin =
+partNum = 20000
+frames = 4000
+sizeMin = partNum * 0.4     # 40% of particles in single cluster
+timeMin = frames * 0.5      # cluster present for half of all frames
 
 # Loop through each data series
 for i in range(0, len(txtFiles)):
@@ -84,6 +86,9 @@ for i in range(0, len(txtFiles)):
 
     if count >= timeMin:
         phasSep = 1
+        print("{}: Y").format(txtFiles[i])
+    else:
+        print("{}: N").format(txtFiles[i])
 
     # Save to phase separation array
 
