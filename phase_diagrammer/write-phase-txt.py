@@ -20,6 +20,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math
 
+# Function that'll grab my parameters from the filenames
+def getFromTxt(fname, first, last):
+    """Takes a string, text before and after desired text, outs text between"""
+    start = fname.index( first ) + len( first )
+    end = fname.index( last, start )
+    myTxt = fname[start:end]
+    return float(myTxt)
+
 sigma = 1.0
 # The old model
 epsilon = 1.0
