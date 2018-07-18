@@ -1,15 +1,14 @@
 '''
 #                           This is an 80 character line                       #
-This file is intended to look at the average distance between particles (delta).
-This should directly result from the forces applied on particles (that's how
-potentials work). We will then look at how this changes (for a specific epsilon)
-as a function of activity.
+This file reads in processed data from text files and outputs whether or not the
+given system undergoes phase separation.  This is currently computed by the size
+and lifetime of the largest cluster, but, could also feasibly arise from the
+percentage of clustered particles in the system (not necessarily one cluster).
 
-What this file does:
-    1. Load in source .gsd files (in a list)
-    2. Compute center-to-center MODE distance (of last 10 frames)
-    3. Index this with the corresponding activity ratio
-    4. Plot mode center-to-center distance as a function of activity
+This file:
+    1.  Reads in post-processed text data
+    2.  Examines the largest cluster size
+    3.  Writes to a phase separation file the values: peA, peB, xA, ps
 '''
 
 # Imports and loading the .gsd file
@@ -66,6 +65,8 @@ partNum = 20000
 frames = 4000
 sizeMin = partNum * 0.4     # 40% of particles in single cluster
 timeMin = frames * 0.5      # cluster present for half of all frames
+# Name to write to
+phase_file = "phase-separation-data.txt"
 
 # Loop through each data series
 for i in range(0, len(txtFiles)):
@@ -92,21 +93,18 @@ for i in range(0, len(txtFiles)):
         if lgClust[j] >= sizeMin:
             count += 1
 
+    f = open(phase_file, 'a')
     if count >= timeMin:
         phasSep = 1
-        print("{}: Y").format(txtFiles[i])
+        f.write(str(peA[i]).center(10) + ' ' + \
+                str(peB[i]).center(10) + ' ' + \
+                str(xA[i]).center(10) + ' ' + \
+                str(phaseSep).center(10) + \
+                '\n')
     else:
-        print("{}: N").format(txtFiles[i])
-
-    # Save to phase separation array
-
-
-
-
-
-
-
-
-
-# Write phase seperation array to text file
-
+        f.write(str(peA[i]).center(10) + ' ' + \
+                str(peB[i]).center(10) + ' ' + \
+                str(xA[i]).center(10) + ' ' + \
+                str(phaseSep).center(10) + \
+                '\n')
+    f.close()
