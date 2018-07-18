@@ -89,7 +89,7 @@ for i in range(0, len(txtFiles)):
     count = 0
     phaseSep = 0
     for j in range(0, len(lgClust)):
-        if lgClust >= sizeMin:
+        if lgClust[j] >= sizeMin:
             count += 1
 
     if count >= timeMin:
