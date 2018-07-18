@@ -64,6 +64,13 @@ sizeMin = partNum * 0.4     # 40% of particles in single cluster
 timeMin = frames * 0.5      # cluster present for half of all frames
 # Name to write to
 phase_file = "phase-separation-data.txt"
+f = open(phase_file, 'w')
+f.write(('Act_A').center(10) + ' ' + \
+        ('Act_B').center(10) + ' ' + \
+        ('Frac_A').center(10) + ' ' + \
+        ('Phase_Sep').center(10) + \
+        '\n')
+f.close()
 
 # Loop through each data series
 for i in range(0, len(txtFiles)):
