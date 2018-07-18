@@ -29,7 +29,7 @@ sigma = 1.0
 epsilon = 1.0
 
 # Grab the command line arguments
-txtFiles = sys.argv[3:]     # pass starting at 4 to avoid script path and hoomd
+txtFiles = sys.argv[2:]     # start at 2 to avoid early arguments
 
 # Parse out the activities and fractions from the filenames
 peA = np.zeros_like(txtFiles, dtype=np.int)
@@ -97,15 +97,17 @@ for i in range(0, len(txtFiles)):
         if lgClust[j] >= sizeMin:
             count += 1
 
-    f = open(phase_file, 'a')
+
     if count >= timeMin:
-        phasSep = 1
+        phaseSep = 1
+        f = open(phase_file, 'a')
         f.write(str(peA[i]).center(10) + ' ' + \
                 str(peB[i]).center(10) + ' ' + \
                 str(xA[i]).center(10) + ' ' + \
                 str(phaseSep).center(10) + \
                 '\n')
     else:
+        f = open(phase_file, 'a')
         f.write(str(peA[i]).center(10) + ' ' + \
                 str(peB[i]).center(10) + ' ' + \
                 str(xA[i]).center(10) + ' ' + \

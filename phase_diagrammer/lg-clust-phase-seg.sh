@@ -1,10 +1,20 @@
 #!/bin/sh
 
+echo "Longleaf?"
+read longleaf
+
 txtFiles=()
-script='/nas/longleaf/home/kolbt/whingdingdilly/phase_diagrammer/txt-to-py.sh'
+
+if [ $longleaf == 'y' ]; then
+    script='/nas/longleaf/home/kolbt/whingdingdilly/phase_diagrammer'
+    submit='sbatch'
+else
+    script='/Users/kolbt/Desktop/compiled/whingdingdilly/phase_diagrammer'
+    submit='sh'
+fi
 
 # Get all text data
-for txt in $(ls *.txt)
+for txt in $(ls all*.txt)
 do
 
     # Add to the array that you'll pass to the py file
@@ -12,4 +22,4 @@ do
 
 done
 
-sbatch $script ${txtFiles[@]}
+$submit $script/txt-to-py.sh $script ${txtFiles[@]}
