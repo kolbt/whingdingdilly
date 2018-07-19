@@ -61,7 +61,7 @@ partFracA = xA/100.0    # Particle fraction
 partNum = 20000
 frames = 4000
 sizeMin = partNum * 0.40    # 40% of particles in single cluster
-timeMin = frames * 0.25     # cluster present for half of all frames
+timeMin = frames * 0.10     # cluster present for half of all frames
 # Name to write to
 phase_file = "phase-separation-data.txt"
 f = open(phase_file, 'w')
