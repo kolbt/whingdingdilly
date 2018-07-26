@@ -275,7 +275,7 @@ def dump_spec(timestep):
                       group=all,
                       overwrite=False,
                       dynamic=['attribute', 'property', 'momentum'])
-       os.close(2)
+       # os.close(2)
 
 hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
