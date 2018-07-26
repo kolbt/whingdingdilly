@@ -69,17 +69,17 @@ xA = np.zeros_like(gsdFiles, dtype=np.float64)
 ep = np.zeros_like(gsdFiles, dtype=np.int)
 
 # This grabs the parameters of each text file
-for i in range(0, len(gsdFiles)):
-   peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-   peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-   xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+# for i in range(0, len(gsdFiles)):
+#    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+#    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+#    xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
 
 # Only if epsilon is in the filename
-# for i in range(0, len(gsdFiles)):
-#     peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-#     peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-#     xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
-#     ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
+for i in range(0, len(gsdFiles)):
+    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+    xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
+    ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
 
 peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
 
@@ -91,6 +91,8 @@ epsHS[:] = ep[:] # only if you've set epsilon explicitly
 
 partFracA = xA/100.0    # Particle fraction
 mode = []               # List to store modes in
+
+lowest = 1.122 # get the smallest analyzed diameter
 
 for i in range(0, len(gsdFiles)):
     print('Computing mode center-to-center distance for data in file: {}'.format(gsdFiles[i]))
@@ -148,7 +150,7 @@ for i in range(0, len(gsdFiles)):
         pos = np.delete(pos, 2, 1)
         typ = types[j]
 
-        effRad = np.ones((len(typ)), dtype=np.float64)
+        effRad = np.zeros((partNum), dtype=np.float64)
 
         # Put particles in their respective bins
         for k in range(0, partNum):
@@ -210,14 +212,31 @@ for i in range(0, len(gsdFiles)):
             if neighCount != 0:
                 effRad[k] /= neighCount
             else:
-                effRad[k] = 1.0
+                effRad[k] = 1.122
+            # Get lowest value (for heatmap)
+            if effRad[k] < lowest:
+                lowest = effRad[k]
+
+        print("Closest center-to-center distance: {}").format(lowest)
         # Plot radius overlaid on position
         x = np.zeros((partNum), dtype=np.float64)
         y = np.zeros((partNum), dtype=np.float64)
         for w in range(0, partNum):
             x[w] = pos[w][0]
             y[w] = pos[w][1]
-        plt.scatter(x, y, c=effRad, s=1.5, edgecolors='none')
-        plt.clim(0.90, 1.112)
+        plt.scatter(x, y, c=effRad, s=0.5, edgecolors='none')
+        plt.xlim(-h_box, h_box)
+        plt.ylim(-h_box, h_box)
+        plt.xticks([])
+        plt.yticks([])
+        plt.clim(lowest, 1.0)
         plt.colorbar()
-        plt.savefig('test.png', dpi=1000)
+        plt.tight_layout()
+        plt.axes().set_aspect('equal')
+        plt.savefig('effSigma' +\
+                    '_pa' + str(peA[i]) +\
+                    '_pb' + str(peB[i]) +\
+                    '_xa' + str(int(xA[i])) +\
+                    '_ep' + str(ep[i]) +\
+                    '.png', dpi=1000)
+        plt.close()
