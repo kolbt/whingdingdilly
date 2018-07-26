@@ -58,7 +58,6 @@ def computeR(part1, part2):
 in_file = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
-"_ep1"+\
 ".gsd"
 # File to write all data to
 all_file = "all_pa"+str(pe_a)+\
