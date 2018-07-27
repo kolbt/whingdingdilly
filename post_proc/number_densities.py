@@ -126,7 +126,7 @@ float_side = box_data[0] / 2.0
 side = float((int(box_data[0])+1)) / 2
 box_width = 5                                           # bin width
 diameter = 1.0                                          # sigma
-while side % box_width != 0:                            # must be divisible
+while int(side+1) % box_width != 0:                       # must be divisible
     side += 1                                           # make divisible by bin
 
 spacer = int(side * 2 / (box_width * diameter))         # number of bins

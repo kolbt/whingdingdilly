@@ -69,17 +69,17 @@ xA = np.zeros_like(gsdFiles, dtype=np.float64)
 ep = np.zeros_like(gsdFiles, dtype=np.int)
 
 # This grabs the parameters of each text file
-# for i in range(0, len(gsdFiles)):
-#    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-#    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-#    xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+for i in range(0, len(gsdFiles)):
+   peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+   peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+   xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
 
 # Only if epsilon is in the filename
-for i in range(0, len(gsdFiles)):
-    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-    xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
-    ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
+# for i in range(0, len(gsdFiles)):
+#     peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+#     peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+#     xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
+#     ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
 
 peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
 
@@ -87,7 +87,8 @@ epsilonA = computeEps(peA)
 epsilonB = computeEps(peB)
 epsHS = np.zeros(len(peA), dtype=np.float64)
 for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
-epsHS[:] = ep[:] # only if you've set epsilon explicitly
+# epsHS[:] = ep[:] # only if you've set epsilon explicitly
+epsHS[:] = 1
 
 partFracA = xA/100.0    # Particle fraction
 mode = []               # List to store modes in
@@ -100,8 +101,9 @@ for i in range(0, len(gsdFiles)):
     f = hoomd.open(name=gsdFiles[i], mode='rb') # open gsd file with hoomd
     dumps = f.__len__()                         # get number of frames
     # Start and stop frames
-    start = dumps - 1  # gives first frame to read
-    end = dumps         # gives last frame to read
+    # start = dumps - 1  # gives first frame to read
+    start = 150
+    end = 500         # gives last frame to read
     # Instantiate necessary arrays
     positions = np.zeros((end), dtype=np.ndarray)   # array of positions
     types = np.zeros((end), dtype=np.ndarray)       # particle types
@@ -217,14 +219,14 @@ for i in range(0, len(gsdFiles)):
             if effRad[k] < lowest:
                 lowest = effRad[k]
 
-        print("Closest center-to-center distance: {}").format(lowest)
+        # print("Closest center-to-center distance: {}").format(lowest)
         # Plot radius overlaid on position
         x = np.zeros((partNum), dtype=np.float64)
         y = np.zeros((partNum), dtype=np.float64)
         for w in range(0, partNum):
             x[w] = pos[w][0]
             y[w] = pos[w][1]
-        plt.scatter(x, y, c=effRad, s=0.5, edgecolors='none')
+        plt.scatter(x, y, c=effRad, s=0.25, edgecolors='none')
         plt.xlim(-h_box, h_box)
         plt.ylim(-h_box, h_box)
         plt.xticks([])
@@ -237,6 +239,7 @@ for i in range(0, len(gsdFiles)):
                     '_pa' + str(peA[i]) +\
                     '_pb' + str(peB[i]) +\
                     '_xa' + str(int(xA[i])) +\
-                    '_ep' + str(ep[i]) +\
+                    '_ep' + str(int(epsHS[i])) +\
+                    '_fm' + str(j) +\
                     '.png', dpi=1000)
         plt.close()
