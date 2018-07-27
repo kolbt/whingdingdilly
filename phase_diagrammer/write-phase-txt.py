@@ -57,11 +57,6 @@ epsHS = np.zeros(len(peA), dtype=np.float64)
 epsHS[:] = ep[:] # only if you've set epsilon explicitly
 partFracA = xA/100.0    # Particle fraction
 
-# Requirement to be consider phase separated
-partNum = 20000
-frames = 4000
-sizeMin = partNum * 0.25    # 40% of particles in single cluster
-timeMin = frames * 0.50     # cluster present for half of all frames
 # Name to write to
 phase_file = "phase-separation-data.txt"
 f = open(phase_file, 'w')
@@ -89,6 +84,12 @@ for i in range(0, len(txtFiles)):
     clustAr, \
     gasAr, \
     MCS = np.loadtxt(txtFiles[i], skiprows=1, unpack=True)
+
+    # Requirement to be consider phase separated
+    partNum = gasTot[0]     # everything starts in a gas
+    frames = len(tst)
+    sizeMin = partNum * 0.25  # 40% of particles in single cluster
+    timeMin = frames * 0.50  # cluster present for half of all frames
 
     # See if data satisfies phase separated requirements
     count = 0
