@@ -101,9 +101,8 @@ for i in range(0, len(gsdFiles)):
     f = hoomd.open(name=gsdFiles[i], mode='rb') # open gsd file with hoomd
     dumps = f.__len__()                         # get number of frames
     # Start and stop frames
-    # start = dumps - 1  # gives first frame to read
-    start = 150
-    end = 500         # gives last frame to read
+    start = dumps - 1   # gives first frame to read
+    end = dumps         # gives last frame to read
     # Instantiate necessary arrays
     positions = np.zeros((end), dtype=np.ndarray)   # array of positions
     types = np.zeros((end), dtype=np.ndarray)       # particle types
