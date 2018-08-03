@@ -12,90 +12,103 @@ What this file does:
 
 # Imports and loading the .gsd file
 import sys
-
 import numpy as np
-from scipy.interpolate import griddata
-from scipy import stats
 
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib import colors
-import math
+hoomdPath = sys.argv[1]
+print(hoomdPath)
+gsdPath = sys.argv[2]
+peA = int(sys.argv[3])
+peB = int(sys.argv[4])
+xA = int(sys.argv[5])
+ep = float(sys.argv[6])
+seed1 = int(sys.argv[7])
+seed2 = int(sys.argv[8])
+seed3 = int(sys.argv[9])
+seed4 = int(sys.argv[10])
+seed5 = int(sys.argv[11])
+myFrame = int(sys.argv[12])
 
-inFile = sys.argv[2]
-gsdPath = sys.argv[3]
-myFrame = sys.argv[4]
+# sys.path.append(gsdPath)
+sys.path.append(hoomdPath)
 
-sys.path.append(gsdPath)
-import gsd
-from gsd import hoomd
-
-sigma=1.0
-# The old model
-epsilon = 1.0
-
-# The new model
-def computeEps(activity):
-    "Given particle activity, output repulsion well depth"
-    epsilon = activity * sigma / 24.0
-    return epsilon
-
-# Function that'll grab my parameters from the filenames
-def getFromTxt(fname, first, last):
-    """Takes a string, text before and after desired text, outs text between"""
-    start = fname.index( first ) + len( first )
-    end = fname.index( last, start )
-    myTxt = fname[start:end]
-    return float(myTxt)
-
-# Computes distance
-def getDistance(point1, point2x, point2y):
-    """"Find the distance between two points"""
-    distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
-    return distance
-
-# Computes force given distance with LJ potential
-def computeLJForce(r, eps_in):
-    """Given a distance, computes the force"""
-    forceLJ = 4*eps_in*((12*(sigma**12)*(r**-13))-(6*(sigma**12)*(r**-7)))
-    return forceLJ
-
-# If epsilon is not in filename
-peA = getFromTxt(inFile, "pa", "_pb")
-peB = getFromTxt(inFile, "pb", "_xa")
-xA = getFromTxt(inFile, "xa", ".gsd")
-
-# Only if epsilon is in the filename
-if type(xA) is str:
-    peA = getFromTxt(inFile, "pa", "_pb")
-    peB = getFromTxt(inFile, "pb", "_xa")
-    xA = getFromTxt(inFile, "xa", "_ep")
-    ep = getFromTxt(inFile, "ep", ".gsd")
-
-try:
-    peR = float(peA) / float(peB)       # Compute activity ratio
-except:
-    peR = 0
-
-epsilonA = computeEps(peA)
-epsilonB = computeEps(peB)
-epsHS = epsilonA if epsilonA > epsilonB else epsilonB
-epsHS = 1
-partFracA = xA / 100.0    # Particle fraction
-
-# There are two options for the infile name
-fname = "pa" + str(peA) +\
-"_pb" + str(peB) +\
-"_xa" + str(xA) +\
-"_ep" + str(ep) +\
-".gsd"
-
-fname = "pa" + str(peA) +\
-"_pb" + str(peB) +\
-"_xa" + str(xA) +\
-".gsd"
-
-# need to import hoomd
+# import gsd
+# from gsd import hoomd
 import hoomd
-hoomd.init.read_gsd(fname, myFrame)
+from hoomd import md
+
+# Get necessary parameters
+sigma = 1.0
+threeEtaPiSigma = 1.0
+kT = 1.0
+D_t = kT / threeEtaPiSigma      # translational diffusion constant
+D_r = (3.0 * D_t) / (sigma**2)  # rotational diffusion constant
+tauBrown = (sigma**2) / D_t     # brownian time scale (invariant)
+def computeTauLJ(epsilon):
+    "Given epsilon, compute lennard-jones time unit"
+    tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
+    return tauLJ
+tauLJ = computeTauLJ(ep)
+dt = 0.00001 * tauLJ
+
+fname = 'pa' + str(peA) +\
+'_pb' + str(peB) +\
+'_xa' + str(xA) +\
+'.gsd'
+nuc = 'nuc_' + fname
+nucFreq = 100
+
+# BEFORE READING IN GSD TO RUN
+# Read in and put orientation data into array (for myFrame)
+# Why isn't this default behavior?
+
+hoomd.context.initialize()
+system = hoomd.init.read_gsd(filename=fname, frame=myFrame)
+
+# Assigning groups and lengths to particles
+all = hoomd.group.all()
+gA = hoomd.group.type(type = 'A', update=True)
+gB = hoomd.group.type(type = 'B', update=True)
+N = len(all)
+Na = len(gA)
+Nb = len(gB)
+
+# Define potential between pairs
+nl = hoomd.md.nlist.cell()
+lj = hoomd.md.pair.lj(r_cut=2**(1/6), nlist=nl)
+lj.set_params(mode='shift')
+lj.pair_coeff.set('A', 'A', epsilon=ep, sigma=1.0)
+lj.pair_coeff.set('A', 'B', epsilon=ep, sigma=1.0)
+lj.pair_coeff.set('B', 'B', epsilon=ep, sigma=1.0)
+
+activity_a = [(peA,0,0) for i in range(Na)]
+activity_b = [(peB,0,0) for i in range(Nb)]
+
+# Set A-type activity in hoomd
+hoomd.md.force.active(group=gA,
+                      seed=seed4,
+                      f_lst=activity_a,
+                      rotation_diff=D_r,
+                      orientation_link=False,
+                      orientation_reverse_link=True)
+# Set B-type activity in hoomd
+hoomd.md.force.active(group=gB,
+                      seed=seed5,
+                      f_lst=activity_b,
+                      rotation_diff=D_r,
+                      orientation_link=False,
+                      orientation_reverse_link=True)
+
+# General integration parameters
+hoomd.md.integrate.mode_standard(dt=dt)
+hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed2)
+
+hoomd.dump.gsd(nuc,
+               period=nucFreq,
+               group=all,
+               overwrite=False,
+               phase=-1,
+               dynamic=['attribute', 'property', 'momentum'])
+
+# Run the simulation
+# hoomd.run(nucFreq[-1])
+hoomd.run(10000)
