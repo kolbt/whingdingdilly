@@ -64,6 +64,9 @@ nucFreq = 100
 hoomd.context.initialize()
 system = hoomd.init.read_gsd(filename=fname, frame=myFrame)
 
+# Take a snapshot use this to set orientation
+# http://hoomd-blue.readthedocs.io/en/stable/module-hoomd-data.html#hoomd.data.SnapshotParticleData
+
 # Assigning groups and lengths to particles
 all = hoomd.group.all()
 gA = hoomd.group.type(type = 'A', update=True)
