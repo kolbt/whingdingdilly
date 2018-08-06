@@ -55,11 +55,18 @@ def computeR(part1, part2):
     return np.sqrt(((part2[0]-part1[0])**2)+((part2[1]-part1[1])**2))
 
 # File to read from
+# in_file = "pa"+str(pe_a)+\
+# "_pb"+str(pe_b)+\
+# "_xa"+str(part_perc_a)+\
+# "_ep1"+\
+# ".gsd"
+
+# Epsilon not in filename
 in_file = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
-"_ep1"+\
 ".gsd"
+
 # File to write all data to
 all_file = "all_pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
