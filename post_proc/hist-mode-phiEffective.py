@@ -69,25 +69,25 @@ xA = np.zeros_like(gsdFiles, dtype=np.float64)
 ep = np.zeros_like(gsdFiles, dtype=np.int)
 
 # This grabs the parameters of each text file
-#for i in range(0, len(gsdFiles)):
-#    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-#    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-#    xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+for i in range(0, len(gsdFiles)):
+   peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+   peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+   xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
 
 # Only if epsilon is in the filename
-for i in range(0, len(gsdFiles)):
-    peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-    peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-    xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
-    ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
+# for i in range(0, len(gsdFiles)):
+#     peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+#     peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+#     xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
+#     ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
 
 peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
 
 epsilonA = computeEps(peA)
 epsilonB = computeEps(peB)
-epsHS = np.zeros(len(peA), dtype=np.float64)
-for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
-epsHS[:] = ep[:] # only if you've set epsilon explicitly
+epsHS = np.ones(len(peA), dtype=np.float64)
+# for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
+# epsHS[:] = ep[:] # only if you've set epsilon explicitly
 
 partFracA = xA/100.0    # Particle fraction
 mode = []               # List to store modes in
