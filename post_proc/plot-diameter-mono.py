@@ -55,6 +55,10 @@ for i in range(0, len(peA)):
             tmp2 = phiEff[j]
             phiEff[j] = phiEff[i]
             phiEff[i] = tmp2
+            # Swap corresponding sigma indices
+            tmp3 = modeALL[j]
+            modeALL[j] = modeALL[i]
+            modeALL[i] = tmp3
 
 plt.plot(peA, phiEff, c='r', zorder=1)
 plt.scatter(peA, phiEff, c='k', zorder=2)
@@ -63,5 +67,16 @@ plt.ylim(min(phiEff), max(phiEff))
 # plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
 plt.xlabel(r'Activity $(Pe)$')
 plt.ylabel(r'$\phi_{Effective}$')
+#plt.tight_layout()
+plt.savefig('phi-trends.png', bbox_inches='tight', dpi=1000)
+plt.close()
+
+plt.plot(peA, modeALL, c='r', zorder=1)
+plt.scatter(peA, modeALL, c='k', zorder=2)
+plt.xlim(min(peA), max(peA))
+plt.ylim(min(modeALL), max(modeALL))
+# plt.legend(loc='center left', bbox_to_anchor=(1, 0.625), title=r'$(x_{slow}, Pe_{fast})$')
+plt.xlabel(r'Activity $(Pe)$')
+plt.ylabel(r'$\sigma_{Effective}$')
 #plt.tight_layout()
 plt.savefig('diameter-trends.png', bbox_inches='tight', dpi=1000)
