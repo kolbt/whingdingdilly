@@ -1,6 +1,6 @@
 '''
 #                           This is an 80 character line                       #
-PURE:  The intent of this file is to get out a few basic values as text files
+PURE:  Read in simulation, output extrinsic data for each timestep
 
                     File   :   Column 1    Column 2    Column 3    Column 4
      gas_pa#_pb#_xa#.txt   :   time        gas_A       gas_B       gas_total
@@ -108,6 +108,7 @@ part_B = part_num - part_A
 
 # Feed data into freud analysis software
 l_box = box_data[0]
+h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 my_clust = cluster.Cluster(box = f_box,                 # init cluster class
@@ -115,8 +116,10 @@ my_clust = cluster.Cluster(box = f_box,                 # init cluster class
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
-min_size = 1000         # minimum cluster size
-dist_min = 2.0          # bin density for avg d.p. density
+min_size_abso = 1000
+min_size_perc = 0.05 * part_num  # minimum cluster size 5% of all particles
+min_size = min_size_abso if min_size_abso < min_size_perc else min_size_perc
+
 f = open(all_file, 'w') # write file headings
 f.write('Timestep'.center(10) + ' ' +\
         'Gas_A'.center(10) + ' ' +\
@@ -138,95 +141,90 @@ f.write('Timestep'.center(10) + ' ' +\
         'GP_density'.center(10) + '\n')
 f.close()
 
-# Create mesh
-float_side = box_data[0] / 2.0
-side = float((int(box_data[0])+1)) / 2
-box_width = 5                                           # bin width
-diameter = 1.0                                          # sigma
-while int(side+1) % box_width != 0:                       # must be divisible
-    side += 1                                           # make divisible by bin
+# Make the mesh
+r_cut = 1.122
+sizeBin = r_cut
+nBins = int(l_box / sizeBin)
+nBins += 1  # account for integer rounding
 
-spacer = int(side * 2 / (box_width * diameter))         # number of bins
-mesh = np.zeros((spacer, spacer), dtype = np.int)       # array of each bin
-reset_mesh = np.zeros_like(mesh)                        # zero out mesh
+for j in range(start, end):
 
-for iii in range(start, end):
-    
-    # Get data from arrays
-    pos = positions[iii]
-    typ = types[iii]
-    tst = timesteps[iii]
+    # Mesh array
+    binParts = [[[] for b in range(nBins)] for a in range(nBins)]
 
-    # Run freud computations
-    my_clust.computeClusters(pos)           # feed in position
-    ids = my_clust.getClusterIdx()          # get id of each cluster
-    
-    c_props.computeProperties(pos, ids)     # find cluster properties
-    clust_size = c_props.getClusterSizes()  # find cluster sizes
-    
-    # Querry array, that tells whether cluster ID is of sufficient size
-    q_clust = np.zeros((len(clust_size)), dtype = np.int)
-    clust_num = 0   # number of clusters
-    l_clust = 0     # largest cluster
-    
-    for jjj in range(0, len(clust_size)):
-        if clust_size[jjj] > min_size:
-            q_clust[jjj] = 1
-            clust_num += 1
-        if clust_size[jjj] > l_clust:
-            l_clust = clust_size[jjj]
+    # Easier accessors
+    pos = positions[j]
+    pos = np.delete(pos, 2, 1)
+    typ = types[j]
 
-    # Values to write out after computations are complete
-    dense_num = 0   # number of particles in dense phase
-    dense_A = 0     # number of A-particles in dense phase
-    dense_B = 0     # number of B-particles in dense phase
-    gas_num = 0     # number of particles in gas phase
-    gas_A = 0       # number of A-particles in gas phase
-    gas_B = 0       # number of B-particles in gas phase
-    dp_density = 0  # density of dense phase
-    gp_density = 0  # density of gas phase
-    mcs = 0         # mean cluster size
+    # Lists for effective diameter
+    ALL = []
+    AA = []
+    AB = []
+    BB = []
 
-    for jjj in range(0, part_num):
-        
-        # Get the index of the mesh the particle belongs in
-        loc_x = int((pos[jjj][0] + float_side) / (box_width * diameter))
-        loc_y = int((pos[jjj][1] + float_side) / (box_width * diameter))
-        
-        # Add the particle to it's bin
-        mesh[loc_x][loc_y] += 1
-        
-        if q_clust[ids[jjj]] == 1:          # it's in the dense phase
-            dense_num += 1
-            if typ[jjj] == 0:
-                dense_A += 1
-            else:
-                dense_B += 1
-        else:                               # it's in the gas phase
-            gas_num += 1
-            if typ[jjj] == 0:
-                gas_A += 1
-            else:
-                gas_B += 1
+    # Put particles in their respective bins
+    for k in range(0, partNum):
+        # Get mesh indices
+        tmp_posX = pos[k][0] + h_box
+        tmp_posY = pos[k][1] + h_box
+        x_ind = int(tmp_posX / sizeBin)
+        y_ind = int(tmp_posY / sizeBin)
+        # Append particle id to appropriate bin
+        binParts[x_ind][y_ind].append(k)
 
-    for jjj in range(0, part_num):
-        if q_clust[ids[jjj]] == 1:          # is in dense phase
-            # Indices of particle's bin
-            loc_x = int((pos[jjj][0] + float_side) / (box_width * diameter))
-            loc_y = int((pos[jjj][1] + float_side) / (box_width * diameter))
-            # Add it and surrounding particles to dp_density
-            dp_density += mesh[loc_x][loc_y]
+    # Compute distance, each pair will be counted twice
+    for k in range(0, partNum):
+        # Get mesh indices
+        tmp_posX = pos[k][0] + h_box
+        tmp_posY = pos[k][1] + h_box
+        x_ind = int(tmp_posX / sizeBin)
+        y_ind = int(tmp_posY / sizeBin)
+        # Get index of surrounding bins
+        l_bin = x_ind - 1  # index of left bins
+        r_bin = x_ind + 1  # index of right bins
+        b_bin = y_ind - 1  # index of bottom bins
+        t_bin = y_ind + 1  # index of top bins
+        if r_bin == nBins:
+            r_bin -= nBins  # adjust if wrapped
+        if t_bin == nBins:
+            t_bin -= nBins  # adjust if wrapped
+        h_list = [l_bin, x_ind, r_bin]  # list of horizontal bin indices
+        v_list = [b_bin, y_ind, t_bin]  # list of vertical bin indices
 
-    if dense_num != 0:
-        dp_density /= float(dense_num)                  # avg number in each bin
-        dp_density /= (float(box_width*diameter)**2)    # normalize by bin area
-        mcs = dense_num / clust_num                     # compute mean cluster size
+        # Loop through all bins
+        for h in range(0, len(h_list)):
+            for v in range(0, len(v_list)):
+                # Take care of periodic wrapping for position
+                wrapX = 0.0
+                wrapY = 0.0
+                if h == 0 and h_list[h] == -1:
+                    wrapX -= l_box
+                if h == 2 and h_list[h] == 0:
+                    wrapX += l_box
+                if v == 0 and v_list[v] == -1:
+                    wrapY -= l_box
+                if v == 2 and v_list[v] == 0:
+                    wrapY += l_box
+                # Compute distance between particles
+                for b in range(0, len(binParts[h_list[h]][v_list[v]])):
+                    ref = binParts[h_list[h]][v_list[v]][b]
+                    r = getDistance(pos[k],
+                                    pos[ref][0] + wrapX,
+                                    pos[ref][1] + wrapY)
+                    r = round(r, 4)  # round value to 4 decimal places
 
-    a_clust = 0.0
-    if dp_density != 0:
-        a_clust = float(dense_num) / float(dp_density)  # area of cluster
-    a_gas = float(a_box) - a_clust                      # area of gas
-    gp_density = gas_num / a_gas                        # number density in gas
+                    # If LJ potential is on, store into a list (omit self)
+                    if 0.1 < r <= r_cut:
+                        ALL.append(r)  # All particles
+                        if typ[k] == 0 and typ[ref] == 0:  # AA distance
+                            AA.append(r)
+                        elif typ[k] == 1 and typ[ref] == 1:  # BB distance
+                            BB.append(r)
+                        else:  # AB distance
+                            AB.append(r)
+
+    # You can compute the density from the intended radius and cluster area
 
     # Values have been set, write to text files
     f = open(all_file, 'a')
@@ -238,11 +236,14 @@ for iii in range(start, end):
             str(dense_B).center(10) + ' ' +\
             str(dense_num).center(10) + ' ' +\
             str(l_clust).center(10) + ' ' +\
+            str(mcs).center(10) + ' ' +\
+            str(modeALL).center(10) + ' ' +\
+            str(modeAA).center(10) + ' ' +\
+            str(modeAB).center(10) + ' ' +\
+            str(modeBB).center(10) + ' ' +\
+            str(phiEff).center(10) + ' ' +\
+            str(lcA).center(10) + ' ' +\
+            str(tcA).center(10) + ' ' +\
             '{0:.2f}'.format(dp_density).center(10) + ' ' +\
-            '{0:.2f}'.format(gp_density).center(10) + ' ' +\
-            '{0:.2f}'.format(a_clust).center(10) + ' ' +\
-            '{0:.2f}'.format(a_gas).center(10) + ' ' +\
-            str(mcs).center(10) + '\n')
+            '{0:.2f}'.format(gp_density).center(10) + '\n')
     f.close()
-
-    mesh[:] = 0     # zero out the mesh
