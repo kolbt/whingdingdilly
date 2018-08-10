@@ -325,12 +325,15 @@ for j in range(start, end):
                 dense_B += 1
 
     # Compute some things...
-    mcs = dense_num / clust_num     # mcs from number of 'real' clusters
+    if clust_num != 0:
+        mcs = dense_num / clust_num
     lcA = (lc_numA * computeA(modeAA)) + (lc_numB * computeA(modeBB))
     tcA = (dense_A * computeA(modeAA)) + (dense_B * computeA(modeBB))
     # Number densities (number per unit area)
-    lc_density = l_clust / lcA
-    dp_density = dense_num / tcA
+    if lcA != 0.0:
+        lc_density = l_clust / lcA
+    if tcA != 0.0:
+        dp_density = dense_num / tcA
     gp_density = gas_num / (a_box - tcA)
 
     # Values have been set, write to text files
