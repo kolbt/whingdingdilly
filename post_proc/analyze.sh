@@ -25,7 +25,8 @@ script_path=$6
 #python $script_path/gtar_pressure.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/phase_types.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/dense_CoM.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/plotNumberDensities.py $pa $pb $xa
