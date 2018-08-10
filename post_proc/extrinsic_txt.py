@@ -79,7 +79,7 @@ in_file = "pa"+str(pe_a)+\
 ".gsd"
 
 # File to write all data to
-all_file = "all_pa"+str(pe_a)+\
+all_file = "diam_pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
 "_ep1"+\
