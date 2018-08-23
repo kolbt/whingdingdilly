@@ -119,18 +119,24 @@ else:                               # B particles are Brownian
 eps = (epsA if (epsA >= epsB) else epsB)    # use the larger epsilon
 Fp = (FpA if (FpA >= FpB) else FpB)         # use the larger active force
 
-# File to read from
-in_file = "pa"+str(peA)+\
-"_pb"+str(peB)+\
-"_xa"+str(part_perc_a)+\
-".gsd"
-
 # File base
 b_file = "pa"+str(peA)+\
 "_pb"+str(peB)+\
 "_xa"+str(part_perc_a)
 
-f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
+try:
+    in_file = "pa" + str(pe_a) + \
+              "_pb" + str(pe_b) + \
+              "_xa" + str(part_perc_a) + \
+              ".gsd"
+    f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
+except:
+    in_file = "pa"+str(pe_a)+\
+              "_pb"+str(pe_b)+\
+              "_xa"+str(part_perc_a)+\
+              "_ep1"+\
+              ".gsd"
+    f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 dumps = f.__len__()                     # get number of timesteps dumped
 
 start = 0       # gives first frame to read
