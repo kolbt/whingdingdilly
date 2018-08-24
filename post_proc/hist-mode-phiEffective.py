@@ -68,24 +68,26 @@ peB = np.zeros_like(gsdFiles, dtype=np.int)
 xA = np.zeros_like(gsdFiles, dtype=np.float64)
 ep = np.zeros_like(gsdFiles, dtype=np.int)
 
-# This grabs the parameters of each text file
-for i in range(0, len(gsdFiles)):
-   peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-   peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-   xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+try:
+    # This grabs the parameters of each text file
+    for i in range(0, len(gsdFiles)):
+        peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+        peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+        xA[i] = getFromTxt(gsdFiles[i], "xa", ".gsd")
+        ep[i] = 1
 
-# Only if epsilon is in the filename
-# for i in range(0, len(gsdFiles)):
-#     peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
-#     peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
-#     xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
-#     ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
+except:
+    for i in range(0, len(gsdFiles)):
+        peA[i] = getFromTxt(gsdFiles[i], "pa", "_pb")
+        peB[i] = getFromTxt(gsdFiles[i], "pb", "_xa")
+        xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
+        ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
 
 peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
 
-epsilonA = computeEps(peA)
-epsilonB = computeEps(peB)
-epsHS = np.ones(len(peA), dtype=np.float64)
+# epsilonA = computeEps(peA)
+# epsilonB = computeEps(peB)
+# epsHS = np.ones(len(peA), dtype=np.float64)
 # for i in range(0, len(peA)): epsHS[i] = epsilonA[i] if epsilonA[i] > epsilonB[i] else epsilonB[i]
 # epsHS[:] = ep[:] # only if you've set epsilon explicitly
 
@@ -232,14 +234,14 @@ for i in range(0, len(gsdFiles)):
     # ALL
     modeALL = stats.mode(ALL)
     modeALL = round(modeALL[0][0], 4)
-    fALL = computeLJForce(modeALL, epsHS[i])
+    fALL = computeLJForce(modeALL, ep[i])
     phiEff = modeALL * 0.6                      # Effective area fraction phi=0.6
 
     # AA
     try:
         modeAA = stats.mode(AA)
         modeAA = round(modeAA[0][0], 4)
-        fAA = computeLJForce(modeAA, epsHS[i])
+        fAA = computeLJForce(modeAA, ep[i])
     except:
         modeAA = 0.0
         fAA = 0.0
@@ -248,7 +250,7 @@ for i in range(0, len(gsdFiles)):
     try:
         modeAB = stats.mode(AB)
         modeAB = round(modeAB[0][0], 4)
-        fAB = computeLJForce(modeAB, epsHS[i])
+        fAB = computeLJForce(modeAB, ep[i])
     except:
         modeAB = 0.0
         fAB = 0.0
@@ -257,7 +259,7 @@ for i in range(0, len(gsdFiles)):
     try:
         modeBB = stats.mode(BB)
         modeBB = round(modeBB[0][0], 4)
-        fBB = computeLJForce(modeBB, epsHS[i])
+        fBB = computeLJForce(modeBB, ep[i])
     except:
         modeBB = 0.0
         fBB = 0.0
@@ -274,7 +276,7 @@ for i in range(0, len(gsdFiles)):
             str(peB[i]).center(10) + ' ' + \
             str(peR[i]).center(10) + ' ' + \
             str(xA[i]).center(10) + ' ' + \
-            '{0:.2f}'.format(epsHS[i]).center(10) + ' ' + \
+            '{0:.2f}'.format(ep[i]).center(10) + ' ' + \
             '{0:.3f}'.format(modeALL).center(10) + ' ' + \
             '{0:.3f}'.format(modeAA).center(10) + ' ' + \
             '{0:.3f}'.format(modeAB).center(10) + ' ' + \
