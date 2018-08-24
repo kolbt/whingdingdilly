@@ -23,7 +23,10 @@ part_perc_a = int(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
-inEps = int(sys.argv[6])                    # epsilon (if given)
+try:
+    inEps = int(sys.argv[6])                    # epsilon (if given)
+except:
+    inEps = 1
 
 sys.path.append(hoomd_path)     # ensure hoomd is in your python path
 sys.path.append(gsd_path)       # ensure gsd is in your python path

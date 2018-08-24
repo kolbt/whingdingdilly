@@ -83,7 +83,10 @@ except:
         xA[i] = getFromTxt(gsdFiles[i], "xa", "_ep")
         ep[i] = getFromTxt(gsdFiles[i], "ep", ".gsd")
 
-peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
+if np.any(peB):
+    peR = peA.astype(float) / peB.astype(float)         # Compute activity ratio
+else:
+    peR = np.zeros_like(peA, dtype=np.int)
 
 # epsilonA = computeEps(peA)
 # epsilonB = computeEps(peB)
