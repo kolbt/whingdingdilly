@@ -10,6 +10,7 @@ xa=$3
 hoomd_path=$4
 gsd_path=$5
 script_path=$6
+ep=$7
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/nearest_neigh.py $pa $pb $xa $hoomd_path $gsd_path
@@ -27,7 +28,7 @@ script_path=$6
 #python $script_path/dense_CoM.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path

@@ -23,6 +23,7 @@ part_perc_a = int(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
+inEps = int(sys.argv[6])                    # epsilon (if given)
 
 sys.path.append(hoomd_path)     # ensure hoomd is in your python path
 sys.path.append(gsd_path)       # ensure gsd is in your python path
@@ -119,23 +120,27 @@ else:                               # B particles are Brownian
 eps = (epsA if (epsA >= epsB) else epsB)    # use the larger epsilon
 Fp = (FpA if (FpA >= FpB) else FpB)         # use the larger active force
 
-# File base
-b_file = "pa"+str(peA)+\
-"_pb"+str(peB)+\
-"_xa"+str(part_perc_a)
-
 try:
     in_file = "pa" + str(peA) + \
               "_pb" + str(peB) + \
               "_xa" + str(part_perc_a) + \
               ".gsd"
+    # File base
+    b_file = "pa" + str(peA) + \
+             "_pb" + str(peB) + \
+             "_xa" + str(part_perc_a)
     f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 except:
     in_file = "pa"+str(peA)+\
               "_pb"+str(peB)+\
               "_xa"+str(part_perc_a)+\
-              "_ep1"+\
+              "_ep"+str(inEps)+\
               ".gsd"
+    # File base
+    b_file = "pa" + str(peA) + \
+             "_pb" + str(peB) + \
+             "_xa" + str(part_perc_a) + \
+             "_ep" + str(inEps)
     f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
 dumps = f.__len__()                     # get number of timesteps dumped
