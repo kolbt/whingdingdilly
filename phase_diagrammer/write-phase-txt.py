@@ -6,9 +6,11 @@ and lifetime of the largest cluster, but, could also feasibly arise from the
 percentage of clustered particles in the system (not necessarily one cluster).
 
 This file:
-    1.  Reads in post-processed text data
-    2.  Examines the largest cluster size
-    3.  Writes to a phase separation file the values: peA, peB, xA, ps
+    1.  Read in SA txt (l_clust and phi)
+    2.  Compute effective activity
+    3.  Use Cates formula to check agreement
+    4.  Plot Pe_intended vs x_A
+    5.  Use filled unfilled to indicate agreement
 '''
 
 # Imports and loading the .gsd file
