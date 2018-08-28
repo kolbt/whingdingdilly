@@ -17,6 +17,7 @@ This file:
 import sys
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 # Function that'll grab my parameters from the filenames
 def getFromTxt(fname, first, last):
@@ -67,6 +68,7 @@ f.write(('Act_A').center(10) + ' ' + \
         ('Sig_AA').center(10) + ' ' + \
         ('Sig_AB').center(10) + ' ' + \
         ('Sig_BB').center(10) + ' ' + \
+        ('Phi_Eff').center(10) + ' ' + \
         ('Phase_Sep').center(10) + \
         '\n')
 f.close()
@@ -74,6 +76,7 @@ f.close()
 # Loop through each data series
 for i in range(0, len(txtFiles)):
 
+    print(txtFiles[i])
     # Import data into arrays
     tst, \
     gasA, \
@@ -85,7 +88,6 @@ for i in range(0, len(txtFiles)):
     lgClust, \
     MCS, \
     sigALL, \
-    sigAA, \
     sigAA, \
     sigAB, \
     sigBB, \
@@ -109,8 +111,10 @@ for i in range(0, len(txtFiles)):
     AA = 0
     AB = 0
     BB = 0
+    phiAvg = 0
     # Get last 10% of simulation
-    avgTime = len(lgClust) - (0.10 * len(lgClust))
+    numAvg = (0.10 * len(lgClust))
+    avgTime = len(lgClust) - numAvg
 
     for j in range(0, len(lgClust)):
         # Average over last
@@ -119,14 +123,16 @@ for i in range(0, len(txtFiles)):
             AA += sigAA[j]
             AB += sigAB[j]
             BB += sigBB[j]
+            phiAvg += phiEff[j]
         if lgClust[j] >= sizeMin:
             count += 1
 
     # Average diameter values
-    ALL /= avgTime
-    AA /= avgTime
-    AB /= avgTime
-    BB /= avgTime
+    ALL /= numAvg
+    AA /= numAvg
+    AB /= numAvg
+    BB /= numAvg
+    phiAvg /= numAvg
 
     if count >= timeMin:
         phaseSep = 1
@@ -134,10 +140,11 @@ for i in range(0, len(txtFiles)):
         f.write(str(peA[i]).center(10) + ' ' + \
                 str(peB[i]).center(10) + ' ' + \
                 str(xA[i]).center(10) + ' ' + \
-                str(ALL).center(10) + ' ' + \
-                str(AA).center(10) + ' ' + \
-                str(AB).center(10) + ' ' + \
-                str(BB).center(10) + ' ' + \
+                '{0:.4f}'.format(ALL).center(10) + ' ' + \
+                '{0:.4f}'.format(AA).center(10) + ' ' + \
+                '{0:.4f}'.format(AB).center(10) + ' ' + \
+                '{0:.4f}'.format(BB).center(10) + ' ' + \
+                '{0:.3f}'.format(phiAvg).center(10) + ' ' + \
                 str(phaseSep).center(10) + \
                 '\n')
     else:
@@ -145,10 +152,11 @@ for i in range(0, len(txtFiles)):
         f.write(str(peA[i]).center(10) + ' ' + \
                 str(peB[i]).center(10) + ' ' + \
                 str(xA[i]).center(10) + ' ' + \
-                str(ALL).center(10) + ' ' + \
-                str(AA).center(10) + ' ' + \
-                str(AB).center(10) + ' ' + \
-                str(BB).center(10) + ' ' + \
+                '{0:.4f}'.format(ALL).center(10) + ' ' + \
+                '{0:.4f}'.format(AA).center(10) + ' ' + \
+                '{0:.4f}'.format(AB).center(10) + ' ' + \
+                '{0:.4f}'.format(BB).center(10) + ' ' + \
+                '{0:.3f}'.format(phiAvg).center(10) + ' ' + \
                 str(phaseSep).center(10) + \
                 '\n')
     f.close()
@@ -172,9 +180,13 @@ ALL, \
 AA, \
 AB, \
 BB, \
+phiEff, \
 phaseSep = np.loadtxt(phase_file, skiprows=1, unpack=True)
+
+xA /= 100.0
+
 for i in range(0, len(peA)):
-    minFrac = catesTheory(ALL[i], peA[i])
+    minFrac = catesTheory(phiEff[i], peA[i])
     if xA[i] >= minFrac:        # is phase separated (theory)
         if phaseSep[i] == 1:    # agreement!
             psAgree = plt.scatter(peA[i], xA[i], facecolor='k', edgecolor='k')

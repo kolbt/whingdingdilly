@@ -7,4 +7,5 @@
 script=$1
 txtFiles=("$@")
 
-python $script/write-phase-txt.py ${txtFiles[@]}
+#python $script/write-phase-txt.py ${txtFiles[@]}
+python $script/renormalize_experiment.py ${txtFiles[@]}
