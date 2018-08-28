@@ -76,7 +76,6 @@ f.close()
 # Loop through each data series
 for i in range(0, len(txtFiles)):
 
-    print(txtFiles[i])
     # Import data into arrays
     tst, \
     gasA, \
@@ -166,6 +165,11 @@ for i in range(0, len(txtFiles)):
 # Now let's take that data and compare to Cates theory
 kappa = 4.05
 
+def effectiveActivity(peIntended, sigEff):
+    '''Compute the effective activity'''
+    peEffective = peIntended * (sigEff**4)
+    return peEffective
+
 def catesTheory(phiEff, peEff):
     '''This uses the Cates theory to provide the minimum active
         fraction of particles required for phase separation'''
@@ -183,11 +187,38 @@ BB, \
 phiEff, \
 phaseSep = np.loadtxt(phase_file, skiprows=1, unpack=True)
 
+# Extract monodisperse values for diameter and phi
+distPeAs = []
+resultSig = []
+resultPhi = []
+for i in range(0, len(peA)):
+    if xA[i] == 100.0:
+        distPeAs.append(peA[i])
+        resultSig.append(ALL[i])
+        resultPhi.append(phiEff[i])
+
+print("Activities: {}").format(distPeAs)
+print("Corresponding Sigmas: {}").format(resultSig)
+print("Corresponding Phis: {}").format(resultPhi)
+
 xA /= 100.0
 
 for i in range(0, len(peA)):
-    minFrac = catesTheory(phiEff[i], peA[i])
-    if xA[i] >= minFrac:        # is phase separated (theory)
+
+    # Grab effective phi and sigma, compute Cates theory
+    for j in range(0, len(distPeAs)):
+        if peA[i] == distPeAs[j]:
+            myPeEff = effectiveActivity(peA[i], resultSig[j])
+            minFracEff = catesTheory(resultPhi[j], myPeEff)
+
+    # Intended theory comparison
+    minFracInt = catesTheory(0.60, peA[i])
+
+    # Plot the intended and effective theory
+    plt.scatter(peA[i], minFracInt, facecolor='g')
+    plt.scatter(peA[i], minFracEff, facecolor='c')
+
+    if xA[i] >= minFracEff:     # is phase separated (theory)
         if phaseSep[i] == 1:    # agreement!
             psAgree = plt.scatter(peA[i], xA[i], facecolor='k', edgecolor='k')
         else:                   # theory: yes, simulation: no
@@ -199,6 +230,14 @@ for i in range(0, len(peA)):
         else:                   # theory: no, simulation: yes
             gasTheory = plt.scatter(peA[i], xA[i], facecolor='b', edgecolor='k')
 
+# Ensure each point type exists
+psAgree = plt.scatter(-10, -10, facecolor='k', edgecolor='k')
+psTheory = plt.scatter(-10, -10, facecolor='r', edgecolor='k')
+gasAgree = plt.scatter(-10, -10, facecolor='w', edgecolor='k')
+gasTheory = plt.scatter(-10, -10, facecolor='b', edgecolor='k')
+
+plt.xlim(min(peA), max(peA))
+plt.ylim(min(xA), max(xA))
 legend = plt.legend(bbox_to_anchor=(0.0, 1.0),
                     loc='center left',
                     ncol=4,
@@ -210,4 +249,4 @@ plt.xlabel(r'$Pe_{Fast}$')
 plt.ylabel(r'$x_{Fast}$')
 plt.tight_layout()
 plt.savefig('renormalize_params.png', dpi=1000)
-
+plt.close()
