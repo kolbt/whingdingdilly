@@ -14,7 +14,7 @@ else
 fi
 
 # Get all text data
-for txt in $(ls all*.txt)
+for txt in $(ls diam*.txt)
 do
 
     # Add to the array that you'll pass to the py file
