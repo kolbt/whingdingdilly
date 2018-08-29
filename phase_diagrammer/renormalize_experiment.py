@@ -18,6 +18,7 @@ import sys
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import matplotlib.lines as mlines
 
 # Function that'll grab my parameters from the filenames
 def getFromTxt(fname, first, last):
@@ -167,7 +168,7 @@ kappa = 4.05
 
 def effectiveActivity(peIntended, sigEff):
     '''Compute the effective activity'''
-    peEffective = peIntended * (sigEff**4)
+    peEffective = peIntended * (sigEff**2)
     return peEffective
 
 def catesTheory(phiEff, peEff):
@@ -196,15 +197,36 @@ for i in range(0, len(peA)):
         distPeAs.append(peA[i])
         resultSig.append(ALL[i])
         resultPhi.append(phiEff[i])
-
-print("Activities: {}").format(distPeAs)
-print("Corresponding Sigmas: {}").format(resultSig)
-print("Corresponding Phis: {}").format(resultPhi)
+# Sort the array by activity
+for i in range(0, len(distPeAs)):
+    for j in range(0, len(distPeAs)):
+        if distPeAs[i] < distPeAs[j] and i > j:
+            # Swap activity order
+            tmp = distPeAs[j]
+            distPeAs[j] = distPeAs[i]
+            distPeAs[i] = tmp
+            # Swap sigma order
+            tmp = resultSig[j]
+            resultSig[j] = resultSig[i]
+            resultSig[i] = tmp
+            # Swap phi order
+            tmp = resultPhi[j]
+            resultPhi[j] = resultPhi[i]
+            resultPhi[i] = tmp
+# Compute minimum fraction effective values
+theoryMinFracs = []
+for i in range(0, len(distPeAs)):
+    linePe = effectiveActivity(distPeAs[i], resultSig[i])
+    lineCates = catesTheory(resultPhi[i], linePe)
+    theoryMinFracs.append(lineCates)
+# Compute intended theory values
+xs = np.arange(0.0, 500.0, 0.1)
+ys = np.zeros_like(xs)
+for i in range(0, len(xs)):
+    ys[i] = catesTheory(0.6, xs[i])
 
 xA /= 100.0
-
 for i in range(0, len(peA)):
-
     # Grab effective phi and sigma, compute Cates theory
     for j in range(0, len(distPeAs)):
         if peA[i] == distPeAs[j]:
@@ -215,8 +237,8 @@ for i in range(0, len(peA)):
     minFracInt = catesTheory(0.60, peA[i])
 
     # Plot the intended and effective theory
-    plt.scatter(peA[i], minFracInt, facecolor='g')
-    plt.scatter(peA[i], minFracEff, facecolor='c')
+    # plt.scatter(peA[i], minFracInt, facecolor='g')
+    # plt.scatter(peA[i], minFracEff, facecolor='c')
 
     if xA[i] >= minFracEff:     # is phase separated (theory)
         if phaseSep[i] == 1:    # agreement!
@@ -230,6 +252,13 @@ for i in range(0, len(peA)):
         else:                   # theory: no, simulation: yes
             gasTheory = plt.scatter(peA[i], xA[i], facecolor='b', edgecolor='k')
 
+# Plot the theory lines
+intBin = plt.plot(xs, ys, c='g')
+effBin = plt.plot(distPeAs, theoryMinFracs, c='c')
+# Artist for legend
+artIntBin = mlines.Line2D([], [], color='g')
+artEffBin = mlines.Line2D([], [], color='c')
+
 # Ensure each point type exists
 psAgree = plt.scatter(-10, -10, facecolor='k', edgecolor='k')
 psTheory = plt.scatter(-10, -10, facecolor='r', edgecolor='k')
@@ -238,15 +267,16 @@ gasTheory = plt.scatter(-10, -10, facecolor='b', edgecolor='k')
 
 plt.xlim(min(peA), max(peA))
 plt.ylim(min(xA), max(xA))
-legend = plt.legend(bbox_to_anchor=(0.0, 1.0),
-                    loc='center left',
-                    ncol=4,
-                    handles=[psAgree, psTheory, gasAgree, gasTheory],
-                    labels=['PS Both', 'PS Theory Only', 'Gas Both', 'Gas Theory Only'],
+showEff = plt.text(510, 0.5, r'$Pe_{Eff}=Pe_{Int}\sigma_{Eff}^{2}$', fontsize=16)
+legend = plt.legend(bbox_to_anchor=(1.0, 1.0),
+                    loc='best',
+                    ncol=1,
+                    handles=[psAgree, psTheory, gasAgree, gasTheory, artIntBin, artEffBin],
+                    labels=['PS Both', 'PS Theory Only', 'Gas Both', 'Gas Theory Only', 'Intended Binodal', 'Effective Binodal'],
                     framealpha=1.0)
-plt.title(r'Active/Passive Phase Separation', y=1.03)
+plt.title(r'Active/Passive Phase Separation', y=1.0)
 plt.xlabel(r'$Pe_{Fast}$')
 plt.ylabel(r'$x_{Fast}$')
 plt.tight_layout()
-plt.savefig('renormalize_params.png', dpi=1000)
+plt.savefig('renormalize_params.png', bbox_extra_artists = (legend, showEff,), bbox_inches='tight', dpi=1000)
 plt.close()
