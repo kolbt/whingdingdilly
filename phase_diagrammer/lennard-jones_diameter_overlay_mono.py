@@ -1,16 +1,10 @@
 '''
 #                           This is an 80 character line                       #
-This file reads in processed data from text files and outputs whether or not the
-given system undergoes phase separation.  This is currently computed by the size
-and lifetime of the largest cluster, but, could also feasibly arise from the
-percentage of clustered particles in the system (not necessarily one cluster).
 
 This file:
-    1.  Read in SA txt (l_clust and phi)
-    2.  Compute effective activity
-    3.  Use Cates formula to check agreement
-    4.  Plot Pe_intended vs x_A
-    5.  Use filled unfilled to indicate agreement
+    1.  Reads in data for diameter from textfiles
+    2.  Computes the LJ force for given distances
+    3.  Plots this data
 '''
 
 # Imports and loading the .gsd file
@@ -22,11 +16,16 @@ import matplotlib.lines as mlines
 
 # Function that'll grab my parameters from the filenames
 def getFromTxt(fname, first, last):
-    """Takes a string, text before and after desired text, outs text between"""
+    '''Takes a string, text before and after desired text, outs text between'''
     start = fname.index( first ) + len( first )
     end = fname.index( last, start )
     myTxt = fname[start:end]
     return float(myTxt)
+
+def ljForce(r):
+    '''Takes distance gives force from Lennard-Jones potential'''
+    forceLJ = 4 * epsilon * ((12 * (sigma ** 12) * (r ** -13)) - (6 * (sigma ** 12) * (r ** -7)))
+    return forceLJ
 
 sigma = 1.0
 # The old model
@@ -59,20 +58,13 @@ try:
 except:
     peR = np.zeros(len(txtFiles))
 
-# see file format in write-phase-txt.py
-phase_file = "phase_sep_w_diameters.txt"
-f = open(phase_file, 'w')
-f.write(('Act_A').center(10) + ' ' + \
-        ('Act_B').center(10) + ' ' + \
-        ('Frac_A').center(10) + ' ' + \
-        ('Sig_All').center(10) + ' ' + \
-        ('Sig_AA').center(10) + ' ' + \
-        ('Sig_AB').center(10) + ' ' + \
-        ('Sig_BB').center(10) + ' ' + \
-        ('Phi_Eff').center(10) + ' ' + \
-        ('Phase_Sep').center(10) + \
-        '\n')
-f.close()
+# Instantiate arrays I'd like to plot
+phaseSep = np.zeros(len(txtFiles), dtype=np.int)
+ALL = np.zeros(len(txtFiles), dtype=np.float64)
+AA = np.zeros(len(txtFiles), dtype=np.float64)
+AB = np.zeros(len(txtFiles), dtype=np.float64)
+BB = np.zeros(len(txtFiles), dtype=np.float64)
+phiAvg = np.zeros(len(txtFiles), dtype=np.float64)
 
 # Loop through each data series
 for i in range(0, len(txtFiles)):
@@ -104,14 +96,8 @@ for i in range(0, len(txtFiles)):
     sizeMin = partNum * 0.25  # 40% of particles in single cluster
     timeMin = frames * 0.50  # cluster present for half of all frames
 
-    # See if data satisfies phase separated requirements
     count = 0
-    phaseSep = 0
-    ALL = 0
-    AA = 0
-    AB = 0
-    BB = 0
-    phiAvg = 0
+
     # Get last 10% of simulation
     numAvg = (0.10 * len(lgClust))
     avgTime = len(lgClust) - numAvg
@@ -119,164 +105,128 @@ for i in range(0, len(txtFiles)):
     for j in range(0, len(lgClust)):
         # Average over last
         if j >= avgTime:
-            ALL += sigALL[j]
-            AA += sigAA[j]
-            AB += sigAB[j]
-            BB += sigBB[j]
-            phiAvg += phiEff[j]
+            ALL[i] += sigALL[j]
+            AA[i] += sigAA[j]
+            AB[i] += sigAB[j]
+            BB[i] += sigBB[j]
+            phiAvg[i] += phiEff[j]
         if lgClust[j] >= sizeMin:
             count += 1
 
     # Average diameter values
-    ALL /= numAvg
-    AA /= numAvg
-    AB /= numAvg
-    BB /= numAvg
-    phiAvg /= numAvg
+    ALL[i] /= numAvg
+    AA[i] /= numAvg
+    AB[i] /= numAvg
+    BB[i] /= numAvg
+    phiAvg[i] /= numAvg
 
     if count >= timeMin:
         phaseSep = 1
-        f = open(phase_file, 'a')
-        f.write(str(peA[i]).center(10) + ' ' + \
-                str(peB[i]).center(10) + ' ' + \
-                str(xA[i]).center(10) + ' ' + \
-                '{0:.4f}'.format(ALL).center(10) + ' ' + \
-                '{0:.4f}'.format(AA).center(10) + ' ' + \
-                '{0:.4f}'.format(AB).center(10) + ' ' + \
-                '{0:.4f}'.format(BB).center(10) + ' ' + \
-                '{0:.3f}'.format(phiAvg).center(10) + ' ' + \
-                str(phaseSep).center(10) + \
-                '\n')
-    else:
-        f = open(phase_file, 'a')
-        f.write(str(peA[i]).center(10) + ' ' + \
-                str(peB[i]).center(10) + ' ' + \
-                str(xA[i]).center(10) + ' ' + \
-                '{0:.4f}'.format(ALL).center(10) + ' ' + \
-                '{0:.4f}'.format(AA).center(10) + ' ' + \
-                '{0:.4f}'.format(AB).center(10) + ' ' + \
-                '{0:.4f}'.format(BB).center(10) + ' ' + \
-                '{0:.3f}'.format(phiAvg).center(10) + ' ' + \
-                str(phaseSep).center(10) + \
-                '\n')
-    f.close()
 
-# At this point we have a textfile with params, diameters, and ps
+# Now everything is in an array, sort them (for lines)
+for i in range(0, len(txtFiles)):
+    for j in range(0, len(txtFiles)):
+        # Values need to be swapped
+        if peA[i] > peA[j] and i < j:
+            # Swap A activity
+            tmp = peA[j]
+            peA[j] = peA[i]
+            peA[i] = tmp
+            # Swap total diameter
+            tmp = ALL[j]
+            ALL[j] = ALL[i]
+            ALL[i] = tmp
+            # Swap AA diameter
+            tmp = AA[j]
+            AA[j] = AA[i]
+            AA[i] = tmp
+            # Swap AB diameter
+            tmp = AB[j]
+            AB[j] = AB[i]
+            AB[i] = tmp
+            # Swap BB diameter
+            tmp = BB[j]
+            BB[j] = BB[i]
+            BB[i] = tmp
+            # Swap phi
+            tmp = phiAvg[j]
+            phiAvg[j] = phiAvg[i]
+            phiAvg[i] = tmp
 
-# Now let's take that data and compare to Cates theory
-kappa = 4.05
+# Plot the data
+plt.plot(peA, ALL, marker='o', c='k', label='Emergent Diameter')
 
-def effectiveActivity(peIntended, sigEff):
-    '''Compute the effective activity'''
-    peEffective = peIntended * (sigEff**2)
-    return peEffective
-
-def catesTheory(phiEff, peEff):
-    '''This uses the Cates theory to provide the minimum active
-        fraction of particles required for phase separation'''
-    minFrac = (3 * (np.pi ** 2) * kappa) / (4 * phiEff * peEff)
-    return minFrac
-
-# Title plot by effective Pe being used (plot using intended Pe)
-peA, \
-peB, \
-xA, \
-ALL, \
-AA, \
-AB, \
-BB, \
-phiEff, \
-phaseSep = np.loadtxt(phase_file, skiprows=1, unpack=True)
-
-# Extract monodisperse values for diameter and phi
-distPeAs = []
-resultSig = []
-resultPhi = []
-for i in range(0, len(peA)):
-    if xA[i] == 100.0:
-        distPeAs.append(peA[i])
-        resultSig.append(ALL[i])
-        resultPhi.append(phiEff[i])
-# Sort the array by activity
-for i in range(0, len(distPeAs)):
-    for j in range(0, len(distPeAs)):
-        if distPeAs[i] < distPeAs[j] and i > j:
-            # Swap activity order
-            tmp = distPeAs[j]
-            distPeAs[j] = distPeAs[i]
-            distPeAs[i] = tmp
-            # Swap sigma order
-            tmp = resultSig[j]
-            resultSig[j] = resultSig[i]
-            resultSig[i] = tmp
-            # Swap phi order
-            tmp = resultPhi[j]
-            resultPhi[j] = resultPhi[i]
-            resultPhi[i] = tmp
-# Compute minimum fraction effective values
-theoryMinFracs = []
-for i in range(0, len(distPeAs)):
-    linePe = effectiveActivity(distPeAs[i], resultSig[i])
-    lineCates = catesTheory(resultPhi[i], linePe)
-    theoryMinFracs.append(lineCates)
-# Compute intended theory values
-xs = np.arange(0.0, 500.0, 0.1)
-ys = np.zeros_like(xs)
+# Get theory on fine r-scale
+ys = np.arange(min(ALL), max(ALL), 0.001)
+xs = np.zeros_like(ys)
 for i in range(0, len(xs)):
-    ys[i] = catesTheory(0.6, xs[i])
+    xs[i] = ljForce(ys[i])
 
-xA /= 100.0
-for i in range(0, len(peA)):
-    # Grab effective phi and sigma, compute Cates theory
-    for j in range(0, len(distPeAs)):
-        if peA[i] == distPeAs[j]:
-            myPeEff = effectiveActivity(peA[i], resultSig[j])
-            minFracEff = catesTheory(resultPhi[j], myPeEff)
+# Plot theory
+plt.plot(xs, ys, c='g', label=r'$Pe=F_{LJ}$')
+plt.plot(0.5 * xs, ys, c='r', label=r'$2Pe=F_{LJ}$')
+plt.plot(0.3 * xs, ys, c='b', label=r'$3Pe=F_{LJ}$')
 
-    # Intended theory comparison
-    minFracInt = catesTheory(0.60, peA[i])
-
-    # Plot the intended and effective theory
-    # plt.scatter(peA[i], minFracInt, facecolor='g')
-    # plt.scatter(peA[i], minFracEff, facecolor='c')
-
-    if xA[i] >= minFracEff:     # is phase separated (theory)
-        if phaseSep[i] == 1:    # agreement!
-            psAgree = plt.scatter(peA[i], xA[i], facecolor='k', edgecolor='k')
-        else:                   # theory: yes, simulation: no
-            psTheory = plt.scatter(peA[i], xA[i], facecolor='r', edgecolor='k')
-
-    else:                       # is gas (theory)
-        if phaseSep[i] == 0:    # agreement!
-            gasAgree = plt.scatter(peA[i], xA[i], facecolor='w', edgecolor='k')
-        else:                   # theory: no, simulation: yes
-            gasTheory = plt.scatter(peA[i], xA[i], facecolor='b', edgecolor='k')
-
-# Plot the theory lines
-intBin = plt.plot(xs, ys, c='g')
-effBin = plt.plot(distPeAs, theoryMinFracs, c='c')
-# Artist for legend
-artIntBin = mlines.Line2D([], [], color='g')
-artEffBin = mlines.Line2D([], [], color='c')
-
-# Ensure each point type exists
-psAgree = plt.scatter(-10, -10, facecolor='k', edgecolor='k')
-psTheory = plt.scatter(-10, -10, facecolor='r', edgecolor='k')
-gasAgree = plt.scatter(-10, -10, facecolor='w', edgecolor='k')
-gasTheory = plt.scatter(-10, -10, facecolor='b', edgecolor='k')
-
+# Axes limits
 plt.xlim(min(peA), max(peA))
-plt.ylim(min(xA), max(xA))
-showEff = plt.text(510, 0.5, r'$Pe_{Eff}=Pe_{Int}\sigma_{Eff}^{2}$', fontsize=16)
-legend = plt.legend(bbox_to_anchor=(1.0, 1.0),
-                    loc='best',
-                    ncol=1,
-                    handles=[psAgree, psTheory, gasAgree, gasTheory, artIntBin, artEffBin],
-                    labels=['PS Both', 'PS Theory Only', 'Gas Both', 'Gas Theory Only', 'Intended Binodal', 'Effective Binodal'],
-                    framealpha=1.0)
-plt.title(r'Active/Passive Phase Separation', y=1.0)
-plt.xlabel(r'$Pe_{Fast}$')
-plt.ylabel(r'$x_{Fast}$')
-plt.tight_layout()
-plt.savefig('renormalize_params.png', bbox_extra_artists = (legend, showEff,), bbox_inches='tight', dpi=1000)
+plt.ylim(min(ALL), max(ALL))
+# Labels
+plt.xlabel(r'Activity $(Pe)$')
+plt.ylabel(r'Center-to-center Distance $(\sigma_{Eff}$)')
+# Get information for legend
+plt.legend()
+# Plot :)
+plt.savefig('data_LJ_overlay_monodisperse.png', bbox_inches='tight', dpi=1000)
 plt.close()
+
+# # This is an example that works for using multiple axes
+# # Instantiate figure
+# fig = plt.figure()
+# ax1 = fig.add_subplot(111)
+# ax2 = ax1.twiny()
+# fig.subplots_adjust(bottom=0.2)
+#
+# # Plot the data
+# data = ax1.plot(peA, ALL, c='k', label='Emergent Diameter')
+#
+# # Get theory on fine r-scale
+# ys = np.arange(min(ALL), max(ALL), 0.001)
+# xs = np.zeros_like(ys)
+# for i in range(0, len(xs)):
+#     xs[i] = ljForce(ys[i])
+#
+# # Plot theory
+# first = ax1.plot(xs, ys, c='g', label=r'$Pe=F_{LJ}$')
+# second = ax2.plot(xs, ys, c='r', label=r'$2Pe=F_{LJ}$')
+# third = ax1.plot(0.45 * xs, ys, c='b', label=r'$Pe2=F_{LJ}$')
+#
+# # Additional plot restrictions
+#
+# # Axes limits
+# ax1.set_xlim(min(peA), max(peA))
+# ax2.set_xlim(2 * min(peA), 2 * max(peA))
+# plt.ylim(min(ALL), max(ALL))
+# # Labels
+# ax1.set_xlabel(r'Activity $(Pe)$')
+# ax2.set_xlabel(r'Twice Activity $(2Pe)$')
+# plt.ylabel(r'Center-to-center Distance $(\sigma_{Eff}$)')
+# # Move second axis to bottom
+# ax2.xaxis.set_ticks_position("bottom")
+# ax2.xaxis.set_label_position("bottom")
+# ax2.spines["bottom"].set_position(("axes", -0.15))
+# # Get information for legend
+# lns = data + first + second + third
+# labs = [l.get_label() for l in lns]
+# plt.legend(lns, labs)
+# # Plot :)
+# plt.show()
+
+
+
+
+
+
+
+
+
+

@@ -8,4 +8,5 @@ script=$1
 txtFiles=("$@")
 
 #python $script/write-phase-txt.py ${txtFiles[@]}
-python $script/renormalize_experiment.py ${txtFiles[@]}
+#python $script/renormalize_experiment.py ${txtFiles[@]}
+python $script/lennard-jones_diameter_overlay_mono.py ${txtFiles[@]}
