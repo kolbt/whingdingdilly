@@ -65,25 +65,29 @@ def getDistance(point1, point2x, point2y):
     distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
     return distance
 
-# File to write all data to
-all_file = "diam_pa"+str(pe_a)+\
-"_pb"+str(pe_b)+\
-"_xa"+str(part_perc_a)+\
-"_ep1"+\
-".txt"
-
 try:
     in_file = "pa" + str(pe_a) + \
               "_pb" + str(pe_b) + \
               "_xa" + str(part_perc_a) + \
               ".gsd"
+    # File to write all data to
+    all_file = "diam_pa" + str(pe_a) + \
+               "_pb" + str(pe_b) + \
+               "_xa" + str(part_perc_a) + \
+               ".txt"
     f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 except:
-    in_file = "pa"+str(pe_a)+\
-              "_pb"+str(pe_b)+\
-              "_xa"+str(part_perc_a)+\
-              "_ep1"+\
+    in_file = "pa" + str(pe_a) + \
+              "_pb" + str(pe_b) + \
+              "_xa" + str(part_perc_a) + \
+              "_ep1" + \
               ".gsd"
+    # File to write all data to
+    all_file = "diam_pa" + str(pe_a) + \
+               "_pb" + str(pe_b) + \
+               "_xa" + str(part_perc_a) + \
+               "_ep1" + \
+               ".txt"
     f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
 dumps = f.__len__()                     # get number of timesteps dumped
