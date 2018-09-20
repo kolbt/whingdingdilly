@@ -32,7 +32,8 @@ ep=$7
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path
+#python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path
+python $script_path/edge_detection.py $pa $pb $xa $hoomd_path $gsd_path
 
 
 #ffmpeg -framerate 10 -i mvy_pa${pa}_pb${pb}_xa${xa}_%d.png\
