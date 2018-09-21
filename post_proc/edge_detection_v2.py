@@ -48,17 +48,70 @@ from descartes import PolygonPatch
 from scipy.spatial import Delaunay
 
 def plot_polygon(polygon):
-    fig = pl.figure(figsize=(10,10))
+    fig = plt.figure(figsize=(10,10))
     ax = fig.add_subplot(111)
-    margin = .3
-    x_min, y_min, x_max, y_max = polygon.bounds
-    ax.set_xlim([x_min-margin, x_max+margin])
-    ax.set_ylim([y_min-margin, y_max+margin])
+    ax.set_xlim([-h_box, h_box])
+    ax.set_ylim([-h_box, h_box])
     patch = PolygonPatch(polygon, fc='#999999',
                          ec='#000000', fill=True,
                          zorder=-1)
     ax.add_patch(patch)
     return fig
+
+def alpha_shape(points, alpha):
+    """
+    Compute the alpha shape (concave hull) of a set
+    of points.
+    @param points: Iterable container of points.
+    @param alpha: alpha value to influence the
+        gooeyness of the border. Smaller numbers
+        don't fall inward as much as larger numbers.
+        Too large, and you lose everything!
+    """
+    if len(points) < 4:
+        # When you have a triangle, there is no sense
+        # in computing an alpha shape.
+        return geometry.MultiPoint(list(points)).convex_hull
+    def add_edge(edges, edge_points, coords, i, j):
+        """
+        Add a line between the i-th and j-th points,
+        if not in the list already
+        """
+        if (i, j) in edges or (j, i) in edges:
+            # already added
+            return
+        edges.add( (i, j) )
+        edge_points.append(coords[ [i, j] ])
+
+    coords = np.array([point for point in points])
+    tri = Delaunay(coords)
+    edges = set()
+    edge_points = []
+    # loop over triangles:
+    # ia, ib, ic = indices of corner points of the
+    # triangle
+    for ia, ib, ic in tri.vertices:
+        pa = coords[ia]
+        pb = coords[ib]
+        pc = coords[ic]
+        # Lengths of sides of triangle
+        a = math.sqrt((pa[0]-pb[0])**2 + (pa[1]-pb[1])**2)
+        b = math.sqrt((pb[0]-pc[0])**2 + (pb[1]-pc[1])**2)
+        c = math.sqrt((pc[0]-pa[0])**2 + (pc[1]-pa[1])**2)
+        # Semiperimeter of triangle
+        s = (a + b + c)/2.0
+        # Area of triangle by Heron's formula
+        area = math.sqrt(s*(s-a)*(s-b)*(s-c))
+        circum_r = a*b*c/(4.0*area)
+        # Here's the radius filter.
+        #print circum_r
+        if circum_r < 1.0/alpha:
+            add_edge(edges, edge_points, coords, ia, ib)
+            add_edge(edges, edge_points, coords, ib, ic)
+            add_edge(edges, edge_points, coords, ic, ia)
+    m = geometry.MultiLineString(edge_points)
+    triangles = list(polygonize(m))
+    return cascaded_union(triangles), edge_points
 
 # Load the file, get output name style
 try:
@@ -118,7 +171,7 @@ h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 5.0)                # distance to search
+                           rcut = 1.0)                  # distance to search
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
@@ -148,20 +201,18 @@ for j in range(start, end):
     clust_size = c_props.getClusterSizes()  # find cluster sizes
 
     # Querry array, that tells whether cluster ID is of sufficient size
-    lcIndex = 0     # particle index of largest cluster
+    lcIndex = 0     # id of largest cluster
     l_clust = 0     # any cluster is larger than this
-    lcID = 0        # id of largest cluster
 
     for k in range(0, len(clust_size)):
         if clust_size[k] > l_clust:
             l_clust = clust_size[k]
             lcIndex = k
-            lcID = ids[k]
 
     lc_posX = []
     lc_posY = []
     for k in range(0, len(ids)):
-        if ids[k] == lcID:
+        if ids[k] == lcIndex:
             lc_posX.append(pos[k][0])
             lc_posY.append(pos[k][1])
 
@@ -169,3 +220,13 @@ for j in range(start, end):
     lc_pos = np.zeros((len(lc_posX), 2), dtype=np.float64)
     lc_pos[:, 0] = lc_posX[:]
     lc_pos[:, 1] = lc_posY[:]
+    points = []
+    for k in range(0, len(lc_pos)):
+        points.append((lc_posX[k], lc_posY[k]))
+
+    # point_collection = geometry.MultiPoint(list(lc_pos))
+    # convex_hull_polygon = point_collection.convex_hull
+    concave_hull, edge_points = alpha_shape(points, alpha=1.6)
+    plot_polygon(concave_hull)
+    # plt.scatter(lc_posX, lc_posY, s=0.5, edgecolors='none')
+    plt.savefig('Delaunay_method.png', dpi=1000)
