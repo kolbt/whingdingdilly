@@ -102,7 +102,7 @@ h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 1.0)                  # distance to search
+                           rcut = 5.0)                # distance to search
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
@@ -200,13 +200,19 @@ for j in range(start, end):
     edgeX = []
     edgeY = []
     neigh = []
+
+    nMin = 2
+    nMax = 3
+
     for k in range(0, partNum):
-        if (3 <= neighbors[k] and neighbors[k] <= 5):
+        if (nMin <= neighbors[k] and neighbors[k] <= nMax):
             edgeX.append(pos[k][0])
             edgeY.append(pos[k][1])
             neigh.append(neighbors[k])
 
-    neigh_pos = np.zeros
+    neigh_pos = np.zeros((len(edgeX), 3), dtype=np.float64)
+    neigh_pos[:, 0] = edgeX[:]
+    neigh_pos[:, 1] = edgeY[:]
 
     # # Sanity check -- plot only particles with specific number of neighbors
     # plt.scatter(edgeX, edgeY, c=neigh, s=0.5, edgecolors='none')
@@ -219,7 +225,39 @@ for j in range(start, end):
     # plt.savefig('3-5neigh_' + out_file + '_frame' + str(j) + '.png', dpi=1000)
 
     # Feed in the reduced particle set to the cluster algorithm
-    my_clust.computeClusters(pos)  # feed in position
+    my_clust.computeClusters(neigh_pos)  # feed in position
     ids = my_clust.getClusterIdx()  # get id of each cluster
-    c_props.computeProperties(pos, ids)  # find cluster properties
+    c_props.computeProperties(neigh_pos, ids)  # find cluster properties
     clust_size = c_props.getClusterSizes()  # find cluster sizes
+
+    # Querry array, that tells whether cluster ID is of sufficient size
+    q_clust = np.zeros((len(clust_size)), dtype=np.int)
+    clust_num = 0   # number of clusters
+    lcIndex = 0     # id of largest cluster
+    lc_numA = 0     # number of A particles in dense phase
+    lc_numB = 0     # number of B particles in dense phase
+    l_clust = 0     # any cluster is larger than this
+
+    for k in range(0, len(clust_size)):
+        if clust_size[k] > min_size:
+            q_clust[k] = 1
+            clust_num += 1
+        if clust_size[k] > l_clust:
+            l_clust = clust_size[k]
+            lcIndex = k
+            lcID = ids[k]
+
+    lc_posX = []
+    lc_posY = []
+    for k in range(0, len(ids)):
+        if ids[k] == lcID:
+            lc_posX.append(neigh_pos[k][0])
+            lc_posY.append(neigh_pos[k][1])
+
+    plt.scatter(lc_posX, lc_posY, s=0.5, edgecolors='none')
+    plt.xticks(())
+    plt.yticks(())
+    plt.xlim(-h_box, h_box)
+    plt.ylim(-h_box, h_box)
+    plt.title('Largest edge cluster')
+    plt.savefig('lcEdge_' + out_file + '_frame' + str(j) + '.png', dpi=1000)
