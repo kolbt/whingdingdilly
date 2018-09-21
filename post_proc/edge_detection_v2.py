@@ -224,9 +224,7 @@ for j in range(start, end):
     for k in range(0, len(lc_pos)):
         points.append((lc_posX[k], lc_posY[k]))
 
-    # point_collection = geometry.MultiPoint(list(lc_pos))
-    # convex_hull_polygon = point_collection.convex_hull
-    concave_hull, edge_points = alpha_shape(points, alpha=1.6)
-    plot_polygon(concave_hull)
-    # plt.scatter(lc_posX, lc_posY, s=0.5, edgecolors='none')
+    concave_hull, edge_points = alpha_shape(points, alpha=1.5)
+    plot_polygon(concave_hull.buffer(1.5))
+    plt.scatter(lc_posX, lc_posY, s=0.5, c='#FF6103', edgecolors='none')
     plt.savefig('Delaunay_method.png', dpi=1000)
