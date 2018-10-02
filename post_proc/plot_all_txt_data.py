@@ -215,42 +215,58 @@ plt.ylim(0,1)
 plt.savefig('largestCluster.png', dpi=1000)
 plt.close()
 
-# Cluster Density
+# MCS
 for i in range(0, len(txtFiles)):
-    plt.plot(tsteps[i], gpDensity[i], label=str(peA[i]))
+    plt.plot(tsteps[i], MCS[i], label=str(peA[i]))
 plt.legend()
 plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
-plt.ylabel('Gas Phase Density')
-#plt.ylim(0,1)
-plt.savefig('gpDensity.png', dpi=1000)
+plt.ylabel('Mean Cluster Size')
+plt.savefig('MCS.png', dpi=1000)
 plt.close()
 
+# Largest Cluster Area
+for i in range(0, len(txtFiles)):
+    plt.plot(tsteps[i], lgClustA[i], label=str(peA[i]))
+plt.legend()
+plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
+plt.ylabel('Largest Cluster Area')
+plt.savefig('largest_cluster_area.png', dpi=1000)
+plt.close()
+
+# Total Cluster Area
+for i in range(0, len(txtFiles)):
+    plt.plot(tsteps[i], totClustA[i], label=str(peA[i]))
+plt.legend()
+plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
+plt.ylabel('Total Cluster Area')
+plt.savefig('total_cluster_area.png', dpi=1000)
+plt.close()
+
+# Largest Cluster Density
+for i in range(0, len(txtFiles)):
+    plt.plot(tsteps[i], lgClustD[i], label=str(peA[i]))
+plt.legend()
+plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
+plt.ylabel('Largest Cluster Density')
+plt.savefig('largest_cluster_density.png', dpi=1000)
+plt.close()
+
+# Dense phase density
 for i in range(0, len(txtFiles)):
     plt.plot(tsteps[i], dpDensity[i], label=str(peA[i]))
 plt.legend()
 plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
 plt.ylabel('Dense Phase Density')
-#plt.ylim(0,1)
 plt.savefig('dpDensity.png', dpi=1000)
 plt.close()
 
-# Cluster Area
+# Gas phase density
 for i in range(0, len(txtFiles)):
-    plt.plot(tsteps[i], gpArea[i], label=str(peA[i]))
+    plt.plot(tsteps[i], gpDensity[i], label=str(peA[i]))
 plt.legend()
 plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
-plt.ylabel('Gas Phase Area')
-#plt.ylim(0,1)
-plt.savefig('gpArea.png', dpi=1000)
-plt.close()
-
-for i in range(0, len(txtFiles)):
-    plt.plot(tsteps[i], dpArea[i], label=str(peA[i]))
-plt.legend()
-plt.xlabel(r'Brownian Time $(\tau_{Brownian})$')
-plt.ylabel('Dense Phase Area')
-#plt.ylim(0,1)
-plt.savefig('dpArea.png', dpi=1000)
+plt.ylabel('Gas Phase Density')
+plt.savefig('gpDensity.png', dpi=1000)
 plt.close()
 
 ################################################################################
