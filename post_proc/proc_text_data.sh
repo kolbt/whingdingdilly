@@ -22,7 +22,7 @@ fi
 
 txtFiles=()
 
-for filename in $( ls all_pa*.txt )
+for filename in $( ls *pa*.txt )
 do
 
     txtFiles+=($filename)
