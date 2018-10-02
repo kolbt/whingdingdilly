@@ -7,5 +7,5 @@
 script_path=$1
 txtFiles=("$@")
 
-python $script_path/compareTexts.py ${txtFiles[@]}
+python $script_path/plot_all_txt_data.py ${txtFiles[@]}
 
