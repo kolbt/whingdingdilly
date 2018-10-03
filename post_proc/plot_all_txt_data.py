@@ -281,10 +281,17 @@ ssDenseA = np.zeros((len(txtFiles)), dtype=np.float64)
 ssDenseB = np.zeros((len(txtFiles)), dtype=np.float64)
 ssDenseAll = np.zeros((len(txtFiles)), dtype=np.float64)
 ssLgClust = np.zeros((len(txtFiles)), dtype=np.float64)
-ssDPDensity = np.zeros((len(txtFiles)), dtype=np.float64)
-ssGPDensity = np.zeros((len(txtFiles)), dtype=np.float64)
-ssDPArea = np.zeros((len(txtFiles)), dtype=np.float64)
-ssGPArea = np.zeros((len(txtFiles)), dtype=np.float64)
+ssMCS = np.zeros((len(txtFiles)), dtype=np.float64)
+ssALL = np.zeros((len(txtFiles)), dtype=np.float64)
+ssAA = np.zeros((len(txtFiles)), dtype=np.float64)
+ssAB = np.zeros((len(txtFiles)), dtype=np.float64)
+ssBB = np.zeros((len(txtFiles)), dtype=np.float64)
+ssPhi = np.zeros((len(txtFiles)), dtype=np.float64)
+sslgCA = np.zeros((len(txtFiles)), dtype=np.float64)
+sstotCA = np.zeros((len(txtFiles)), dtype=np.float64)
+sslgCD = np.zeros((len(txtFiles)), dtype=np.float64)
+ssDPD = np.zeros((len(txtFiles)), dtype=np.float64)
+ssGPD = np.zeros((len(txtFiles)), dtype=np.float64)
 
 # Get steady state values (last 100 dumps)
 for i in range(0, len(txtFiles)):
@@ -295,10 +302,17 @@ for i in range(0, len(txtFiles)):
     ssDenseB[i] = np.mean(denseB[i][-100:-1])
     ssDenseAll[i] = np.mean(denseAll[i][-100:-1])
     ssLgClust[i] = np.mean(lgClust[i][-100:-1])
-    ssDPDensity[i] = np.mean(dpDensity[i][-100:-1])
-    ssGPDensity[i] = np.mean(gpDensity[i][-100:-1])
-    ssDPArea[i] = np.mean(dpArea[i][-100:-1])
-    ssGPArea[i] = np.mean(gpArea[i][-100:-1])
+    ssMCS = np.mean(MCS[i][-100:-1])
+    ssALL = np.mean(sigALL[i][-100:-1])
+    ssAA = np.mean(sigAA[i][-100:-1])
+    ssAB = np.mean(sigAB[i][-100:-1])
+    ssBB = np.mean(sigBB[i][-100:-1])
+    ssPhi = np.mean(phiEff[i][-100:-1])
+    sslgCA = np.mean(lgClustA[i][-100:-1])
+    sstotCA = np.mean(totClustA[i][-100:-1])
+    sslgCD = np.mean(lgClustD[i][-100:-1])
+    ssDPD = np.mean(dpDensity[i][-100:-1])
+    ssGPD = np.mean(gpDensity[i][-100:-1])
 
 # Gas Phase #####################
 
@@ -488,28 +502,186 @@ for i in range(0, len(txtFiles)):
         plt.xlabel(r'Activity Ratio')
 
 plt.ylabel('Steady-State Largest Cluster Size')
-plt.savefig('SteadyState_dpDensity.png', dpi=1000)
+plt.savefig('SteadyState_lgCluster.png', dpi=1000)
+plt.close()
+
+# MCS ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssMCS[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssMCS[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], ssMCS[i], c='k')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssMCS[i], label=str(ratio), c='k')
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State MCS')
+plt.savefig('SteadyState_MCS.png', dpi=1000)
+plt.close()
+
+# Diameter All ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssALL[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssALL[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], ssALL[i], c='k', label='All')
+        plt.scatter(xA[i], ssAA[i], c='b', label='AA')
+        plt.scatter(xA[i], ssAB[i], c='g', label='AB')
+        plt.scatter(xA[i], ssBB[i], c='r', label='BB')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+        plt.legend()
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssALL[i], label=str(ratio), c='k', label='All')
+        plt.scatter(ratio, ssAA[i], label=str(ratio), c='b', label='AA')
+        plt.scatter(ratio, ssAB[i], label=str(ratio), c='g', label='AB')
+        plt.scatter(ratio, ssBB[i], label=str(ratio), c='r', label='BB')
+        plt.xlabel(r'Activity Ratio')
+        plt.legend()
+
+plt.ylabel('Steady-State Diameter')
+plt.savefig('SteadyState_diameter.png', dpi=1000)
+plt.close()
+
+# Phi Effective ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], ssPhi[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], ssPhi[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], ssPhi[i], c='k')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, ssPhi[i], label=str(ratio), c='k')
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State Phi')
+plt.savefig('SteadyState_Phi.png', dpi=1000)
+plt.close()
+
+# Steady-state largest cluster area ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], sslgCA[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], sslgCA[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], sslgCA[i], c='k')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, sslgCA[i], label=str(ratio), c='k')
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State MCS')
+plt.savefig('SteadyState_lgCA.png', dpi=1000)
+plt.close()
+
+# Steady-state total cluster area ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], sstotCA[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], sstotCA[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], sstotCA[i], c='k')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, sstotCA[i], label=str(ratio), c='k')
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State MCS')
+plt.savefig('SteadyState_totCA.png', dpi=1000)
+plt.close()
+
+# Steady-state largest cluster density ###############
+for i in range(0, len(txtFiles)):
+    # Monodisperse B, use activity
+    if xA[i] == 0:
+        plt.scatter(peB[i], sslgCD[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Monodisperse A, use activity
+    elif xA[i] == 100:
+        plt.scatter(peA[i], sslgCD[i], label=str(peA[i]), c='k')
+        plt.xlabel(r'Activity')
+    # Binary, varying xA
+    elif xA[i] != xA[i-1]:
+        plt.scatter(xA[i], sslgCD[i], c='k')
+        plt.xlabel(r'Particle Fraction $x_{A}$')
+        plt.xlim(0,1)
+    # Binary, use activity ratio
+    else:
+        ratio = float(peA[i] / peB[i])
+        plt.scatter(ratio, sslgCD[i], label=str(ratio), c='k')
+        plt.xlabel(r'Activity Ratio')
+
+plt.ylabel('Steady-State largest cluster density')
+plt.savefig('SteadyState_lgCA.png', dpi=1000)
 plt.close()
 
 # Cluster Density ###############
 for i in range(0, len(txtFiles)):
     # Monodisperse B, use activity
     if xA[i] == 0:
-        plt.scatter(peB[i], ssDPDensity[i], label=str(peA[i]), c='k')
+        plt.scatter(peB[i], ssDPD[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Monodisperse A, use activity
     elif xA[i] == 100:
-        plt.scatter(peA[i], ssDPDensity[i], label=str(peA[i]), c='k')
+        plt.scatter(peA[i], ssDPD[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Binary, varying xA
     elif xA[i] != xA[i-1]:
-        plt.scatter(xA[i], ssDPDensity[i], c='k')
+        plt.scatter(xA[i], ssDPD[i], c='k')
         plt.xlabel(r'Particle Fraction $x_{A}$')
         plt.xlim(0,1)
     # Binary, use activity ratio
     else:
         ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssDPDensity[i], label=str(ratio), c='k')
+        plt.scatter(ratio, ssDPD[i], label=str(ratio), c='k')
         plt.xlabel(r'Activity Ratio')
 
 plt.ylabel('Steady-State Dense Phase Density')
@@ -519,73 +691,24 @@ plt.close()
 for i in range(0, len(txtFiles)):
     # Monodisperse B, use activity
     if xA[i] == 0:
-        plt.scatter(peB[i], ssGPDensity[i], label=str(peA[i]), c='k')
+        plt.scatter(peB[i], ssGPD[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Monodisperse A, use activity
     elif xA[i] == 100:
-        plt.scatter(peA[i], ssGPDensity[i], label=str(peA[i]), c='k')
+        plt.scatter(peA[i], ssGPD[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Binary, varying xA
     elif xA[i] != xA[i-1]:
-        plt.scatter(xA[i], ssGPDensity[i], c='k')
+        plt.scatter(xA[i], ssGPD[i], c='k')
         plt.xlabel(r'Particle Fraction $x_{A}$')
         plt.xlim(0,1)
     # Binary, use activity ratio
     else:
         ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssGPDensity[i], label=str(ratio), c='k')
+        plt.scatter(ratio, ssGPD[i], label=str(ratio), c='k')
         plt.xlabel(r'Activity Ratio')
 
 plt.ylabel('Steady-State Gas Phase Density')
 plt.savefig('SteadyState_gpDensity.png', dpi=1000)
-plt.close()
-
-# Cluster Area ##################
-for i in range(0, len(txtFiles)):
-    # Monodisperse B, use activity
-    if xA[i] == 0:
-        plt.scatter(peB[i], ssDPArea[i], label=str(peA[i]), c='k')
-        plt.xlabel(r'Activity')
-    # Monodisperse A, use activity
-    elif xA[i] == 100:
-        plt.scatter(peA[i], ssDPArea[i], label=str(peA[i]), c='k')
-        plt.xlabel(r'Activity')
-    # Binary, varying xA
-    elif xA[i] != xA[i-1]:
-        plt.scatter(xA[i], ssDPArea[i], c='k')
-        plt.xlabel(r'Particle Fraction $x_{A}$')
-        plt.xlim(0,1)
-    # Binary, use activity ratio
-    else:
-        ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssDPArea[i], label=str(ratio), c='k')
-        plt.xlabel(r'Activity Ratio')
-
-plt.ylabel('Steady-State Dense Phase Area')
-plt.savefig('SteadyState_dpArea.png', dpi=1000)
-plt.close()
-
-for i in range(0, len(txtFiles)):
-    # Monodisperse B, use activity
-    if xA[i] == 0:
-        plt.scatter(peB[i], ssGPArea[i], label=str(peA[i]), c='k')
-        plt.xlabel(r'Activity')
-    # Monodisperse A, use activity
-    elif xA[i] == 100:
-        plt.scatter(peA[i], ssGPArea[i], label=str(peA[i]), c='k')
-        plt.xlabel(r'Activity')
-    # Binary, varying xA
-    elif xA[i] != xA[i-1]:
-        plt.scatter(xA[i], ssGPArea[i], c='k')
-        plt.xlabel(r'Particle Fraction $x_{A}$')
-        plt.xlim(0,1)
-    # Binary, use activity ratio
-    else:
-        ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssGPArea[i], label=str(ratio), c='k')
-        plt.xlabel(r'Activity Ratio')
-
-plt.ylabel('Steady-State Gas Phase Area')
-plt.savefig('SteadyState_gpArea.png', dpi=1000)
 plt.close()
 
