@@ -552,10 +552,10 @@ for i in range(0, len(txtFiles)):
     # Binary, use activity ratio
     else:
         ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssALL[i], label=str(ratio), c='k', label='All')
-        plt.scatter(ratio, ssAA[i], label=str(ratio), c='b', label='AA')
-        plt.scatter(ratio, ssAB[i], label=str(ratio), c='g', label='AB')
-        plt.scatter(ratio, ssBB[i], label=str(ratio), c='r', label='BB')
+        plt.scatter(ratio, ssALL[i], c='k', label='All')
+        plt.scatter(ratio, ssAA[i], c='b', label='AA')
+        plt.scatter(ratio, ssAB[i], c='g', label='AB')
+        plt.scatter(ratio, ssBB[i], c='r', label='BB')
         plt.xlabel(r'Activity Ratio')
         plt.legend()
 
