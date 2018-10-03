@@ -149,6 +149,70 @@ for i in range(0, len(txtFiles)):
     dt[i] = ratio * 0.00001                     # tstep size
     tsteps[i] *= dt[i]
 
+# Reorder things in order of increasing timestep
+for i in range(0, len(txtFiles)):
+    for j in range(0, len(tsteps[i])):
+        for k in range(0, len(tsteps[i])):
+            # Need to swap
+            if tsteps[i][j] < tsteps[i][k] and j > k:
+                tmp = tsteps[i][j]
+                tsteps[i][j] = tsteps[i][k]
+                tsteps[i][k] = tmp
+                tmp = gasA[i][j]
+                gasA[i][j] = gasA[i][k]
+                gasA[i][k] = tmp
+                tmp = gasB[i][j]
+                gasB[i][j] = gasB[i][k]
+                gasB[i][k] = tmp
+                tmp = gasAll[i][j]
+                gasAll[i][j] = gasAll[i][k]
+                gasAll[i][k] = tmp
+                tmp = denseA[i][j]
+                denseA[i][j] = denseA[i][k]
+                denseA[i][k] = tmp
+                tmp = denseB[i][j]
+                denseB[i][j] = denseB[i][k]
+                denseB[i][k] = tmp
+                tmp = denseAll[i][j]
+                denseAll[i][j] = denseAll[i][k]
+                denseAll[i][k] = tmp
+                tmp = lgClust[i][j]
+                lgClust[i][j] = lgClust[i][k]
+                lgClust[i][k] = tmp
+                tmp = MCS[i][j]
+                MCS[i][j] = MCS[i][k]
+                MCS[i][k] = tmp
+                tmp = sigALL[i][j]
+                sigALL[i][j] = sigALL[i][k]
+                sigALL[i][k] = tmp
+                tmp = sigAA[i][j]
+                sigAA[i][j] = sigAA[i][k]
+                sigAA[i][k] = tmp
+                tmp = sigAB[i][j]
+                sigAB[i][j] = sigAB[i][k]
+                sigAB[i][k] = tmp
+                tmp = sigBB[i][j]
+                sigBB[i][j] = sigBB[i][k]
+                sigBB[i][k] = tmp
+                tmp = phiEff[i][j]
+                phiEff[i][j] = phiEff[i][k]
+                phiEff[i][k] = tmp
+                tmp = lgClustA[i][j]
+                lgClustA[i][j] = lgClustA[i][k]
+                lgClustA[i][k] = tmp
+                tmp = totClustA[i][j]
+                totClustA[i][j] = totClustA[i][k]
+                totClustA[i][k] = tmp
+                tmp = lgClustD[i][j]
+                lgClustD[i][j] = lgClustD[i][k]
+                lgClustD[i][k] = tmp
+                tmp = dpDensity[i][j]
+                dpDensity[i][j] = dpDensity[i][k]
+                dpDensity[i][k] = tmp
+                tmp = gpDensity[i][j]
+                gpDensity[i][j] = gpDensity[i][k]
+                gpDensity[i][k] = tmp
+
 # Now plot everything
 
 # Gas phase
@@ -302,17 +366,17 @@ for i in range(0, len(txtFiles)):
     ssDenseB[i] = np.mean(denseB[i][-100:-1])
     ssDenseAll[i] = np.mean(denseAll[i][-100:-1])
     ssLgClust[i] = np.mean(lgClust[i][-100:-1])
-    ssMCS = np.mean(MCS[i][-100:-1])
-    ssALL = np.mean(sigALL[i][-100:-1])
-    ssAA = np.mean(sigAA[i][-100:-1])
-    ssAB = np.mean(sigAB[i][-100:-1])
-    ssBB = np.mean(sigBB[i][-100:-1])
-    ssPhi = np.mean(phiEff[i][-100:-1])
-    sslgCA = np.mean(lgClustA[i][-100:-1])
-    sstotCA = np.mean(totClustA[i][-100:-1])
-    sslgCD = np.mean(lgClustD[i][-100:-1])
-    ssDPD = np.mean(dpDensity[i][-100:-1])
-    ssGPD = np.mean(gpDensity[i][-100:-1])
+    ssMCS[i] = np.mean(MCS[i][-100:-1])
+    ssALL[i] = np.mean(sigALL[i][-100:-1])
+    ssAA[i] = np.mean(sigAA[i][-100:-1])
+    ssAB[i] = np.mean(sigAB[i][-100:-1])
+    ssBB[i] = np.mean(sigBB[i][-100:-1])
+    ssPhi[i] = np.mean(phiEff[i][-100:-1])
+    sslgCA[i] = np.mean(lgClustA[i][-100:-1])
+    sstotCA[i] = np.mean(totClustA[i][-100:-1])
+    sslgCD[i]= np.mean(lgClustD[i][-100:-1])
+    ssDPD[i] = np.mean(dpDensity[i][-100:-1])
+    ssGPD[i] = np.mean(gpDensity[i][-100:-1])
 
 # Gas Phase #####################
 
