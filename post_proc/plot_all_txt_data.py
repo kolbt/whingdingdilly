@@ -598,30 +598,40 @@ plt.close()
 for i in range(0, len(txtFiles)):
     # Monodisperse B, use activity
     if xA[i] == 0:
-        plt.scatter(peB[i], ssALL[i], label=str(peA[i]), c='k')
+        ALL = plt.scatter(peB[i], ssALL[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Monodisperse A, use activity
     elif xA[i] == 100:
-        plt.scatter(peA[i], ssALL[i], label=str(peA[i]), c='k')
+        ALL = plt.scatter(peA[i], ssALL[i], label=str(peA[i]), c='k')
         plt.xlabel(r'Activity')
     # Binary, varying xA
     elif xA[i] != xA[i-1]:
-        plt.scatter(xA[i], ssALL[i], c='k', label='All')
-        plt.scatter(xA[i], ssAA[i], c='b', label='AA')
-        plt.scatter(xA[i], ssAB[i], c='g', label='AB')
-        plt.scatter(xA[i], ssBB[i], c='r', label='BB')
+        ALL = plt.scatter(xA[i], ssALL[i], c='k', label='All')
+        AA = plt.scatter(xA[i], ssAA[i], c='b', label='AA')
+        AB = plt.scatter(xA[i], ssAB[i], c='g', label='AB')
+        BB = plt.scatter(xA[i], ssBB[i], c='r', label='BB')
         plt.xlabel(r'Particle Fraction $x_{A}$')
         plt.xlim(0,1)
-        plt.legend()
+        legend = plt.legend(bbox_to_anchor=(1.0, 1.0),
+                            loc='best',
+                            ncol=1,
+                            handles=[ALL, AA, AB, BB],
+                            labels=['ALL', 'AA', 'AB', 'BB'],
+                            framealpha=1.0)
     # Binary, use activity ratio
     else:
         ratio = float(peA[i] / peB[i])
-        plt.scatter(ratio, ssALL[i], c='k', label='All')
-        plt.scatter(ratio, ssAA[i], c='b', label='AA')
-        plt.scatter(ratio, ssAB[i], c='g', label='AB')
-        plt.scatter(ratio, ssBB[i], c='r', label='BB')
+        ALL = plt.scatter(ratio, ssALL[i], c='k', label='All')
+        AA = plt.scatter(ratio, ssAA[i], c='b', label='AA')
+        AB = plt.scatter(ratio, ssAB[i], c='g', label='AB')
+        BB = plt.scatter(ratio, ssBB[i], c='r', label='BB')
         plt.xlabel(r'Activity Ratio')
-        plt.legend()
+        legend = plt.legend(bbox_to_anchor=(1.0, 1.0),
+                            loc='best',
+                            ncol=1,
+                            handles=[ALL, AA, AB, BB],
+                            labels=['ALL', 'AA', 'AB', 'BB'],
+                            framealpha=1.0)
 
 plt.ylabel('Steady-State Diameter')
 plt.savefig('SteadyState_diameter.png', dpi=1000)
@@ -673,7 +683,7 @@ for i in range(0, len(txtFiles)):
         plt.scatter(ratio, sslgCA[i], label=str(ratio), c='k')
         plt.xlabel(r'Activity Ratio')
 
-plt.ylabel('Steady-State MCS')
+plt.ylabel('Steady-State largest Cluster area')
 plt.savefig('SteadyState_lgCA.png', dpi=1000)
 plt.close()
 
@@ -698,7 +708,7 @@ for i in range(0, len(txtFiles)):
         plt.scatter(ratio, sstotCA[i], label=str(ratio), c='k')
         plt.xlabel(r'Activity Ratio')
 
-plt.ylabel('Steady-State MCS')
+plt.ylabel('Steady-State total Cluster Area')
 plt.savefig('SteadyState_totCA.png', dpi=1000)
 plt.close()
 
@@ -724,7 +734,7 @@ for i in range(0, len(txtFiles)):
         plt.xlabel(r'Activity Ratio')
 
 plt.ylabel('Steady-State largest cluster density')
-plt.savefig('SteadyState_lgCA.png', dpi=1000)
+plt.savefig('SteadyState_lgCD.png', dpi=1000)
 plt.close()
 
 # Cluster Density ###############
