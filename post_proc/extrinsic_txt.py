@@ -77,16 +77,21 @@ try:
                ".txt"
     f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 except:
+    try:
+        eps = str(sys.argv[6])
+    except:
+        eps = 1
+        
     in_file = "pa" + str(pe_a) + \
               "_pb" + str(pe_b) + \
               "_xa" + str(part_perc_a) + \
-              "_ep1" + \
+              "_ep" + str(eps) + \
               ".gsd"
     # File to write all data to
     all_file = "diam_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
-               "_ep1" + \
+               "_ep" + str(eps) +\
                ".txt"
     f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
