@@ -13,7 +13,7 @@ if [ $answer == "y" ]; then
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
 #    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/template_spec.py'
 #    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/vary_v_and_eps.py'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/linear_epsilon_hs.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/linear_epsilon_hs.py'
     sedtype='sed'
     submit='sbatch'
 else
