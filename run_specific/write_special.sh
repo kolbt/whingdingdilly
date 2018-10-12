@@ -12,7 +12,8 @@ if [ $answer == "y" ]; then
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
 #    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/template_spec.py'
-    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/vary_v_and_eps.py'
+#    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/vary_v_and_eps.py'
+    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/linear_epsilon_hs.py'
     sedtype='sed'
     submit='sbatch'
 else
@@ -21,7 +22,8 @@ else
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
 #    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/template_spec.py'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/vary_v_and_eps.py'
+#    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/vary_v_and_eps.py'
+    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/linear_epsilon_hs.py'
     sedtype='gsed'
     submit='sh'
 fi

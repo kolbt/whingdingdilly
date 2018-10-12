@@ -65,9 +65,9 @@ def computeActiveForce(velocity):
 
 def computeEps(activeForce):
     "Given particle activity, output repulsion well depth"
-    a = 5.87
-    b = 99.1
-    epsilon = (a * activeForce) / (b + activeForce)
+    a = 0.16
+    b = 1.0
+    epsilon = (a * activeForce) + b
     epsilon = int(epsilon) + 1
     return epsilon
 
@@ -254,5 +254,6 @@ hoomd.dump.gsd(gsdName,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-# Run the simulation
 hoomd.run(totTsteps)
+
+
