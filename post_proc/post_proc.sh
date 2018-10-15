@@ -29,6 +29,7 @@ echo "Epsilon in filename?"
 read isEps
 
 if [ $isEps == 'n' ]; then
+    ep=$(( 1 ))
     for filename in $( ls pa*.gsd )
     #for filename in $( ls *pa*_0.png )
     #for filename in $( ls all_pa*.txt )
@@ -40,7 +41,7 @@ if [ $isEps == 'n' ]; then
         pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
         xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
 
-        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path
+        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
 
     done
 
