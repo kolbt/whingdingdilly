@@ -21,23 +21,23 @@ import os
 import psutil
 
 # Read in bash arguments
-hoomdPath = '/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'     # path to hoomd-blue
-gsdPath = '/Users/kolbt/Desktop/compiled/gsd/build'         # path to gsd
-runFor = 100                    # simulation length (in tauLJ)
-dumpFreq = 1                    # how often to dump data
-partPercA = 50                  # percentage of A particles
+hoomdPath = "${hoomd_path}"     # path to hoomd-blue
+gsdPath = "${gsd_path}"         # path to gsd
+runFor = ${runfor}              # simulation length (in tauLJ)
+dumpFreq = ${dump_freq}         # how often to dump data
+partPercA = ${part_frac_a}      # percentage of A particles
 partFracA = float(partPercA) / 100.0
-peA = 50                        # activity of A particles
-peB = 100                       # activity of B particles
-partNum = 6                     # total number of particles
-phi = 60                        # system area fraction
+peA = ${pe_a}                   # activity of A particles
+peB = ${pe_b}                   # activity of B particles
+partNum = ${part_num}           # total number of particles
+phi = ${phi}                    # system area fraction
 phi = float(phi)/100.0
 
-seed1 = 3758                # seed for position
-seed2 = 2487                # seed for bd equilibration
-seed3 = 679                 # seed for initial orientations
-seed4 = 9028                # seed for A activity
-seed5 = 21                  # seed for B activity
+seed1 = ${seed1}                # seed for position
+seed2 = ${seed2}                # seed for bd equilibration
+seed3 = ${seed3}                # seed for initial orientations
+seed4 = ${seed4}                # seed for A activity
+seed5 = ${seed5}                # seed for B activity
 
 # Remaining imports
 sys.path.append(hoomdPath)
@@ -281,13 +281,11 @@ logDump += brownEquil
 # Remove .gsd files if they exist
 try:
     os.remove(logName)
-    print("Deleted {}").format(logName)
 except OSError:
     pass
 
 try:
     os.remove(gsdName)
-    print("Deleted {}").format(gsdName)
 except OSError:
     pass
 
