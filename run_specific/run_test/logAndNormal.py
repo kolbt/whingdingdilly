@@ -18,6 +18,7 @@
 # Initial imports
 import sys
 import os
+import psutil
 
 # Read in bash arguments
 hoomdPath = '/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'     # path to hoomd-blue
@@ -182,7 +183,7 @@ if partPercA != 0 and partPercA != 100:
         z = 0                           # z active force vector
         tuple = (x, y, z)               # made into a tuple
         activity_a.append(tuple)        # add to activity A list
-    
+
     # Now assign B-type active force vectors (w/ peB)
     activity_b = []
     for i in range(mid,partNum):
@@ -245,15 +246,9 @@ name = "pa" + str(peA) +\
 
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
-MSDName = "MSD" + name + ".gsd"
+logName = "log_" + name + ".gsd"
+chkName = os.getcwd() + "/" + logName
 lastTen = "lastTen" + name + ".gsd"
-
-hoomd.dump.gsd(gsdName,
-               period=dumpFreq,
-               group=all,
-               overwrite=False,
-               phase=-1,
-               dynamic=['attribute', 'property', 'momentum'])
 
 ### Dump for MSD ###
 # Get the early times for MSD output
@@ -265,32 +260,66 @@ times = [ 0.00001,
           0.10000,
           1.00000 ]
 # Instantiate array for dumping timesteps
-logDump = np.zeros((len(times) - 1) * 9)
+# logDump = np.zeros((len(times) - 1) * 9)
+logDump = np.zeros(((len(times) - 1) * 90) + 1)
+
+# Get number of timesteps in 1 tauBrownian
+tStepPerTau = int(float(totTsteps) / (float(runFor) * float(tauBrown)))
 
 # Little loop to give the desired values
 count = 0
 for i in range(0, len(times) - 1 ):
-    vals = np.arange(times[i], times[i + 1], times[i])
+    # vals = np.arange(times[i], times[i + 1], times[i])
+    vals = np.arange(times[i], times[i + 1], times[i] / 10)
     for j in range(0, len(vals)):
         logDump[count] = vals[j]
         count += 1
 
-logDump /= logDump[0]
+logDump *= tStepPerTau
 logDump += brownEquil
+
+# Remove .gsd files if they exist
+try:
+    os.remove(logName)
+    print("Deleted {}").format(logName)
+except OSError:
+    pass
+
+try:
+    os.remove(gsdName)
+    print("Deleted {}").format(gsdName)
+except OSError:
+    pass
 
 def dump_spec(timestep):
 
-    if timestep in logDump:
-        hoomd.dump.gsd(filename=gsdName,
+    if timestep in logDump.astype(int):
+
+        hoomd.dump.gsd(filename=logName,
                        period=None,
                        group=all,
                        overwrite=False,
+                       time_step=timestep,
                        dynamic=['attribute', 'property', 'momentum'])
-        print("Dumping additional frames... ")
 
-hoomd.analyze.callback(callback = dump_spec, period = 1)
+        # Need to close duplicate logfile processes
+        proc = psutil.Process()
+        of = proc.open_files()
+        for i in xrange(len(of)):
+            if of[i][0] == chkName:
+                os.close(of[i][1])
+
+    if timestep > logDump[-1]:
+        analyzer.disable()
+
+analyzer = hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
+hoomd.dump.gsd(gsdName,
+               period=dumpFreq,
+               group=all,
+               overwrite=False,
+               phase=-1,
+               dynamic=['attribute', 'property', 'momentum'])
+
 hoomd.run(totTsteps)
-
-
