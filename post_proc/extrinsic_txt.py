@@ -82,13 +82,13 @@ except:
     except:
         eps = 1
         
-    in_file = "pa" + str(pe_a) + \
+    in_file = "log_pa" + str(pe_a) + \
               "_pb" + str(pe_b) + \
               "_xa" + str(part_perc_a) + \
               "_ep" + str(eps) + \
               ".gsd"
     # File to write all data to
-    all_file = "diam_pa" + str(pe_a) + \
+    all_file = "diam_log_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_ep" + str(eps) +\

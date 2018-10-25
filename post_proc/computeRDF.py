@@ -43,12 +43,12 @@ from matplotlib import colors
 import math
 
 # File to read from
-in_file = "pa"+str(pe_a)+\
+in_file = "log_pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
 ".gsd"
 
-out = "pa"+str(pe_a)+\
+out = "log_pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)
 
@@ -161,7 +161,6 @@ for iii in range(start, end):
     plt.ylim(0.0, 10.0)
     plt.xlabel(r'r $(\sigma)$')
     plt.ylabel(r'g(r)')
-    plt.title("RDF Data")
     plt.legend()
     plt.savefig('RDF_' + out + '_frame' + str(iii) + '.png', dpi=1000)
     plt.close()
