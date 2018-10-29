@@ -30,7 +30,7 @@ read isEps
 
 if [ $isEps == 'n' ]; then
     ep=$(( 1 ))
-    for filename in $( ls log_pa*.gsd )
+    for filename in $( ls pa*.gsd )
     #for filename in $( ls *pa*_0.png )
     #for filename in $( ls all_pa*.txt )
     do
@@ -46,7 +46,7 @@ if [ $isEps == 'n' ]; then
     done
 
 else
-    for filename in $( ls log_pa*.gsd )
+    for filename in $( ls pa*.gsd )
     do
 
         # pull parameters from filename

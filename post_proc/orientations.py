@@ -9,6 +9,7 @@ part_perc_a = int(sys.argv[3])
 part_frac_a = float(part_perc_a) / 100.0
 pe_a = int(sys.argv[1])
 pe_b = int(sys.argv[2])
+ep = int(sys.argv[7])
 
 sys.path.append(hoomd_path)
 
@@ -37,7 +38,7 @@ def quat_to_theta(quat):
 
     return rad
 
-myfile = str(file_path) + "/" + "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + ".gsd"
+myfile = str(file_path) + "/" + "pa" + str(pe_a) + "_pb" + str(pe_b) + "_xa" + str(part_perc_a) + "_ep" + str(ep) + ".gsd"
 print(myfile)
 
 f = hoomd.open(name=myfile, mode='rb')
@@ -51,8 +52,8 @@ timesteps = np.zeros((dumps), dtype=np.float64)         # timesteps
 orientations = np.zeros((dumps), dtype=np.ndarray)      # orientations
 velocities = np.zeros((dumps), dtype=np.ndarray)
 
-start = 600
-stop = 602
+start = 0
+stop = dumps
 
 with hoomd.open(name=myfile, mode='rb') as t:           # open for reading
     snap = t[0]                                         # snap 0th snapshot

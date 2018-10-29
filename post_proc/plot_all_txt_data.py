@@ -55,12 +55,14 @@ txtFiles = sys.argv[2:] # pass starting at 2 to avoid script path
 peA = np.zeros_like(txtFiles, dtype=np.float64)
 peB = np.zeros_like(txtFiles, dtype=np.float64)
 xA = np.zeros_like(txtFiles, dtype=np.float64)
+ep = np.zeros_like(txtFiles, dtype=np.float64)
 
 # This grabs the parameters of each text file
 for i in range(0, len(txtFiles)):
     peA[i] = getFromTxt(txtFiles[i], "pa", "_pb")
     peB[i] = getFromTxt(txtFiles[i], "pb", "_xa")
-    xA[i] = getFromTxt(txtFiles[i], "xa", ".txt")
+    xA[i] = getFromTxt(txtFiles[i], "xa", "_ep")
+    ep[i] = getFromTxt(txtFiles[i], "ep", ".txt")
 
 partFracA = xA/100.0
 
