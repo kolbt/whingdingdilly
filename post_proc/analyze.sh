@@ -28,7 +28,7 @@ ep=$7
 #python $script_path/dense_CoM.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
-#python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
@@ -42,16 +42,16 @@ ep=$7
 # CoM_pa${pa}_pb${pb}_xa${xa}.mp4
 
 # Orientation specific scripts
-myfile=$(pwd)
-mkdir "pa${pa}_pb${pb}_xa${xa}_images"
-cd "pa${pa}_pb${pb}_xa${xa}_images"
+#myfile=$(pwd)
+#mkdir "pa${pa}_pb${pb}_xa${xa}_images"
+#cd "pa${pa}_pb${pb}_xa${xa}_images"
 
-python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile $ep
+#python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile $ep
 #python $script_path/orientationsCentered.py $pa $pb $xa $hoomd_path $gsd_path $myfile
 
-ffmpeg -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
- -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
- orientation_pa${pa}_pb${pb}_xa${xa}.mp4
+#ffmpeg -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_mvout_%d.png\
+# -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
+# orientation_pa${pa}_pb${pb}_xa${xa}.mp4
 
 # Move the movie once it's been made
 #mv orientation_pa${pa}_pb${pb}_xa${xa}.mp4 ../orientation*

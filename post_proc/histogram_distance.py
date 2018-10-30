@@ -54,7 +54,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import seaborn as sns
-sns.set(color_codes=True)
+# sns.set(color_codes=True)
 
 import math
 
@@ -152,7 +152,7 @@ start = 0       # gives first frame to read
 end = dumps     # gives last frame to read
 
 # Run for last 20 tsteps?
-start = dumps - 10
+start = dumps - 2
 #end = 401
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
@@ -313,19 +313,21 @@ modeALL = modeALL[0][0]
 # modeBB = modeBB[0][0]
 
 
-xmin = 0.80
+xmin = 0.96
 xmax = r_cut
+xmax = 1.04
 ymin = 0
-ymax = 20
+ymax = 1.0
+weights = np.ones_like(ALL)/float(len(ALL))
 
 # Plot data for all particles
 fig, ax = plt.subplots()
-plt.hist(ALL, bins=50, normed=True)
-plt.axvline(x=avgALL, c='k', label="Average: " + str(round(avgALL, 3)))
-plt.axvline(x=medianALL, c='g', label="Median: " + str(round(medianALL, 3)))
-plt.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
-plt.xlim(minALL, xmax)
-plt.ylim(ymin, ymax)
+ax.hist(ALL, weights=weights, bins=50)
+ax.axvline(x=avgALL, c='k', label="Average: " + str(round(avgALL, 3)))
+ax.axvline(x=medianALL, c='g', label="Median: " + str(round(medianALL, 3)))
+ax.axvline(x=modeALL, c='r', label="Mode: " + str(round(modeALL, 3)))
+ax.set_xlim(xmin, xmax)
+ax.set_ylim(ymin, ymax)
 plt.text(0.0, 0.95,
          "Computed for: " + str(popALL)+" pairs",
          transform=ax.transAxes)
@@ -336,9 +338,12 @@ plt.text(0.0, 0.95,
 #         "Fast Active Force: " + str(round(Fp,0)),
 #         transform=ax.transAxes)
 ax.set(xlabel='Center-to-center distance $(\delta$)',
-       ylabel='Number of particles')
-plt.legend(loc='upper right')
-plt.savefig('ALL_' + b_file + '.png', dpi=1000)
+       ylabel='Percent of particles')
+ax.legend(loc='upper right')
+# ax.set_facecolor('w')
+# ax.grid(None)
+# ax.set_visible(True)
+fig.savefig('ALL_' + b_file + '.png', dpi=1000)
 plt.close()
 
 # # Plot data for AA interactions
