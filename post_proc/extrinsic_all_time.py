@@ -65,12 +65,16 @@ def getDistance(point1, point2x, point2y):
     distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
     return distance
 
-def mergeSort(array)
+def mergeSort(array):
     """Sort arrays from the timestep with mergesort"""
-    if len(array) > 1:
-        mid = len(array) // 2
-        lft = array[:mid]
-        rgt = array[mid:]
+
+    # Make an array copy to manipulate
+    cpy = array
+
+    if len(cpy) > 1:
+        mid = len(cpy) // 2
+        lft = cpy[:mid]
+        rgt = cpy[mid:]
 
         mergeSort(lft)
         mergeSort(rgt)
@@ -79,22 +83,30 @@ def mergeSort(array)
 
         while i < len(lft) and j < len(rgt):
             if lft[i] < rgt[j]:
-                array[k] = lft[i]
+                cpy[k] = lft[i]
                 i += 1
             else:
-                array[k] = rgt[j]
+                cpy[k] = rgt[j]
                 j += 1
             k += 1
 
         while i < len(lft):
-            array[k] = lft[i]
+            cpy[k] = lft[i]
             i += 1
             k += 1
 
         while j < len(rgt):
-            array[k] = rgt[j]
+            cpy[k] = rgt[j]
             j += 1
             k += 1
+    return cpy
+
+def chkSort(array):
+    """Make sure mergesort actually did its job"""
+    for i in xrange(len(array)-1):
+        if array[i] > array[i+1]:
+            return False
+    return True
 
 try:
     # This is for the long timescale data
@@ -170,8 +182,11 @@ with hoomd.open(name=long_file, mode='rb') as t:
 
 timesteps -= timesteps[0]       # get rid of brownian run time
 # Sort the arrays based on timestep
-for i in xrange(end):
-
+newArr = mergeSort(timesteps)
+if chkSort(newArr):
+    print("Array succesfully sorted")
+else:
+    print("Array not sorted")
 
 # Get number of each type of particle
 partNum = len(types[start])
