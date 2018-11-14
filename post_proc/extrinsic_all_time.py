@@ -69,7 +69,7 @@ def mergeSort(array):
     """Sort arrays from the timestep with mergesort"""
 
     # Make an array copy to manipulate
-    cpy = array
+    cpy = np.copy(array)
 
     if len(cpy) > 1:
         mid = len(cpy) // 2
@@ -79,7 +79,9 @@ def mergeSort(array):
         mergeSort(lft)
         mergeSort(rgt)
 
-        i, j, k = 0
+        i = 0
+        j = 0
+        k = 0
 
         while i < len(lft) and j < len(rgt):
             if lft[i] < rgt[j]:
@@ -101,10 +103,13 @@ def mergeSort(array):
             k += 1
     return cpy
 
+def slowSort(array):
+
 def chkSort(array):
     """Make sure mergesort actually did its job"""
-    for i in xrange(len(array)-1):
+    for i in xrange(len(array)-2):
         if array[i] > array[i+1]:
+            print("{} is not greater than {} for indices=({},{})").format(array[i+1], array[i], i, i+1)
             return False
     return True
 
@@ -151,8 +156,8 @@ except:
     f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
     g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
 
-dump_long = f.__len__()                     # get number of timesteps dumped
-dump_short = g.__len__()                    # get number of timesteps dumped
+dump_long = int(f.__len__())                # get number of timesteps dumped
+dump_short = int(g.__len__())               # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
 end = dump_long + dump_short    # gives last frame to read
@@ -179,14 +184,16 @@ with hoomd.open(name=long_file, mode='rb') as t:
         types[iii] = snap.particles.typeid          # get types
         positions[iii] = snap.particles.position    # get positions
         timesteps[iii] = snap.configuration.step    # get timestep
+# timesteps -= timesteps[0]       # get rid of brownian run time
 
-timesteps -= timesteps[0]       # get rid of brownian run time
 # Sort the arrays based on timestep
 newArr = mergeSort(timesteps)
 if chkSort(newArr):
     print("Array succesfully sorted")
 else:
     print("Array not sorted")
+newArr -= newArr[0]
+print(newArr)
 
 # Get number of each type of particle
 partNum = len(types[start])
