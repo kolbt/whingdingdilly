@@ -65,48 +65,33 @@ def getDistance(point1, point2x, point2y):
     distance = np.sqrt((point2x - point1[0])**2 + (point2y - point1[1])**2)
     return distance
 
-def mergeSort(array):
-    """Sort arrays from the timestep with mergesort"""
-
-    # Make an array copy to manipulate
-    cpy = np.copy(array)
-
-    if len(cpy) > 1:
-        mid = len(cpy) // 2
-        lft = cpy[:mid]
-        rgt = cpy[mid:]
-
-        mergeSort(lft)
-        mergeSort(rgt)
-
-        i = 0
-        j = 0
-        k = 0
-
-        while i < len(lft) and j < len(rgt):
-            if lft[i] < rgt[j]:
-                cpy[k] = lft[i]
-                i += 1
-            else:
-                cpy[k] = rgt[j]
-                j += 1
-            k += 1
-
-        while i < len(lft):
-            cpy[k] = lft[i]
-            i += 1
-            k += 1
-
-        while j < len(rgt):
-            cpy[k] = rgt[j]
-            j += 1
-            k += 1
-    return cpy
-
 def slowSort(array):
+    """Sort an array the slow (but certain) way"""
+    cpy = np.copy(array)
+    ind = np.arange(0, len(array))
+    for i in xrange(len(cpy)):
+        for j in xrange(len(cpy)):
+            if cpy[i] > cpy[j] and i < j:
+                # Swap the copy array values
+                tmp = cpy[i]
+                cpy[i] = cpy[j]
+                cpy[j] = tmp
+                # Swap the corresponding indices
+                tmp = ind[i]
+                ind[i] = ind[j]
+                ind[j] = tmp
+    return ind
+
+def indSort(arr1, arr2):
+    """Take sorted index array, use to sort array"""
+    # arr1 is array to sort
+    # arr2 is index array
+    cpy = np.copy(arr1)
+    for i in xrange(len(arr1)):
+        arr1[i] = cpy[arr2[i]]
 
 def chkSort(array):
-    """Make sure mergesort actually did its job"""
+    """Make sure sort actually did its job"""
     for i in xrange(len(array)-2):
         if array[i] > array[i+1]:
             print("{} is not greater than {} for indices=({},{})").format(array[i+1], array[i], i, i+1)
@@ -184,16 +169,19 @@ with hoomd.open(name=long_file, mode='rb') as t:
         types[iii] = snap.particles.typeid          # get types
         positions[iii] = snap.particles.position    # get positions
         timesteps[iii] = snap.configuration.step    # get timestep
-# timesteps -= timesteps[0]       # get rid of brownian run time
 
-# Sort the arrays based on timestep
-newArr = mergeSort(timesteps)
-if chkSort(newArr):
+# Get index order for chronological timestep sorting
+newInd = slowSort(timesteps)
+# Use these indexes to reorder other arrays
+indSort(timesteps, newInd)
+indSort(positions, newInd)
+indSort(types, newInd)
+
+if chkSort(timesteps):
     print("Array succesfully sorted")
 else:
     print("Array not sorted")
-newArr -= newArr[0]
-print(newArr)
+timesteps -= timesteps[0]
 
 # Get number of each type of particle
 partNum = len(types[start])
