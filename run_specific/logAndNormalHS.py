@@ -253,12 +253,18 @@ lastTen = "lastTen" + name + ".gsd"
 ### Dump for MSD ###
 # Get the early times for MSD output
 # Time intervals I want, in tauBrown
-times = [ 0.00001,
-          0.00010,
-          0.00100,
-          0.01000,
-          0.10000,
-          1.00000 ]
+# times = [ 0.00001,
+#           0.00010,
+#           0.00100,
+#           0.01000,
+#           0.10000,
+#           1.00000 ]
+times = [ 0.0001,
+          0.0010,
+          0.0100,
+          0.1000,
+          1.0000,
+          10.0000]
 # Instantiate array for dumping timesteps
 # logDump = np.zeros((len(times) - 1) * 9)
 logDump = np.zeros(((len(times) - 1) * 90) + 1)
