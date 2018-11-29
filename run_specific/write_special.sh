@@ -40,7 +40,7 @@ echo "Distinct epsilon values?"
 read distEps
 
 if [ $distEps == "y" ]; then
-    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/multiple_epsilons.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/distinct_epsilon_logAndNormalHS.py'
 fi
 
 # Default values for simulations
