@@ -32,6 +32,10 @@ from freud import cluster
 import numpy as np
 from scipy import stats
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 def computeR(part1, part2):
     """Computes distance"""
     return np.sqrt(((part2[0]-part1[0])**2)+((part2[1]-part1[1])**2))
@@ -123,6 +127,7 @@ timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 # Get relevant data from long.gsd file
 with hoomd.open(name=in_file, mode='rb') as t:
     snap = t[0]
+    box_data = snap.configuration.box
     for iii in range(start, end):
         snap = t[iii]                  # snapshot of frame
         types[iii] = snap.particles.typeid          # get types
@@ -180,10 +185,9 @@ for j in range(start, end):
     q_clust = np.zeros((len(clust_size)), dtype=np.int)
     clust_num = 0   # number of clusters
     lcIndex = 0     # id of largest cluster
-    lc_numA = 0     # number of A particles in dense phase
-    lc_numB = 0     # number of B particles in dense phase
 
     # This sorts clusters that are too small
+    l_clust = 1
     for k in range(0, len(clust_size)):
         if clust_size[k] > min_size:
             q_clust[k] = 1
@@ -192,26 +196,64 @@ for j in range(start, end):
             l_clust = clust_size[k]
             lcIndex = k
 
-    # Plot the data
+    # Various lists for quick plot
+    gas_Ax = []
+    gas_Ay = []
+    gas_Bx = []
+    gas_By = []
+    lc_Ax = []
+    lc_Ay = []
+    lc_Bx = []
+    lc_By = []
+    den_Ax = []
+    den_Ay = []
+    den_Bx = []
+    den_By = []
+
+    # Put points into lists
     for k in range(0, partNum):
         # This is in gas phase
         if q_clust[ids[k]] == 1:
-            gas_num += 1
+            # A
             if typ[k] == 0:
-                gas_A += 1
-                plt.scatter(pos[k][0], pos[k][1], facecolor='w', edgecolors='#FF00FF')
+                gas_Ax.append(pos[k][0])
+                gas_Ay.append(pos[k][1])
+            # B
             else:
-                gas_B += 1
-                plt.scatter(pos[k][0], pos[k][1], facecolor='w', edgecolors='#6BF648')
+                gas_Bx.append(pos[k][0])
+                gas_By.append(pos[k][1])
         # This is in dense phase
         else:
-            dense_num += 1
-            if typ[k] == 0:
-                dense_A += 1
-                plt.scatter(pos[k][0], pos[k][1], facecolor='#FF00FF', edgecolors='#FF00FF')
+            # Part of largest cluster
+            if ids[k] == lcIndex:
+                if typ[k] == 0:
+                    lc_Ax.append(pos[k][0])
+                    lc_Ay.append(pos[k][1])
+                else:
+                    lc_Bx.append(pos[k][0])
+                    lc_By.append(pos[k][1])
+            # Other dense phase
             else:
-                dense_B += 1
-                plt.scatter(pos[k][0], pos[k][1], facecolor='#6BF648', edgecolors='#6BF648')
+                if typ[k] == 0:
+                    den_Ax.append(pos[k][0])
+                    den_Ay.append(pos[k][1])
+                else:
+                    den_Bx.append(pos[k][0])
+                    den_By.append(pos[k][1])
+
+    # It's easier to plot this way?
+    plt.scatter(gas_Ax, gas_Ay, s=0.15, facecolor='w', edgecolors=None)
+    plt.scatter(gas_Bx, gas_By, s=0.15, facecolor='w', edgecolors=None)
+    plt.scatter(lc_Ax, lc_Ay, s=0.15, facecolor='#FF00FF', edgecolors=None)
+    plt.scatter(lc_Bx, lc_By, s=0.15, facecolor='#6BF648', edgecolors=None)
+    plt.scatter(den_Ax, den_Ay, s=0.15, facecolor='#FF00FF', edgecolors=None)
+    plt.scatter(den_Bx, den_By, s=0.15, facecolor='#6BF648', edgecolors=None)
+
     plt.xlim(-h_box, h_box)
     plt.ylim(-h_box, h_box)
+    plt.xticks([])
+    plt.yticks([])
+    plt.tight_layout()
+    plt.axes().set_aspect('equal')
     plt.savefig(out_file + str(j) + '.png', dpi=1000)
+    plt.close()
