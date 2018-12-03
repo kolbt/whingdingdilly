@@ -166,7 +166,12 @@ min_size_abso = 1000
 min_size_perc = 0.05 * partNum  # minimum cluster size 5% of all particles
 min_size = min_size_abso if min_size_abso < min_size_perc else min_size_perc
 
-min_size = 2
+min_size = 1000
+
+den_pinkA = '#ff00ff'
+gas_pinkA = '#ff7fff'
+den_greenB = '#2a621c'
+gas_greenB = '#6bf648'
 
 for j in range(start, end):
 
@@ -213,7 +218,7 @@ for j in range(start, end):
     # Put points into lists
     for k in range(0, partNum):
         # This is in gas phase
-        if q_clust[ids[k]] == 1:
+        if q_clust[ids[k]] == 0:
             # A
             if typ[k] == 0:
                 gas_Ax.append(pos[k][0])
@@ -242,12 +247,12 @@ for j in range(start, end):
                     den_By.append(pos[k][1])
 
     # It's easier to plot this way?
-    plt.scatter(gas_Ax, gas_Ay, s=0.15, facecolor='w', edgecolors=None)
-    plt.scatter(gas_Bx, gas_By, s=0.15, facecolor='w', edgecolors=None)
-    plt.scatter(lc_Ax, lc_Ay, s=0.15, facecolor='#FF00FF', edgecolors=None)
-    plt.scatter(lc_Bx, lc_By, s=0.15, facecolor='#6BF648', edgecolors=None)
-    plt.scatter(den_Ax, den_Ay, s=0.15, facecolor='#FF00FF', edgecolors=None)
-    plt.scatter(den_Bx, den_By, s=0.15, facecolor='#6BF648', edgecolors=None)
+    plt.scatter(gas_Ax, gas_Ay, s=0.75, facecolor=gas_pinkA, edgecolor='none')
+    plt.scatter(gas_Bx, gas_By, s=0.75, facecolor=gas_greenB, edgecolor='none')
+    plt.scatter(lc_Ax, lc_Ay, s=0.75, facecolor=den_pinkA, edgecolor='none')
+    plt.scatter(lc_Bx, lc_By, s=0.75, facecolor=den_greenB, edgecolor='none')
+    plt.scatter(den_Ax, den_Ay, s=0.75, facecolor=den_pinkA, edgecolor='none')
+    plt.scatter(den_Bx, den_By, s=0.75, facecolor=den_greenB, edgecolor='none')
 
     plt.xlim(-h_box, h_box)
     plt.ylim(-h_box, h_box)
