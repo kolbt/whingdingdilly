@@ -194,7 +194,7 @@ h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 1.02)                  # distance to search
+                           rcut = 1.02)                 # distance to search
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
