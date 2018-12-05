@@ -319,11 +319,11 @@ def dump_spec(timestep):
 analyzer = hoomd.analyze.callback(callback = dump_spec, period = 1)
 ####################
 
-hoomd.dump.gsd(gsdName,
-               period=dumpFreq,
-               group=all,
-               overwrite=False,
-               phase=-1,
-               dynamic=['attribute', 'property', 'momentum'])
+# hoomd.dump.gsd(gsdName,
+#                period=dumpFreq,
+#                group=all,
+#                overwrite=False,
+#                phase=-1,
+#                dynamic=['attribute', 'property', 'momentum'])
 
 hoomd.run(totTsteps)
