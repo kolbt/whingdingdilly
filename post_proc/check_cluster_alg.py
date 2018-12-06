@@ -158,15 +158,13 @@ h_box = l_box / 2.0
 a_box = l_box * l_box
 f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
 my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 1.02)                 # distance to search
+                           rcut = 1.005)                 # distance to search
 c_props = cluster.ClusterProperties(box = f_box)        # compute properties
 
 # Parameters for sorting dense from dilute
 min_size_abso = 1000
 min_size_perc = 0.05 * partNum  # minimum cluster size 5% of all particles
 min_size = min_size_abso if min_size_abso < min_size_perc else min_size_perc
-
-min_size = 1000
 
 den_pinkA = '#ff00ff'
 gas_pinkA = '#ff7fff'
