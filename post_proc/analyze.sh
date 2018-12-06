@@ -34,7 +34,7 @@ ep=$7
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/computeRDF.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/edge_detection.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/edge_detection_v2.py $pa $pb $xa $hoomd_path $gsd_path
 python $script_path/check_cluster_alg.py $pa $pb $xa $hoomd_path $gsd_path $ep

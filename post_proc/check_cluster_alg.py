@@ -83,56 +83,78 @@ def chkSort(array):
             return False
     return True
 
+
 try:
     # This is for the long timescale data
-    in_file = "pa" + str(pe_a) + \
+    long_file = "pa" + str(pe_a) + \
                 "_pb" + str(pe_b) + \
                 "_xa" + str(part_perc_a) + \
                 ".gsd"
+    # This is for the fine timescale data
+    short_file = "log_pa" + str(pe_a) + \
+                 "_pb" + str(pe_b) + \
+                 "_xa" + str(part_perc_a) + \
+                 ".gsd"
     # File to write all data to
     out_file = "pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_frame"
-    f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
+    f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
+    g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
 except:
     try:
         eps = str(sys.argv[6])
     except:
         eps = 1
-        
-    in_file = "pa" + str(pe_a) + \
+
+    long_file = "pa" + str(pe_a) + \
                 "_pb" + str(pe_b) + \
                 "_xa" + str(part_perc_a) + \
                 "_ep" + str(eps) + \
                 ".gsd"
+    short_file = "log_pa" + str(pe_a) + \
+                 "_pb" + str(pe_b) + \
+                 "_xa" + str(part_perc_a) + \
+                 "_ep" + str(eps) + \
+                 ".gsd"
     # File to write all data to
     out_file = "pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
-               "_ep" + str(eps) +\
+               "_ep" + str(eps) + \
                "_frame"
-    f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
+    f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
+    g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
 
-dump_long = int(f.__len__())                # get number of timesteps dumped
+dump_long = int(f.__len__())  # get number of timesteps dumped
+dump_short = int(g.__len__())  # get number of timesteps dumped
 
-start = 0                       # gives first frame to read
-end = dump_long                 # gives last frame to read
+start = 0  # gives first frame to read
+end = dump_long + dump_short  # gives last frame to read
 
-positions = np.zeros((end), dtype=np.ndarray)       # array of positions
-types = np.zeros((end), dtype=np.ndarray)           # particle types
-box_data = np.zeros((1), dtype=np.ndarray)          # box dimensions
-timesteps = np.zeros((end), dtype=np.float64)       # timesteps
+positions = np.zeros((end), dtype=np.ndarray)  # array of positions
+types = np.zeros((end), dtype=np.ndarray)  # particle types
+box_data = np.zeros((1), dtype=np.ndarray)  # box dimensions
+timesteps = np.zeros((end), dtype=np.float64)  # timesteps
 
-# Get relevant data from long.gsd file
-with hoomd.open(name=in_file, mode='rb') as t:
+# Get relevant data from short.gsd file
+with hoomd.open(name=short_file, mode='rb') as t:
     snap = t[0]
     box_data = snap.configuration.box
-    for iii in range(start, end):
-        snap = t[iii]                  # snapshot of frame
-        types[iii] = snap.particles.typeid          # get types
-        positions[iii] = snap.particles.position    # get positions
-        timesteps[iii] = snap.configuration.step    # get timestep
+    for iii in range(start, dump_short):
+        snap = t[iii]  # snapshot of frame
+        types[iii] = snap.particles.typeid  # get types
+        positions[iii] = snap.particles.position  # get positions
+        timesteps[iii] = snap.configuration.step  # get timestep
+# Get relevant data from long.gsd file
+with hoomd.open(name=long_file, mode='rb') as t:
+    snap = t[0]
+    for iii in range(dump_short, end):
+        snap = t[iii - dump_short]  # snapshot of frame
+        types[iii] = snap.particles.typeid  # get types
+        positions[iii] = snap.particles.position  # get positions
+        timesteps[iii] = snap.configuration.step  # get timestep
 
 # Get index order for chronological timestep sorting
 newInd = slowSort(timesteps)
@@ -156,10 +178,10 @@ part_B = partNum - part_A
 l_box = box_data[0]
 h_box = l_box / 2.0
 a_box = l_box * l_box
-f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
-my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 1.005)                 # distance to search
-c_props = cluster.ClusterProperties(box = f_box)        # compute properties
+f_box = box.Box(Lx=l_box, Ly=l_box, is2D=True)  # make freud box
+my_clust = cluster.Cluster(box=f_box,  # init cluster class
+                           rcut=1.005)  # distance to search
+c_props = cluster.ClusterProperties(box=f_box)  # compute properties
 
 # Parameters for sorting dense from dilute
 min_size_abso = 1000
