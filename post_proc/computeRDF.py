@@ -43,14 +43,16 @@ from matplotlib import colors
 import math
 
 # File to read from
-in_file = "log_pa"+str(pe_a)+\
+in_file = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
 "_xa"+str(part_perc_a)+\
+"_ep"+str(eps)+\
 ".gsd"
 
-out = "log_pa"+str(pe_a)+\
+out = "pa"+str(pe_a)+\
 "_pb"+str(pe_b)+\
-"_xa"+str(part_perc_a)
+"_xa"+str(part_perc_a)+\
+"_ep"+str(eps)
 
 f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
 dumps = f.__len__()                     # get number of timesteps dumped
@@ -158,9 +160,9 @@ for iii in range(start, end):
     plt.plot(r, rdfBA, label='BA')
 
     plt.xlim(0.0, searchRange)
-    plt.ylim(0.0, 10.0)
+    # plt.ylim(0.0, 10.0)
     plt.xlabel(r'r $(\sigma)$')
     plt.ylabel(r'g(r)')
     plt.legend()
-    plt.savefig('RDF_' + out + '_frame' + str(iii) + '.png', dpi=1000)
+    plt.savefig('RDF_' + out + '_fm' + str(iii) + '.png', dpi=1000)
     plt.close()
