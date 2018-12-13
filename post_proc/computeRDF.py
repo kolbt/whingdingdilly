@@ -37,6 +37,8 @@ from freud import cluster
 import numpy as np
 from scipy.fftpack import fft, ifft
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib import colors
 

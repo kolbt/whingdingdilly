@@ -44,13 +44,13 @@ python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
  -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
  RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm RDF*png
+rm RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Movie for heatmap by type
 ffmpeg -framerate 10 -i heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
  -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
  heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm heatType*png
+rm heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Command to make movie for checking cluster algorithm
 #ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%d.png\
