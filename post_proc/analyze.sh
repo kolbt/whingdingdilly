@@ -1,12 +1,8 @@
 #!/bin/sh
-#SBATCH --qos gpu_access                    # quality of service
-#SBATCH --gres=gpu:1                        # I want one gpus
-#SBATCH --partition=gpu                     # partition to run on
+#SBATCH -p general                          # partition to run on
 #SBATCH -n 1                                # number of cores
 #SBATCH --mem=20000                         # increase memory request (a gig)
 #SBATCH -t 1-00:00                          # time (D-HH:MM)
-
-# #SBATCH -p general                          # partition to run on
 
 pa=$1
 pb=$2
