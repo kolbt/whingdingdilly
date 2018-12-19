@@ -32,25 +32,25 @@ ep=$7
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/computeRDF.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/computeRDF.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/edge_detection.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/edge_detection_v2.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/check_cluster_alg.py $pa $pb $xa $hoomd_path $gsd_path $ep
 
 # Movie for RDF
-ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
- -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
- RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
+#ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
+# -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
+# RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+#rm RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Movie for heatmap by type
-ffmpeg -framerate 10 -i heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
- -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
- heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
+#ffmpeg -framerate 10 -i heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
+# -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
+# heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+#rm heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Command to make movie for checking cluster algorithm
 #ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%d.png\
