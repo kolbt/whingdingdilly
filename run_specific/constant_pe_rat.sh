@@ -46,9 +46,6 @@ x_max=$(( 100 ))    # monodisperse species a
 pe_start=$(( 0 ))   # minimum pe value
 pe_max=$(( 150 ))   # maximum pe value
 
-# For constant activity ratio simulations
-pe_rat=$(bc <<< "0.3")
-
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
 while [ $loop == "n" ]
@@ -128,7 +125,7 @@ do
 
         # Compute the activity values for the given activity ratio
         pe_a=$(( $pe_count ))
-        pe_b=$(bc <<< "$pe_a / 0.3")
+        pe_b=$(bc <<< "$pe_a / $pe_rat")
 
         infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
         $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
