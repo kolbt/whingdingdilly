@@ -10,6 +10,8 @@ Designations Explained:
           dense_A : number of A-type particles in dense phase
           dense_B : number of B-type particles in dense phase
       dense_total : total number of dense phase particles
+          lc_numA : number of A particles in the largest cluster
+          lc_numB : number of B particles in the largest cluster
           l_clust : largest individual cluster
               mcs : mean cluster size
               ALL : mode radius of all particles
@@ -210,6 +212,8 @@ f.write('Timestep'.center(10) + ' ' +\
         'Dense_A'.center(10) + ' ' +\
         'Dense_B'.center(10) + ' ' +\
         'Dense_tot'.center(10) + ' ' +\
+        'Lc_numA'.center(10) + ' ' +\
+        'Lc_numB'.center(10) + ' ' +\
         'Lg_clust'.center(10) + ' ' +\
         'MCS'.center(10) + ' ' +\
         'sigALL'.center(10) + ' ' +\
@@ -366,8 +370,8 @@ for j in range(start, end):
     q_clust = np.zeros((len(clust_size)), dtype=np.int)
     clust_num = 0   # number of clusters
     lcIndex = 0     # id of largest cluster
-    lc_numA = 0     # number of A particles in dense phase
-    lc_numB = 0     # number of B particles in dense phase
+    lc_numA = 0     # number of A particles in largest cluster
+    lc_numB = 0     # number of B particles in largest cluster
 
     for k in range(0, len(clust_size)):
         if clust_size[k] > min_size:
@@ -420,6 +424,8 @@ for j in range(start, end):
             str(dense_A).center(10) + ' ' +\
             str(dense_B).center(10) + ' ' +\
             str(dense_num).center(10) + ' ' +\
+            str(lc_numA).center(10) + ' ' +\
+            str(lc_numB).center(10) + ' ' +\
             str(l_clust).center(10) + ' ' +\
             str(mcs).center(10) + ' ' + \
             '{0:.4f}'.format(modeALL).center(10) + ' ' + \
