@@ -58,12 +58,6 @@ do
         part_num=$input
     fi
 
-    echo "density, as a percent, is ${phi}."
-    read input
-    if ! [[ -z "$input" ]]; then
-        phi=$input
-    fi
-
     echo "runfor is ${runfor} tau, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
@@ -189,25 +183,24 @@ do
         while [ $phi_count -le $phi_max ] # loop through activity at constant particle fraction
         do
 
-#            infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
-#            $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
-#            $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
-#            $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
-#            $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
-#            $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
-#            $sedtype -i 's/\${part_frac_a}/'"${x_count}"'/g' $infile                # write particle fraction to infile
-#            $sedtype -i 's/\${pe_a}/'"${pe_count}"'/g' $infile                      # write activity of A to infile
-#            $sedtype -i 's/\${pe_b}/'"${pe_b}"'/g' $infile                          # write activity of B to infile
-#            $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
-#            $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
-#            $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
-#            $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
-#            $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
-#            $sedtype -i 's/\${seed5}/'"${seed5}"'/g' $infile
-#
-#            $submit $script_path $infile
+            infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
+            #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+            $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
+            $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
+            $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $infile                      # write particle number
+            $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
+            $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
+            $sedtype -i 's/\${part_frac_a}/'"${x_count}"'/g' $infile                # write particle fraction to infile
+            $sedtype -i 's/\${pe_a}/'"${pe_count}"'/g' $infile                      # write activity of A to infile
+            $sedtype -i 's/\${pe_b}/'"${pe_b}"'/g' $infile                          # write activity of B to infile
+            $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
+            $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
+            $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
+            $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
+            $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
+            $sedtype -i 's/\${seed5}/'"${seed5}"'/g' $infile
 
-            echo $phi_count
+            $submit $script_path $infile
 
             phi_count=$(( $phi_count + $phi_spacer ))
 
