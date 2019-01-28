@@ -183,7 +183,7 @@ do
         while [ $phi_count -le $phi_max ] # loop through activity at constant particle fraction
         do
 
-            infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
+            infile=pa${pe_count}_pb${pe_b}_xa${x_count}_phi${phi_count}.py          # set unique infile name
             #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
             $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
             $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
