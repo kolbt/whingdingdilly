@@ -73,7 +73,7 @@ do
     echo "phi_start is ${phi_count}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
-        phi_count=$input
+        phi_start=$input
     fi
 
     echo "phi_max is ${phi_max}, input new value or same value."
@@ -135,7 +135,7 @@ do
     echo "part_num is ${part_num}"
     echo "runfor is ${runfor}"
     echo "dump_freq is ${dump_freq}"
-    echo "phi_start is ${phi_count}"
+    echo "phi_start is ${phi_start}"
     echo "phi_max is ${phi_max}"
     echo "phi_spacer is ${phi_spacer}"
     echo "x_start is ${x_count}"
@@ -213,4 +213,3 @@ do
     x_count=$(( $x_count + $x_a_spacer ))
 
 done
-
