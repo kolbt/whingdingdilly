@@ -30,8 +30,8 @@ partFracA = float(partPercA) / 100.0
 peA = ${pe_a}                   # activity of A particles
 peB = ${pe_b}                   # activity of B particles
 partNum = ${part_num}           # total number of particles
-phi = ${phi}                    # system area fraction
-phi = float(phi)/100.0
+intPhi = ${phi}                 # system area fraction
+phi = float(intPhi)/100.0
 
 seed1 = ${seed1}                # seed for position
 seed2 = ${seed2}                # seed for bd equilibration
@@ -243,7 +243,7 @@ name = "pa" + str(peA) +\
 "_pb" + str(peB) +\
 "_xa" + str(partPercA) +\
 "_ep" + str(int(epsAB)) +\
-"_phi" + str(int(phi))
+"_phi" + str(int(intPhi))
 
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
