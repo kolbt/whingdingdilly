@@ -7,7 +7,6 @@ echo "Are you running on Longleaf (y/n)?"
 read answer
 
 if [ $answer == "y" ]; then
-#    hoomd_path='/nas/longleaf/home/kolbt/programs/hoomd-blue/build'
     hoomd_path='/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
@@ -15,7 +14,6 @@ if [ $answer == "y" ]; then
     sedtype='sed'
     submit='sbatch'
 else
-#    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
     hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
@@ -33,17 +31,17 @@ if [ $gpu == "y" ]; then
 fi
 
 # Default values for simulations
-part_num=$(( 15000 ))
+part_num=$(( 50000 ))
 phi=$(( 60 ))
-runfor=$(( 100 ))
+runfor=$(( 50 ))
 dump_freq=$(( 20000 ))
-x_a_spacer=$(( 10 ))
+x_a_spacer=$(( 40 ))
 pe_a_spacer=$(( 10 ))
-pe_b=$(( 150 ))
+pe_rat=$(bc <<< "0.5")
 
-x_count=$(( 0 ))    # monodisperse species b
-x_max=$(( 100 ))    # monodisperse species a
-pe_start=$(( 0 ))   # minimum pe value
+x_count=$(( 30 ))   # monodisperse species b
+x_max=$(( 70 ))     # monodisperse species a
+pe_start=$(( 10 ))  # minimum pe value
 pe_max=$(( 150 ))   # maximum pe value
 
 # This script is for the specific types of jobs (one row or column of a plane)
@@ -52,32 +50,67 @@ while [ $loop == "n" ]
 do
 
     echo "part_num is ${part_num}, input new value or same value."
-    read part_num
-    echo "density, as a percent, is ${phi}."
-    read phi
+    read input
+    if ! [[ -z "$input" ]]; then
+        part_num=$input
+    fi
+
     echo "runfor is ${runfor} tau, input new value or same value."
-    read runfor
+    read input
+    if ! [[ -z "$input" ]]; then
+        runfor=$input
+    fi
+
     echo "dump_freq is ${dump_freq}, input new value or same value."
-    read dump_freq
+    read input
+    if ! [[ -z "$input" ]]; then
+        dump_freq=$input
+    fi
+
     echo "x_start is ${x_count}, input new value or same value."
-    read x_count
+    read input
+    if ! [[ -z "$input" ]]; then
+        x_count=$input
+    fi
+
     echo "x_max is ${x_max}, input new value or same value."
-    read x_max
+    read input
+    if ! [[ -z "$input" ]]; then
+        x_max=$input
+    fi
+
     echo "x_a_spacer is ${x_a_spacer}, input new value or same value."
-    read x_a_spacer
+    read input
+    if ! [[ -z "$input" ]]; then
+        x_a_spacer=$input
+    fi
+
     echo "pe_start is ${pe_start}, input new value or same value."
-    read pe_start
+    read input
+    if ! [[ -z "$input" ]]; then
+        pe_start=$input
+    fi
+
     echo "pe_max is ${pe_max}, input new value or same value."
-    read pe_max
+    read input
+    if ! [[ -z "$input" ]]; then
+        pe_max=$input
+    fi
+
     echo "pe_a_spacer is ${pe_a_spacer}, input new value or same value."
-    read pe_a_spacer
-    echo "PeB is ${pe_b}, input new value or same value."
-    read pe_b
-    echo "Pe ratio is ${pe_rat}, input new value or same value."
-    read pe_rat
+    read input
+    if ! [[ -z "$input" ]]; then
+        pe_a_spacer=$input
+    fi
+
+    echo "PeR is ${pe_rat}, input new value or same value."
+    read input
+    if ! [[ -z "$input" ]]; then
+        pe_rat=$input
+    fi
 
     # this shows how long the simulation will run
-    tsteps=$(bc <<< "scale=2;$runfor/0.000001")
+    tsteps=$(bc <<< "scale=2;$runfor/0.00001")
 
     echo "part_num is ${part_num}"
     echo "runfor is ${runfor}"
@@ -88,7 +121,6 @@ do
     echo "pe_start is ${pe_start}"
     echo "pe_max is ${pe_max}"
     echo "pe_a_spacer is ${pe_a_spacer}"
-    echo "PeB is ${pe_b}"
     echo "Pe ratio is ${pe_rat}"
     echo "Simulation will run for ${tsteps} timesteps"
 
@@ -112,7 +144,6 @@ read seed5
 
 mkdir ${current}_parent
 cd ${current}_parent
-
 
 # this segment of code writes the infiles
 while [ $x_count -le $x_max ]       # loop through particle fraction
@@ -152,4 +183,3 @@ do
     x_count=$(( $x_count + $x_a_spacer ))
 
 done
-
