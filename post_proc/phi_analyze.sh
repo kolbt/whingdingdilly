@@ -11,7 +11,7 @@ hoomd_path=$4
 gsd_path=$5
 script_path=$6
 ep=$7
-ep=$8
+phi=$8
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/nearest_neigh.py $pa $pb $xa $hoomd_path $gsd_path

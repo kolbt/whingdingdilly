@@ -32,6 +32,7 @@ part_perc_a = int(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
+eps = str(sys.argv[6])                      # epsilon from command line
 phi = str(sys.argv[7])          # for simulations that have different phi
 
 sys.path.append(hoomd_path)     # ensure hoomd is in your python path
@@ -123,10 +124,10 @@ try:
     f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
     g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
 except:
-    try:
-        eps = str(sys.argv[6])
-    except:
-        eps = 1
+    # try:
+    #     eps = str(sys.argv[6])
+    # except:
+    #     eps = 1
         
     long_file = "pa" + str(pe_a) + \
                 "_pb" + str(pe_b) + \
