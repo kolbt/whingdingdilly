@@ -192,6 +192,8 @@ den_pinkA = '#ff00ff'
 gas_pinkA = '#ff7fff'
 den_greenB = '#2a621c'
 gas_greenB = '#6bf648'
+gas_pinkA = '#D3D3D3'
+gas_greenB ='#D3D3D3'
 
 for j in range(start, end):
 
