@@ -34,17 +34,17 @@ fi
 part_num=$(( 50000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 20000 ))
-phi_spacer=$(( 6 ))
+phi_spacer=$(( 10 ))
 x_a_spacer=$(( 10 ))
 pe_a_spacer=$(( 10 ))
-pe_b=$(( 0 ))
+pe_b=$(( 500 ))
 
-phi_count=$(( 6 ))
-phi_max=$(( 54 ))
+phi_count=$(( 40 ))
+phi_max=$(( 50 ))
 phi_start=$phi_count
-x_count=$(( 100 ))  # start at lowest desired fraction of a
-x_max=$(( 100 ))    # end at highest desired fraction of a
-pe_start=$(( 500 )) # minimum pe value
+x_count=$(( 50 ))  # start at lowest desired fraction of a
+x_max=$(( 50 ))    # end at highest desired fraction of a
+pe_start=$(( 0 )) # minimum pe value
 pe_max=$(( 500 ))   # maximum pe value
 
 
