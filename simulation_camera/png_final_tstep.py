@@ -1,4 +1,5 @@
 import os
+import ovito
 from ovito.anim import *
 from ovito.data import *
 from ovito.io import import_file
@@ -9,6 +10,7 @@ import sys
 
 infile = str(sys.argv[1])
 flip = int(sys.argv[2])
+dpi = int(sys.argv[3])
 outfile, file_extension = os.path.splitext(infile)      # get base name
 
 node = import_file(infile, multiple_frames = True)      # load file as trajectory
@@ -31,7 +33,7 @@ while a == 0:
     # White background
     rs = RenderSettings(
         filename = outfile + ".png",
-        size = (250,250),
+        size = (dpi, dpi),
         background_color = (1.0, 1.0, 1.0),
         renderer = OpenGLRenderer()
     )                                                       # settings for render
