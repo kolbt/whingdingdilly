@@ -109,7 +109,7 @@ dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = float(simLength / 0.25)          # dump data every 0.5 tauBrown
+numDumps = float(simLength / 0.005)         # dump data every 0.5 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
 
