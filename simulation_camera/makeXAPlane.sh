@@ -1,7 +1,6 @@
 #!/bin/sh
 camPath="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 
-
 # Set xA
 xa=0
 # Resolution of an individual simulation frame
@@ -10,14 +9,14 @@ size=600
 # Loop through particle fraction (constant on each plane)
 while [ ${xa} -le 100 ]; do
 
+    # Create the blank xA plane frame
+    python ${camPath}/makeWall.py "xa${xa}.png" $size
     # Set PeB
     peb=0
 
     # Loop through B particle activity
     while [ ${peb} -le 150 ]; do
 
-        # Create the blank xA plane frame
-        python ${camPath}/makeWall.py "xa${xa}.png" $size
         # Set PeA
         pea=0
 
