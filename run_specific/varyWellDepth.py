@@ -1,20 +1,11 @@
 '''
 #                           This is an 80 character line                       #
-    Given the issue brought up in:
-        Raphael Wittkowski et al 2017 New J. Phys. 19 105003
-        
-    We need to find a way to correct for varying particle softness. We can do
-    this by varying the depth of the repulsive well according to the particles'
-    activity, or, by varying the temperature of the system (thereby decreasing)
-    the diffusive denominator in the Peclet number.
-    
-    So, we will maintain the ratio, F_p*sigma / epsilon = 1, while still using
-    the intrinsic swim speed to vary the Peclet number.  This method results
-    in a varying Lennard-Jones time unit, but as long as we correct for this
-    and run for a set time (i.e. 200 tauLJ), then we should be fine.
-    
-    As an added benefit we will not be restricted by a varying D_t (as many
-    other groups use) and can therefore simulate active/active mixtures.
+    This is intended to investigate how hard our particles need to be. We want
+    to maintain a ratio of active force to LJ well-depth:
+                    epsilon = alpha * F_A * sigma / 24.0
+    This code will investigate alpha, in order to find the smallest value that
+    will maintain a "hard-sphere" potential. (This will optimize computation
+    time while keeping our model realistic)
 '''
 # Initial imports
 import sys
@@ -32,7 +23,7 @@ peA = ${pe_a}                   # activity of A particles
 peB = ${pe_b}                   # activity of B particles
 partNum = ${part_num}           # total number of particles
 intPhi = ${phi}                 # system area fraction
-phi = float(intPhi)/100.0
+phi = float(intPhi) / 100.0
 
 seed1 = ${seed1}                # seed for position
 seed2 = ${seed2}                # seed for bd equilibration
@@ -57,19 +48,24 @@ tauBrown = (sigma**2) / D_t     # brownian time scale (invariant)
 
 def computeVel(activity):
     "Given particle activity, output intrinsic swim speed"
+    # This gives:
+    # v_0 = Pe * sigma / tau_B = Pe * sigma / 3 * tau_R
     velocity = (activity * sigma) / (3 * (1/D_r))
     return velocity
 
 def computeActiveForce(velocity):
     "Given particle activity, output repulsion well depth"
+    # This is multiplied by Brownian time and gives:
+    #          Pe = 3 * v_0 * tau_R / sigma
+    # the conventional description of the Peclet number
     activeForce = velocity * threeEtaPiSigma
     return activeForce
 
-def computeEps(activeForce):
+def computeEps(alpha, activeForce):
     "Given particle activity, output repulsion well depth"
-    a = 0.16
-    b = 1.0
-    epsilon = (a * activeForce) + b
+    # Here is where we will be testing the ratio we use (via alpha)
+    epsilon = (alpha * activeForce * sigma / 24.0) + 1.0
+    # Add 1 because of integer rounding
     epsilon = int(epsilon) + 1
     return epsilon
 
