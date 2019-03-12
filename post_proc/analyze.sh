@@ -74,10 +74,10 @@ python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/orientations.py $pa $pb $xa $hoomd_path $gsd_path $myfile $ep
 #python $script_path/orientationsCentered.py $pa $pb $xa $hoomd_path $gsd_path $myfile
 
-ffmpeg -start_number 450 -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
- -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
- orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
+#ffmpeg -start_number 450 -framerate 10 -i orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
+# -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
+# orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+#rm orientation_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Move the movie once it's been made
 #mv orientation_pa${pa}_pb${pb}_xa${xa}.mp4 ../orientation*
