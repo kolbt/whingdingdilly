@@ -48,9 +48,12 @@ from scipy import stats
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+from matplotlib import colors
 
 def netActivity(numA, numB, PeA, PeB):
     "Takes binned number and type of particles, outputs net activity"
+    if numA == 0 and numB == 0:
+        return 0.0
     total = numA + numB
     fracA = float(numA) / float(total)
     fracB = 1.0 - fracA
@@ -276,10 +279,6 @@ for iii in range(dump_short, end):
             binnedO[jjj][mmm] = vecToAngle(mesh[jjj][mmm])
             netPe[jjj][mmm] = netActivity(binTyp[jjj][mmm][0], binTyp[jjj][mmm][1], pe_a, pe_b)
 
-
-
-
-
     fig = plt.figure()
     # Plot the original simulation
     ax = fig.add_subplot(221)
@@ -336,7 +335,7 @@ for iii in range(dump_short, end):
                 '_pb'+ str(pe_b) +
                 '_xa'+ str(part_perc_a) +
                 '_step_'+ str(iii) +
-                '.png', dpi=1000)
+                '.png', dpi=500)
     plt.close()
 
 #ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
