@@ -65,7 +65,7 @@ cd ${current}_parent
 while [ $a_count -le $a_max ]       # loop through N
 do
 
-    infile=pa${pe_a}_pb${pe_b}_xa${xa}_n${n_count}.py                       # set unique infile name
+    infile=pa${pe_a}_pb${pe_b}_xa${xa}_alpha${a_count}.py                       # set unique infile name
     $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
     $sedtype -i 's/\${part_num}/'"${partNum}"'/g' $infile                   # write particle number
     $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
