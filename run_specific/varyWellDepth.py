@@ -243,7 +243,7 @@ name = "pa" + str(peA) +\
 "_pb" + str(peB) +\
 "_xa" + str(partPercA) +\
 "_ep" + str(int(epsAB)) +\
-"_alpha" + + str(int(alpha))
+"_alpha" + str(int(alpha))
 
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
