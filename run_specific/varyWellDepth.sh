@@ -41,8 +41,8 @@ partNum=$(( 10000 ))
 
 # These are the parameters for my loop
 a_count=$(( 1 ))
-a_spacer=$((1))
-a_max=$((4))
+a_spacer=$(( 1 ))
+a_max=$(( 4 ))
 
 echo "Time to set some seeds!"
 echo "Positional seed"
@@ -84,7 +84,7 @@ do
 
     $submit $script_path $infile
 
-    a_count=$(( $a_count * $a_spacer ))
+    a_count=$(( $a_count + $a_spacer ))
 
 done
 
