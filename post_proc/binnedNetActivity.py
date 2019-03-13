@@ -141,11 +141,6 @@ try:
                  "_pb" + str(pe_b) + \
                  "_xa" + str(part_perc_a) + \
                  ".gsd"
-    # File to write all data to
-    out_file = "orientation_pa" + str(pe_a) + \
-               "_pb" + str(pe_b) + \
-               "_xa" + str(part_perc_a) + \
-               "_fm"
     f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
     g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
 except:
@@ -164,12 +159,6 @@ except:
                  "_xa" + str(part_perc_a) + \
                  "_ep" + str(eps) + \
                  ".gsd"
-    # File to write all data to
-    out_file = "orientation_pa" + str(pe_a) + \
-               "_pb" + str(pe_b) + \
-               "_xa" + str(part_perc_a) + \
-               "_ep" + str(eps) +\
-               "_fm"
     f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
     g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
 
@@ -329,14 +318,40 @@ for iii in range(dump_short, end):
     plt.title('Summed Vector Force')
 
     # Figure name
-#    plt.show()
-    plt.savefig('nBins' + str(nBins) +
+#    plt.savefig('nBins' + str(nBins) +
+#                '_pa'+ str(pe_a) +
+#                '_pb'+ str(pe_b) +
+#                '_xa'+ str(part_perc_a) +
+#                '_step_'+ str(iii) +
+#                '.png', dpi=500)
+    plt.savefig('forces'
                 '_pa'+ str(pe_a) +
                 '_pb'+ str(pe_b) +
                 '_xa'+ str(part_perc_a) +
-                '_step_'+ str(iii) +
+                '_eps' + str(eps) +
+                '_fm'+ str(iii) +
                 '.png', dpi=500)
     plt.close()
+
+    # Plot binned orientation
+    plt.imshow(netPe.T,
+               extent=(0,nBins,0,nBins),
+               origin='lower'
+               )
+    plt.xticks(())
+    plt.yticks(())
+    cb = plt.colorbar()
+    #    cb.set_ticks([])
+    ax = plt.gca()
+    ax.set_aspect('equal')
+    plt.title('Net Activity')
+    plt.savefig('netPe' +
+                '_pa' + str(pe_a) +
+                '_pb' + str(pe_b) +
+                '_xa' + str(part_perc_a) +
+                '_eps' + str(eps) +
+                '_fm'+ str(iii) +
+                '.png', dpi=500)
 
 #ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
