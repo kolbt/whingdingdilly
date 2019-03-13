@@ -98,11 +98,11 @@ else:                               # B particles are Brownian
     epsB = kT
     tauB = computeTauLJ(epsB)
 
-epsAB = (epsA + epsB) / 2.0                 # AB interaction well depth
+epsAB = (epsA + epsB + 1) / 2.0             # AB interaction well depth
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
-epsB = epsA                                 # make sure all use this
-epsAB = epsA                                # make sure all use this
+#epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
+#epsB = epsA                                 # make sure all use this
+#epsAB = epsA                                # make sure all use this
 dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
