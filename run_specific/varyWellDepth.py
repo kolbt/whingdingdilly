@@ -24,6 +24,7 @@ peB = ${pe_b}                   # activity of B particles
 partNum = ${part_num}           # total number of particles
 intPhi = ${phi}                 # system area fraction
 phi = float(intPhi) / 100.0
+alpha = ${alpha}                # alpha to use for epsilon
 
 seed1 = ${seed1}                # seed for position
 seed2 = ${seed2}                # seed for bd equilibration
@@ -78,7 +79,7 @@ def computeTauLJ(epsilon):
 if peA != 0:                        # A particles are NOT Brownian
     vA = computeVel(peA)
     FpA = computeActiveForce(vA)
-    epsA = computeEps(FpA)
+    epsA = computeEps(alpha, FpA)
     tauA = computeTauLJ(epsA)
 else:                               # A particles are Brownian
     vA = 0.0
@@ -89,7 +90,7 @@ else:                               # A particles are Brownian
 if peB != 0:                        # B particles are NOT Brownian
     vB = computeVel(peB)
     FpB = computeActiveForce(vB)
-    epsB = computeEps(FpB)
+    epsB = computeEps(alpha, FpB)
     tauB = computeTauLJ(epsB)
 else:                               # B particles are Brownian
     vB = 0.0
@@ -97,7 +98,7 @@ else:                               # B particles are Brownian
     epsB = kT
     tauB = computeTauLJ(epsB)
 
-#epsAB = (epsA + epsB) / 2.0                # AB interaction well depth
+epsAB = (epsA + epsB) / 2.0                 # AB interaction well depth
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
 epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
 epsB = epsA                                 # make sure all use this
@@ -106,14 +107,16 @@ dt = 0.00001 * tauLJ                        # timestep size
 simLength = runFor * tauBrown               # how long to run (in tauBrown)
 simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = float(simLength / 0.005)         # dump data every 0.5 tauBrown
+numDumps = float(simLength / 0.1)           # dump data every 0.5 tauBrown
 dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
 dumpFreq = int(dumpFreq)                    # ensure this is an integer
 
 print "Brownian tau in use:", tauBrown
 print "Lennard-Jones tau in use:", tauLJ
 print "Timestep in use:", dt
-print "Epsilon in use:", epsAB
+print "A-epsilon in use:", epsA
+print "B-epsilon in use:", epsB
+print "AB-epsilon in use:", epsAB
 print "Total number of timesteps:", totTsteps
 print "Total number of output frames:", numDumps
 print "File dump frequency:", dumpFreq

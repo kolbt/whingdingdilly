@@ -37,11 +37,12 @@ dump_freq=$(( 20000 ))
 pe_a=$(( 0 ))
 pe_b=$(( 500 ))
 xa=$(( 50 ))
+partNum=$(( 10000 ))
 
 # These are the parameters for my loop
-n_count=$(( 100 ))
-n_mult=$((10))
-n_max=$((1000000))
+a_count=$(( 1 ))
+a_spacer=$((1))
+a_max=$((4))
 
 echo "Time to set some seeds!"
 echo "Positional seed"
@@ -61,18 +62,19 @@ cd ${current}_parent
 
 
 # this segment of code writes the infiles
-while [ $n_count -le $n_max ]       # loop through N
+while [ $a_count -le $a_max ]       # loop through N
 do
 
     infile=pa${pe_a}_pb${pe_b}_xa${xa}_n${n_count}.py                       # set unique infile name
     $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
-    $sedtype -i 's/\${part_num}/'"${n_count}"'/g' $infile                   # write particle number
+    $sedtype -i 's/\${part_num}/'"${partNum}"'/g' $infile                   # write particle number
     $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
     $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
     $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
-    $sedtype -i 's/\${part_frac_a}/'"${xa}"'/g' $infile                # write particle fraction to infile
-    $sedtype -i 's/\${pe_a}/'"${pe_a}"'/g' $infile                      # write activity of A to infile
+    $sedtype -i 's/\${part_frac_a}/'"${xa}"'/g' $infile                     # write particle fraction to infile
+    $sedtype -i 's/\${pe_a}/'"${pe_a}"'/g' $infile                          # write activity of A to infile
     $sedtype -i 's/\${pe_b}/'"${pe_b}"'/g' $infile                          # write activity of B to infile
+    $sedtype -i 's/\${alpha}/'"${a_count}"'/g' $infile                      # write activity of B to infile
     $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
     $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
     $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
@@ -82,7 +84,7 @@ do
 
     $submit $script_path $infile
 
-    n_count=$(( $n_count * $n_mult ))
+    a_count=$(( $a_count * $a_spacer ))
 
 done
 
