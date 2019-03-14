@@ -137,12 +137,14 @@ except:
               "_pb"+str(peB)+\
               "_xa"+str(part_perc_a)+\
               "_ep"+str(inEps)+\
+              "_alpha"+str(alpha)+\
               ".gsd"
     # File base
     b_file = "pa" + str(peA) + \
              "_pb" + str(peB) + \
              "_xa" + str(part_perc_a) + \
-             "_ep" + str(inEps)
+             "_ep" + str(inEps) + \
+             "_alpha"+str(alpha)
     f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
 dumps = f.__len__()                     # get number of timesteps dumped
