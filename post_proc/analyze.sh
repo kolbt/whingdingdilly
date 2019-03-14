@@ -35,13 +35,13 @@ ep=$7
 #python $script_path/computeRDF.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/edge_detection.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/edge_detection_v2.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/check_cluster_alg.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/diffHeatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/orientation_snapshots.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
 
 # Movie for RDF
 #ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
@@ -50,15 +50,15 @@ python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #rm RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm*.png
 
 # Movies for net activity and other force relations
-ffmpeg -start_number 450 -framerate 10 -i forces_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm%d.png\
- -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
- forces_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm forces_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm*.png
-
-ffmpeg -start_number 450 -framerate 10 -i netPe_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm%d.png\
- -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
- netPe_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
-rm netPe_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm*.png
+#ffmpeg -start_number 450 -framerate 10 -i forces_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm%d.png\
+# -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
+# forces_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+#rm forces_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm*.png
+#
+#ffmpeg -start_number 450 -framerate 10 -i netPe_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm%d.png\
+# -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p -threads 1\
+# netPe_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+#rm netPe_pa${pa}_pb${pb}_xa${xa}_eps${ep}_fm*.png
 
 # Movie for heatmap by type
 #ffmpeg -start_number 450 -framerate 10 -i heatType_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
