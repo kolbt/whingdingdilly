@@ -352,6 +352,7 @@ for iii in range(dump_short, end):
                 '_eps' + str(eps) +
                 '_fm'+ str(iii) +
                 '.png', dpi=500)
+    plt.close()
 
 #ffmpeg -framerate 10 -i nBins100_pa${pa}_pb${pb}_xa${xa}_step_%d.png\
 # -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p -threads 1\
