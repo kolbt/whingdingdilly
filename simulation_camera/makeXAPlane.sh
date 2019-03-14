@@ -7,7 +7,7 @@ camPath="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 # Set xA
 xa=0
 # Resolution of an individual simulation frame
-size=600
+size=500
 # This is to adjust how y coordinates are implemented
 l_box=$(( $size * 15 ))
 
@@ -38,20 +38,11 @@ while [ ${xa} -le 50 ]; do
             if [ ! -f "${base}.gsd" ]; then
                 # Flip the color scheme
                 flip=1
-                # Swap the x and y coordinates
-                tmp=$x
-                x=$y
-                y=$tmp
                 # Get the new xa value
                 var=$(( 100 - $xa ))
                 # Search for the inverse file
                 base="pa${peb}_pb${pea}_xa${var}"
             fi
-
-#            # Columns where PeA < PeB (on composite plot) are inverted
-#            if [ $peb -gt $pea ]; then
-#                tmp=$(( 100 - $xa ))
-#            fi
 
             # If either filename DOES exist, execute this block
             if [ -f "${base}.gsd" ]; then
