@@ -43,7 +43,8 @@ al=$8
 #python $script_path/diffHeatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/orientation_snapshots.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/analyze_alpha.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
+#python $script_path/analyze_alpha.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
+python $script_path/alpha_diameter_histogram.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
 
 # Movie for RDF
 #ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
