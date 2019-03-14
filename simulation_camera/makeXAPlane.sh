@@ -1,15 +1,20 @@
 #!/bin/sh
 camPath="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 
+# It's important to note that the upper LEFT corner is 0, 0
+# in the python PILlow pixel coordinate system (x, y)
+
 # Set xA
 xa=0
 # Resolution of an individual simulation frame
 size=600
+# This is to adjust how y coordinates are implemented
+l_box=$(( $size * 15 ))
 
 # Loop through particle fraction (constant on each plane)
-while [ ${xa} -le 100 ]; do
+while [ ${xa} -le 50 ]; do
 
-    # Create the blank xA plane frame
+    # Create the blank xA plane frame (16 x 16 image)
     python ${camPath}/makeWall.py "xa${xa}.png" $size
     # Set PeB
     peb=0
@@ -23,24 +28,30 @@ while [ ${xa} -le 100 ]; do
         # Loop through A particle activity
         while [ ${pea} -le 150 ]; do
 
+            # The coordinates are predefined (color may flip)
+            x=$(bc <<< "scale=0;(($pea/10)*$size)")
+            y=$(bc <<< "scale=0;($l_box-(($peb/10)*$size))")
             flip=0
             base="pa${pea}_pb${peb}_xa${xa}"
-            x=$(bc <<< "scale=0;((($pea/10))*$size)")
-            y=$(bc <<< "scale=0;((($peb/10))*$size)")
 
             # Check if file exists (block executes if file does NOT exist)
             if [ ! -f "${base}.gsd" ]; then
+                # Flip the color scheme
                 flip=1
+                # Swap the x and y coordinates
                 tmp=$x
                 x=$y
                 y=$tmp
-                base="pa${peb}_pb${pea}_xa${tmp}"
+                # Get the new xa value
+                var=$(( 100 - $xa ))
+                # Search for the inverse file
+                base="pa${peb}_pb${pea}_xa${var}"
             fi
 
-            # Columns where PeA < PeB (on composite plot) are inverted
-            if [ $peb -gt $pea ]; then
-                tmp=$(( 100 - $xa ))
-            fi
+#            # Columns where PeA < PeB (on composite plot) are inverted
+#            if [ $peb -gt $pea ]; then
+#                tmp=$(( 100 - $xa ))
+#            fi
 
             # If either filename DOES exist, execute this block
             if [ -f "${base}.gsd" ]; then
