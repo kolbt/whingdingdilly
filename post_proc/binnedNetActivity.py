@@ -308,8 +308,8 @@ for iii in range(dump_short, end):
     ax = fig.add_subplot(224)
     plt.imshow(binnedF.T,
                extent=(0,nBins,0,nBins),
-               origin='lower',
-               clim=(0,10000))
+               origin='lower'
+               )
     plt.xticks(())
     plt.yticks(())
     cb = plt.colorbar()
