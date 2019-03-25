@@ -150,6 +150,7 @@ timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 # Get relevant data from long.gsd file
 with hoomd.open(name=long_file, mode='rb') as t:
     snap = t[0]
+    box_data = snap.configuration.box
     for iii in range(start, end):
         snap = t[iii]                               # snapshot of frame
         types[iii] = snap.particles.typeid          # get types
@@ -217,6 +218,7 @@ r_cut = 1.122
 sizeBin = r_cut
 nBins = int(l_box / sizeBin)
 nBins += 1  # account for integer rounding
+print("Number of bins: {}").format(nBins)
 
 for j in range(start, end):
 
