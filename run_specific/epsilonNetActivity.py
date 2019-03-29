@@ -7,10 +7,10 @@
     this by varying the depth of the repulsive well according to the particles'
     activity.
     
-    So, we will maintain the ratio, F_p*sigma / epsilon = 1, while still using
-    the intrinsic swim speed to vary the Peclet number.  This method results
-    in a varying Lennard-Jones time unit, but as long as we correct for this
-    and run for a set time (i.e. 200 tauLJ), then we should be fine.
+    So, we will maintain the ratio, epsilon=4F_net*sigma/24.0, while still
+    using the intrinsic swim speed to vary the Peclet number.  This method
+    results in a varying Lennard-Jones time unit, but as long as we correct
+    for this and run for a set time (i.e. 200 tauB), then we should be fine.
     
     As an added benefit we will not be restricted by a varying D_t (as many
     other groups use) and can therefore simulate active/active mixtures.
@@ -64,18 +64,24 @@ def computeActiveForce(velocity):
     activeForce = velocity * threeEtaPiSigma
     return activeForce
 
-def computeEps(activeForce):
+def computeEps(Fs, Ff, xS):
     "Given particle activity, output repulsion well depth"
-    a = 0.16
-    b = 1.0
-    epsilon = (a * activeForce) + b
-    epsilon = int(epsilon) + 1
+    if Fs <= Ff:
+        xF = 1.0 - xS
+    else:
+        xF = xS
+        xS = 1.0 - xF
+    epsilon = 4.0 * ((Fs * xS) + (Ff * xF)) / 24.0
     return epsilon
 
 def computeTauLJ(epsilon):
     "Given epsilon, compute lennard-jones time unit"
     tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
     return tauLJ
+
+# Compute epsilon
+if peA == 0 and peB == 0:
+    epsilon=
 
 # Compute parameters from activities
 if peA != 0:                        # A particles are NOT Brownian
@@ -99,6 +105,8 @@ else:                               # B particles are Brownian
     FpB = 0.0
     epsB = kT
     tauB = computeTauLJ(epsB)
+
+
 
 #epsAB = (epsA + epsB) / 2.0                # AB interaction well depth
 tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
