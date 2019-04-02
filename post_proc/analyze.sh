@@ -11,7 +11,7 @@ hoomd_path=$4
 gsd_path=$5
 script_path=$6
 ep=$7
-al=$8
+num=$8
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/nearest_neigh.py $pa $pb $xa $hoomd_path $gsd_path
@@ -37,7 +37,8 @@ al=$8
 #python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/extrinsic_all_time_back_compat.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/converge_analysis.py $pa $pb $xa $hoomd_path $gsd_path $ep $num
+#python $script_path/extrinsic_all_time_back_compat.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/edge_detection.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/edge_detection_v2.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/check_cluster_alg.py $pa $pb $xa $hoomd_path $gsd_path $ep
