@@ -34,7 +34,7 @@ fi
 part_num=$(( 15000 ))
 phi=$(( 60 ))
 runfor=$(( 100 ))
-dump_freq=$(( 20000 ))
+dump_freq=$(( 10 ))
 x_a_spacer=$(( 10 ))
 pe_a_spacer=$(( 10 ))
 pe_b=$(( 150 ))
@@ -158,7 +158,7 @@ do
     while [ $pe_count -le $pe_max ] # loop through activity at constant particle fraction
     do
 
-        infile=pa${pe_count}_pb${pe_b}_xa${x_count}.py                          # set unique infile name
+        infile=pa${pe_count}_pb${pe_b}_xa${x_count}_phi${phi}.py                # set unique infile name
         $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
         $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
         $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number

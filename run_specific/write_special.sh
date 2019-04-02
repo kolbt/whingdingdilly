@@ -47,7 +47,7 @@ fi
 part_num=$(( 15000 ))
 phi=$(( 60 ))
 runfor=$(( 100 ))
-dump_freq=$(( 20000 ))
+dump_freq=$(( 10 ))
 x_a_spacer=$(( 10 ))
 pe_a_spacer=$(( 10 ))
 pe_b=$(( 150 ))

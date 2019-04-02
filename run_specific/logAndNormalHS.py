@@ -24,7 +24,7 @@ import psutil
 hoomdPath = "${hoomd_path}"     # path to hoomd-blue
 gsdPath = "${gsd_path}"         # path to gsd
 runFor = ${runfor}              # simulation length (in tauLJ)
-dumpFreq = ${dump_freq}         # how often to dump data
+dumpPerBrownian = ${dump_freq}  # how often to dump data
 partPercA = ${part_frac_a}      # percentage of A particles
 partFracA = float(partPercA) / 100.0
 peA = ${pe_a}                   # activity of A particles
@@ -100,18 +100,18 @@ else:                               # B particles are Brownian
     epsB = kT
     tauB = computeTauLJ(epsB)
 
-#epsAB = (epsA + epsB) / 2.0                # AB interaction well depth
-tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
-epsB = epsA                                 # make sure all use this
-epsAB = epsA                                # make sure all use this
-dt = 0.00001 * tauLJ                        # timestep size
-simLength = runFor * tauBrown               # how long to run (in tauBrown)
-simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
-totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = float(simLength / 0.005)         # dump data every 0.5 tauBrown
-dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
-dumpFreq = int(dumpFreq)                    # ensure this is an integer
+#epsAB = (epsA + epsB) / 2.0                    # AB interaction well depth
+tauLJ = (tauA if (tauA <= tauB) else tauB)      # use the smaller tauLJ
+epsA = (epsA if (epsA >= epsB) else epsB)       # use the larger epsilon
+epsB = epsA                                     # make sure all use this
+epsAB = epsA                                    # make sure all use this
+dt = 0.00001 * tauLJ                            # timestep size
+simLength = runFor * tauBrown                   # how long to run (in tauBrown)
+simTauLJ = simLength / tauLJ                    # how long to run (in tauLJ)
+totTsteps = int(simLength / dt)                 # how many tsteps to run
+numDumps = float(simLength * dumpPerBrownian)   # frames to dump per 1tauB
+dumpFreq = float(totTsteps / numDumps)          # normalized dump frequency
+dumpFreq = int(dumpFreq)                        # ensure this is an integer
 
 print "Brownian tau in use:", tauBrown
 print "Lennard-Jones tau in use:", tauLJ
@@ -120,6 +120,7 @@ print "Epsilon in use:", epsAB
 print "Total number of timesteps:", totTsteps
 print "Total number of output frames:", numDumps
 print "File dump frequency:", dumpFreq
+print "Brownian length of simulation", simLength
 
 # Initialize system
 hoomd.context.initialize()
@@ -243,7 +244,6 @@ name = "pa" + str(peA) +\
 "_pb" + str(peB) +\
 "_xa" + str(partPercA) +\
 "_ep" + str(int(epsAB)) +\
-"_phi" + str(intPhi)
 
 gsdName = name + ".gsd"
 sqliteName = name + ".sqlite"
