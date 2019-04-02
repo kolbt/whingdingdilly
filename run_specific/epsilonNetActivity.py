@@ -24,7 +24,7 @@ import psutil
 hoomdPath = "${hoomd_path}"     # path to hoomd-blue
 gsdPath = "${gsd_path}"         # path to gsd
 runFor = ${runfor}              # simulation length (in tauLJ)
-dumpFreq = ${dump_freq}         # how often to dump data
+dumpPerBrownian = ${dump_freq}  # how often to dump data
 partPercA = ${part_frac_a}      # percentage of A particles
 partFracA = float(partPercA) / 100.0
 peA = ${pe_a}                   # activity of A particles
@@ -64,14 +64,16 @@ def computeActiveForce(velocity):
     activeForce = velocity * threeEtaPiSigma
     return activeForce
 
-def computeEps(Fs, Ff, xS):
+def computeNetEps(FA, FB, xA):
     "Given particle activity, output repulsion well depth"
-    if Fs <= Ff:
-        xF = 1.0 - xS
-    else:
-        xF = xS
-        xS = 1.0 - xF
-    epsilon = 4.0 * ((Fs * xS) + (Ff * xF)) / 24.0
+    # The minimum input force is 1kBT
+    if FA == 0:
+        FA = 1.0
+    if FB == 0:
+        FB = 1.0
+    xB = 1.0 - xA
+    # The minimum epsilon is 1/6
+    epsilon = 4.0 * ((FA * xA) + (FB * xB)) / 24.0
     return epsilon
 
 def computeTauLJ(epsilon):
@@ -79,47 +81,34 @@ def computeTauLJ(epsilon):
     tauLJ = ((sigma**2) * threeEtaPiSigma) / epsilon
     return tauLJ
 
-# Compute epsilon
-if peA == 0 and peB == 0:
-    epsilon=
-
 # Compute parameters from activities
 if peA != 0:                        # A particles are NOT Brownian
     vA = computeVel(peA)
     FpA = computeActiveForce(vA)
-    epsA = computeEps(FpA)
-    tauA = computeTauLJ(epsA)
 else:                               # A particles are Brownian
     vA = 0.0
     FpA = 0.0
-    epsA = kT
-    tauA = computeTauLJ(epsA)
 
 if peB != 0:                        # B particles are NOT Brownian
     vB = computeVel(peB)
     FpB = computeActiveForce(vB)
-    epsB = computeEps(FpB)
-    tauB = computeTauLJ(epsB)
 else:                               # B particles are Brownian
     vB = 0.0
     FpB = 0.0
-    epsB = kT
-    tauB = computeTauLJ(epsB)
 
+netEps = computeNetEps(FpA, FpB, partFracA)
+tauLJ = computeTauLJ(netEps)
 
-
-#epsAB = (epsA + epsB) / 2.0                # AB interaction well depth
-tauLJ = (tauA if (tauA <= tauB) else tauB)  # use the smaller tauLJ
-epsA = (epsA if (epsA >= epsB) else epsB)   # use the larger epsilon
-epsB = epsA                                 # make sure all use this
-epsAB = epsA                                # make sure all use this
-dt = 0.00001 * tauLJ                        # timestep size
-simLength = runFor * tauBrown               # how long to run (in tauBrown)
-simTauLJ = simLength / tauLJ                # how long to run (in tauLJ)
-totTsteps = int(simLength / dt)             # how many tsteps to run
-numDumps = float(simLength / 0.005)         # dump data every 0.5 tauBrown
-dumpFreq = float(totTsteps / numDumps)      # normalized dump frequency
-dumpFreq = int(dumpFreq)                    # ensure this is an integer
+epsA = netEps                                   # use the larger epsilon
+epsB = netEps                                   # make sure all use this
+epsAB = netEps                                  # make sure all use this
+dt = 0.00001 * tauLJ                            # timestep size
+simLength = runFor * tauBrown                   # how long to run (in tauBrown)
+simTauLJ = simLength / tauLJ                    # how long to run (in tauLJ)
+totTsteps = int(simLength / dt)                 # how many tsteps to run
+numDumps = float(simLength * dumpPerBrownian)   # frames in 1 tauB
+dumpFreq = float(totTsteps / numDumps)          # normalized dump frequency
+dumpFreq = int(dumpFreq)                        # ensure this is an integer
 
 print "Brownian tau in use:", tauBrown
 print "Lennard-Jones tau in use:", tauLJ
@@ -127,7 +116,8 @@ print "Timestep in use:", dt
 print "Epsilon in use:", epsAB
 print "Total number of timesteps:", totTsteps
 print "Total number of output frames:", numDumps
-print "File dump frequency:", dumpFreq
+print "Dumped snapshots per 1 tauB:", dumpPerBrownian
+print "Brownian run time:", simLength
 
 # Initialize system
 hoomd.context.initialize()
@@ -262,12 +252,6 @@ lastTen = "lastTen" + name + ".gsd"
 ### Dump for MSD ###
 # Get the early times for MSD output
 # Time intervals I want, in tauBrown
-# times = [ 0.00001,
-#           0.00010,
-#           0.00100,
-#           0.01000,
-#           0.10000,
-#           1.00000 ]
 times = [ 0.0001,
           0.0010,
           0.0100,
@@ -275,7 +259,6 @@ times = [ 0.0001,
           1.0000,
           10.0000]
 # Instantiate array for dumping timesteps
-# logDump = np.zeros((len(times) - 1) * 9)
 logDump = np.zeros(((len(times) - 1) * 90) + 1)
 
 # Get number of timesteps in 1 tauBrownian
