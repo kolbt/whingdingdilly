@@ -36,32 +36,39 @@ def computeMonoSpinodal(PHI, PHICP):
     bottom2 = ((PHI**2)/PHICP) * ((term)**-2)
     return top / (3 * (bottom1 + bottom2))
 
-inPhis = np.arange(0.2, phi_CP, 0.001)
-PeRs = np.zeros_like(inPhis)
-Pes = np.zeros_like(inPhis)
+inPhis = np.arange(0.2, 0.9, 0.001)
+PeRs2D = np.zeros_like(inPhis)
+PeRs3D = np.zeros_like(inPhis)
+Pes2D = np.zeros_like(inPhis)
+Pes3D = np.zeros_like(inPhis)
+phi02D = np.pi / (2.0 * np.sqrt(3.0))
+phi02D = 0.8
+phi03D = 0.64
 for i in xrange(len(inPhis)):
-    PeRs[i] = computeMonoSpinodal(inPhis[i], phi_CP)
-    Pes[i] = (PeRs[i])**-1 * (3.0/2.0)
+    PeRs2D[i] = computeMonoSpinodal(inPhis[i], phi02D)
+    PeRs3D[i] = computeMonoSpinodal(inPhis[i], phi03D)
+    Pes2D[i] = (PeRs2D[i])**-1 * (3.0/2.0)
+    Pes3D[i] = (PeRs3D[i])**-1 * (3.0/2.0)
 
-#plt.semilogy(inPhis, PeRs)
-#plt.ylim(10**-3, 10**-1)
-#plt.xlabel(r'$\phi$')
-#plt.ylabel(r'$Pe_{R}$')
-#plt.show()
-#
-#plt.plot(inPhis, Pes)
-#plt.xlim(0.336, 0.7)
+plt.semilogy(inPhis, PeRs2D)
+plt.ylim(10**-2, 10**0)
+plt.xlabel(r'$\phi$')
+plt.ylabel(r'$Pe_{R}$')
+plt.show()
+
+#plt.plot(inPhis, Pes2D)
+#plt.xlim(0.1, 0.9)
 #plt.ylim(0, 500)
 #plt.xlabel(r'$\phi$')
 #plt.ylabel(r'$Pe$')
 #plt.show()
 
-# We need to do this with symbolic python
-import sympy as sp
-
-a = 4.0 * np.pi * ((sigma / 2.0)**3) / 3.0
-
-n, per = sp.symbols("n per")
+## We need to do this with symbolic python
+#import sympy as sp
+#
+#a = 4.0 * np.pi * ((sigma / 2.0)**3) / 3.0
+#
+#n, per = sp.symbols("n per")
 ## Each term gets its own line
 #plot_implicit(Eq((1/(1-(a*n))) +
 #                 ((1/(1-(a*n))) * B) *
@@ -78,29 +85,29 @@ n, per = sp.symbols("n per")
 #              (phi, 0.2, 0.7),
 #              (per, 10**-3, 10**-1))
 
-# Each term gets its own line
-sp.plot_implicit(sp.Eq((1/(1-(a*n))) +
-                    (
-                     ((1/(1-(a*n))) * (sp.exp(((a*n)**3)-(((a*n)**2)/2.0)+((3.0*per**phiCP*(1.0-phiCP))/(1.0-(a*n/phiCP)))-(3.0*a*n*(1.0-(phiCP*per)))))) *
-                     (
-                      ((3.0*per*a)*((1.0-(a*n/phiCP))**((-3*phiCP*per)-1)))+
-                      (((3.0*(a**3)*(n**2))-((a**2)*n)+(3.0*per*a*(1.0-phiCP)*((1.0-(a*n/phiCP))**-2))-(3.0*a*(1.0-(phiCP*per))))*((1.0-(a*n/phiCP))**(-3*phiCP*per)))
-                      )
-                     ) -
-                    (1) +
-                    (2*a*n) +
-                    (3*(a**2)*(n**2)) -
-                    ((6*a*n*per)*((1.0-(a*n/phiCP))**-1)) +
-                    (3*(a**2)*(n**2)*per/phiCP*((1-(a*n/phiCP))**-2)),
-                    0),
-                 (n, 0.4, 1.3),
-                 (per, 10**-3, 10**-1))
+## Each term gets its own line
+#sp.plot_implicit(sp.Eq((1/(1-(a*n))) +
+#                    (
+#                     ((1/(1-(a*n))) * (sp.exp(((a*n)**3)-(((a*n)**2)/2.0)+((3.0*per**phiCP*(1.0-phiCP))/(1.0-(a*n/phiCP)))-(3.0*a*n*(1.0-(phiCP*per)))))) *
+#                     (
+#                      ((3.0*per*a)*((1.0-(a*n/phiCP))**((-3*phiCP*per)-1)))+
+#                      (((3.0*(a**3)*(n**2))-((a**2)*n)+(3.0*per*a*(1.0-phiCP)*((1.0-(a*n/phiCP))**-2))-(3.0*a*(1.0-(phiCP*per))))*((1.0-(a*n/phiCP))**(-3*phiCP*per)))
+#                      )
+#                     ) -
+#                    (1) +
+#                    (2*a*n) +
+#                    (3*(a**2)*(n**2)) -
+#                    ((6*a*n*per)*((1.0-(a*n/phiCP))**-1)) +
+#                    (3*(a**2)*(n**2)*per/phiCP*((1-(a*n/phiCP))**-2)),
+#                    0),
+#                 (n, 0.4, 1.3),
+#                 (per, 10**-3, 10**-1))
 
 ## These will help you substitute in
 #A = ((1.0-(a*n/phiCP))**(-3*phiCP*per))
 #dA = ((3.0*per*a)*((1.0-(a*n/phiCP))**((-3*phiCP*per)-1)))
 #B = (np.exp(((a*n)**3)-(((a*n)**2)/2.0)+((3.0*per**phiCP*(1.0-phiCP))/(1.0-(a*n/phiCP)))-(3.0*a*n*(1.0-(phiCP*per)))))
 #dC = ((3.0*(a**3)*(n**2))-((a**2)*n)+(3.0*per*a*(1.0-phiCP)*((1.0-(a*n/phiCP))**-2))-(3.0*a*(1.0-(phiCP*per))))
-
+#
 # Modify this plot with the following link
 # https://stackoverflow.com/questions/40747474/sympy-and-plotting
