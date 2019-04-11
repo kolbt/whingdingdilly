@@ -14,15 +14,6 @@ def computeActivity(VP, TAUR, SIG):
 tau_R = 1.0 / 3.0
 sigma = 1.0
 particle_Area = np.pi * ((sigma / 2.0)**2)
-# 2D
-#phi_CP = np.pi / (2.0 * np.sqrt(3.0))
-
-# 3D
-phi_CP = np.pi / (3.0 * np.sqrt(2.0))
-
-# Random close packing in 3D
-phi_CP = 0.64
-phiCP = 0.64
 
 def computeBradyMono(PHI, PE, APART, PHICP):
     '''Computes pressure, straight from the Brady paper'''
@@ -30,20 +21,20 @@ def computeBradyMono(PHI, PE, APART, PHICP):
     return ndense * ((PE**2)/6.0) * ( 1 - PHI - PHI**2 + PHI*(9.0/(2.0 * PE)) * (PHICP/(1-PHI)) )
 
 def computeMonoSpinodal(PHI, PHICP):
-    top = (3 * (PHI**2)) + (2 * PHI) - 1
+    top = (3 * 0.2 * (PHI**2)) + (2 * PHI) - 1
     term = 1.0 - (PHI/PHICP)
     bottom1 = 2.0 * PHI * ((term)**-1)
     bottom2 = ((PHI**2)/PHICP) * ((term)**-2)
-    return top / (3 * (bottom1 + bottom2))
+    return top / ((4.0 / np.pi) * (bottom1 + bottom2))
 
 inPhis = np.arange(0.2, 0.9, 0.001)
 PeRs2D = np.zeros_like(inPhis)
 PeRs3D = np.zeros_like(inPhis)
 Pes2D = np.zeros_like(inPhis)
 Pes3D = np.zeros_like(inPhis)
-phi02D = np.pi / (2.0 * np.sqrt(3.0))
-phi02D = 0.8
-phi03D = 0.64
+#phi02D = np.pi / (2.0 * np.sqrt(3.0))
+phi02D = 0.9 # this is what Brady uses
+phi03D = 0.64 # this is what Brady uses
 for i in xrange(len(inPhis)):
     PeRs2D[i] = computeMonoSpinodal(inPhis[i], phi02D)
     PeRs3D[i] = computeMonoSpinodal(inPhis[i], phi03D)
@@ -51,9 +42,11 @@ for i in xrange(len(inPhis)):
     Pes3D[i] = (PeRs3D[i])**-1 * (3.0/2.0)
 
 plt.semilogy(inPhis, PeRs2D)
-plt.ylim(10**-2, 10**0)
+plt.xlim(0.2, 0.9)
+plt.ylim(2*10**-3, 4*10**-1)
 plt.xlabel(r'$\phi$')
 plt.ylabel(r'$Pe_{R}$')
+plt.title(r'2D Spinodal')
 plt.show()
 
 #plt.plot(inPhis, Pes2D)
