@@ -84,88 +84,78 @@ for i in xrange(len(inPhis)):
 #plt.title(r'3D Spinodal')
 #plt.show()
 
-# Make a figure
-fig, ax = plt.subplots(1, 4, figsize=(14,4))
-ax[0].semilogy(inPhis, PeRs2D)
-ax[1].semilogy(inPhis, PeRs3D)
-ax[2].plot(inPhis, Pes2D)
-ax[3].plot(inPhis, Pes3D)
-# Limits
-ax[0].set_xlim(0.2, 0.9)
-ax[1].set_xlim(0.2, 0.9)
-ax[2].set_xlim(0.2, 0.9)
-ax[3].set_xlim(0.2, 0.9)
-ax[0].set_ylim(10**-3, 10**-1)
-ax[1].set_ylim(10**-3, 10**-1)
-ax[2].set_ylim(0, 500)
-ax[3].set_ylim(0, 500)
-# Labels
-ax[0].set_title(r'2D')
-ax[1].set_title(r'3D')
-ax[2].set_title(r'2D')
-ax[3].set_title(r'3D')
-ax[0].set_ylabel(r'$Pe_{R}$')
-ax[2].set_ylabel(r'$Pe$')
-ax[0].set_xlabel(r'$\phi$')
-ax[1].set_xlabel(r'$\phi$')
-ax[2].set_xlabel(r'$\phi$')
-ax[3].set_xlabel(r'$\phi$')
-ax[0].text(0.75, 1.1, 'Spinodal (vs. $Pe_{R}$)', size=16, transform=ax[0].transAxes)
-ax[2].text(0.75, 1.1, 'Spinodal (vs. $Pe$)', size=16, transform=ax[2].transAxes)
-# Ticks
-ax[1].set_yticklabels([])
-ax[3].set_yticklabels([])
-for i in xrange(4):
-    ax[i].tick_params(direction='in', which='both')
-plt.tight_layout(pad=2.0, w_pad=0.5, h_pad=1.0)
-plt.savefig('Brady_spinodals.png', dpi=1000)
-plt.close()
+## Make a figure
+#fig, ax = plt.subplots(1, 4, figsize=(14,4))
+#ax[0].semilogy(inPhis, PeRs2D)
+#ax[1].semilogy(inPhis, PeRs3D)
+#ax[2].plot(inPhis, Pes2D)
+#ax[3].plot(inPhis, Pes3D)
+## Limits
+#ax[0].set_xlim(0.2, 0.9)
+#ax[1].set_xlim(0.2, 0.9)
+#ax[2].set_xlim(0.2, 0.9)
+#ax[3].set_xlim(0.2, 0.9)
+#ax[0].set_ylim(10**-3, 10**-1)
+#ax[1].set_ylim(10**-3, 10**-1)
+#ax[2].set_ylim(0, 500)
+#ax[3].set_ylim(0, 500)
+## Labels
+#ax[0].set_title(r'2D')
+#ax[1].set_title(r'3D')
+#ax[2].set_title(r'2D')
+#ax[3].set_title(r'3D')
+#ax[0].set_ylabel(r'$Pe_{R}$')
+#ax[2].set_ylabel(r'$Pe$')
+#ax[0].set_xlabel(r'$\phi$')
+#ax[1].set_xlabel(r'$\phi$')
+#ax[2].set_xlabel(r'$\phi$')
+#ax[3].set_xlabel(r'$\phi$')
+#ax[0].text(0.75, 1.1, 'Spinodal (vs. $Pe_{R}$)', size=16, transform=ax[0].transAxes)
+#ax[2].text(0.75, 1.1, 'Spinodal (vs. $Pe$)', size=16, transform=ax[2].transAxes)
+## Ticks
+#ax[1].set_yticklabels([])
+#ax[3].set_yticklabels([])
+#for i in xrange(4):
+#    ax[i].tick_params(direction='in', which='both')
+#plt.tight_layout(pad=2.0, w_pad=0.5, h_pad=1.0)
+#plt.savefig('Brady_spinodals.png', dpi=1000)
+#plt.close()
 
-## We need to do this with symbolic python
-#import sympy as sp
-#
-#a = 4.0 * np.pi * ((sigma / 2.0)**3) / 3.0
-#
-#n, per = sp.symbols("n per")
-## Each term gets its own line
-#plot_implicit(Eq((1/(1-(a*n))) +
-#                 ((1/(1-(a*n))) * B) *
-#                 (
-#                 (dA) +
-#                 (dC * A) -
-#                 ) -
-#                 (1) +
-#                 (2*a*n) +
-#                 (3*(a**2)*(n**2)) -
-#                 (6*a*n*per*((1-(a*n/phiCP))**-1)) +
-#                 (3*(a**2)*(n**2)*per/phiCP*((1-(a*n/phiCP))**-2)),
-#                 0),
-#              (phi, 0.2, 0.7),
-#              (per, 10**-3, 10**-1))
 
-## Each term gets its own line
-#sp.plot_implicit(sp.Eq((1/(1-(a*n))) +
-#                    (
-#                     ((1/(1-(a*n))) * (sp.exp(((a*n)**3)-(((a*n)**2)/2.0)+((3.0*per**phiCP*(1.0-phiCP))/(1.0-(a*n/phiCP)))-(3.0*a*n*(1.0-(phiCP*per)))))) *
-#                     (
-#                      ((3.0*per*a)*((1.0-(a*n/phiCP))**((-3*phiCP*per)-1)))+
-#                      (((3.0*(a**3)*(n**2))-((a**2)*n)+(3.0*per*a*(1.0-phiCP)*((1.0-(a*n/phiCP))**-2))-(3.0*a*(1.0-(phiCP*per))))*((1.0-(a*n/phiCP))**(-3*phiCP*per)))
-#                      )
-#                     ) -
-#                    (1) +
-#                    (2*a*n) +
-#                    (3*(a**2)*(n**2)) -
-#                    ((6*a*n*per)*((1.0-(a*n/phiCP))**-1)) +
-#                    (3*(a**2)*(n**2)*per/phiCP*((1-(a*n/phiCP))**-2)),
-#                    0),
-#                 (n, 0.4, 1.3),
-#                 (per, 10**-3, 10**-1))
 
-## These will help you substitute in
-#A = ((1.0-(a*n/phiCP))**(-3*phiCP*per))
-#dA = ((3.0*per*a)*((1.0-(a*n/phiCP))**((-3*phiCP*per)-1)))
-#B = (np.exp(((a*n)**3)-(((a*n)**2)/2.0)+((3.0*per**phiCP*(1.0-phiCP))/(1.0-(a*n/phiCP)))-(3.0*a*n*(1.0-(phiCP*per)))))
-#dC = ((3.0*(a**3)*(n**2))-((a**2)*n)+(3.0*per*a*(1.0-phiCP)*((1.0-(a*n/phiCP))**-2))-(3.0*a*(1.0-(phiCP*per))))
-#
+
+# We need to do this with symbolic python
+import sympy as sp
+
+# 2D Parameters
+beta = 4.0 / np.pi
+xi = 0.2
+phi0 = 0.90
+# 3D Parameters
+beta = 3.0
+xi = 1.0
+phi0 = 0.64
+
+PHI, PER = sp.symbols("PHI PER")
+# Each term gets its own line
+sp.plot_implicit(sp.Eq(
+                       ((PHI / (1.0 - PHI)) *
+                        ((1.0/PHI) +
+                         (((beta * PER * phi0) / phi0) * ((1.0-(PHI/phi0))**-1)) +
+                         (3.0*xi*(PHI**2)) -
+                         (PHI) +
+                         (((beta * PER * phi0) / phi0) * (1.0 - phi0) * ((1.0-(PHI/phi0))**-2)) -
+                         (3.0) +
+                         ((beta * PER * phi0)))) -
+                       (1.0) +
+                       (2.0*PHI) +
+                       (xi * (PHI**2)) -
+                       (((beta * PER * phi0) / phi0) *
+                        ((2.0*PHI)*((1.0-(PHI/phi0))**-1)) +
+                        (((PHI**2)/phi0)*((1.0-(PHI/phi0))**-2)))),
+                 (PHI, 0.2, 0.7),
+                 (PER, 10**-3, 10**1),
+                 yscale='log')
+
 # Modify this plot with the following link
 # https://stackoverflow.com/questions/40747474/sympy-and-plotting
