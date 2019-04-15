@@ -1,8 +1,9 @@
 #!/bin/sh
 #SBATCH -p general                          # partition to run on
 #SBATCH -n 1                                # number of cores
-#SBATCH --mem=100g                          # increase memory request (a gig)
 #SBATCH -t 11-00:00                         # time (D-HH:MM)
+
+# Command to increase memory allocated --mem=100g
 
 pa=$1
 pb=$2
