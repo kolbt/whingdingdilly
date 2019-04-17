@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[   1876586,      31293]
-NotebookOptionsPosition[   1872963,      31202]
-NotebookOutlinePosition[   1873317,      31218]
-CellTagsIndexPosition[   1873274,      31215]
+NotebookDataLength[   1877469,      31322]
+NotebookOptionsPosition[   1873741,      31229]
+NotebookOutlinePosition[   1874095,      31245]
+CellTagsIndexPosition[   1874052,      31242]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -7637,16 +7637,17 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
       FormBox[
        TagBox["xa", HoldForm], TraditionalForm]}, BoxRatios -> {1, 1, 1}, 
     DisplayFunction -> Identity, FaceGridsStyle -> Automatic, 
-    ImageSize -> {385.50681535278596`, 341.1629526871252}, ImageSizeRaw -> 
+    ImageSize -> {361.3948974533581, 323.1420309576297}, ImageSizeRaw -> 
     Automatic, Method -> {"DefaultBoundaryStyle" -> Directive[
         GrayLevel[0.3]]}, PlotRange -> {{0, 150}, {0, 150}, {0, 1}}, 
     PlotRangePadding -> {
       Scaled[0.02], 
       Scaled[0.02], 
       Scaled[0.02]}, Ticks -> {Automatic, Automatic, Automatic}, 
-    ViewPoint -> {-2.375482570853888, -2.287745418145581, 0.7571680509129409},
-     ViewVertical -> {-0.2717991218783326, -0.2881006879192123, 
-     0.9182174203132089}],FormBox[
+    ViewPoint -> {-2.398595992026546, -2.2638185535116757`, 
+     0.7562161224216862}, 
+    ViewVertical -> {-0.2766123942654794, -0.28367698189112966`, 
+     0.918157368474413}],FormBox[
     FormBox[
      TemplateBox[{
        TagBox[
@@ -7870,10 +7871,11 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RectangleBox[{0, -1}, {2, 1}]}}, AspectRatio -> 1, Frame -> 
                     True, FrameStyle -> GrayLevel[0.6666666666666666], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], "GrayLevel[1]"], 
-                    Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
-                    Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], "GrayLevel[1]"], Appearance -> None, 
+                    BaseStyle -> {}, BaselinePosition -> Baseline, 
+                    DefaultBaseStyle -> {}, ButtonFunction :> 
                     With[{Typeset`box$ = EvaluationBox[]}, 
                     If[
                     Not[
@@ -7908,8 +7910,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     0.587148, 0.40736066666666665`, 0.09470066666666668], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.880722, 0.611041, 0.142051]"], Appearance -> 
                     None, BaseStyle -> {}, BaselinePosition -> Baseline, 
                     DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -7951,8 +7954,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.20067051333333336`, 0.14943112333333333`, 
                     0.06032302333333334], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.30100577, 0.22414668499999998, 0.090484535]"],
                      Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -7992,8 +7996,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.17614440000000003`, 0.12220819999999999`, 
                     0.028410200000000007`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.2642166, 0.18331229999999998, \
 0.04261530000000001]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8039,8 +8044,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.17614440000000003`, 0.12220819999999999`, 
                     0.028410200000000007`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.2642166, 0.18331229999999998, \
 0.04261530000000001]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8086,9 +8092,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.17614440000000003`, 0.12220819999999999`, 
                     0.028410200000000007`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
-                    
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.2642166, 0.18331229999999998, \
 0.04261530000000001]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8133,10 +8139,11 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RectangleBox[{0, -1}, {2, 1}]}}, AspectRatio -> 1, Frame -> 
                     True, FrameStyle -> GrayLevel[0.6666666666666666], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], "GrayLevel[1]"], 
-                    Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
-                    Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], "GrayLevel[1]"], Appearance -> None, 
+                    BaseStyle -> {}, BaselinePosition -> Baseline, 
+                    DefaultBaseStyle -> {}, ButtonFunction :> 
                     With[{Typeset`box$ = EvaluationBox[]}, 
                     If[
                     Not[
@@ -8172,8 +8179,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     0.4731986666666667], FrameTicks -> None, PlotRangePadding -> 
                     None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.368417, 0.506779, 0.709798]"], Appearance -> 
                     None, BaseStyle -> {}, BaselinePosition -> Baseline, 
                     DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8217,8 +8225,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.13133225533333337`, 0.16813654733333336`, 
                     0.22213960133333338`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.19699838300000003, 0.252204821, \
 0.33320940200000004]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8261,8 +8270,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.10315676000000001`, 0.14189812000000002`, 
                     0.19874344000000005`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.15473514000000002, 0.21284718000000002, \
 0.29811516000000005]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8310,8 +8320,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.10315676000000001`, 0.14189812000000002`, 
                     0.19874344000000005`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.15473514000000002, 0.21284718000000002, \
 0.29811516000000005]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8359,8 +8370,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.10315676000000001`, 0.14189812000000002`, 
                     0.19874344000000005`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.15473514000000002, 0.21284718000000002, \
 0.29811516000000005]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8406,10 +8418,11 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RectangleBox[{0, -1}, {2, 1}]}}, AspectRatio -> 1, Frame -> 
                     True, FrameStyle -> GrayLevel[0.6666666666666666], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], "GrayLevel[1]"], 
-                    Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
-                    Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], "GrayLevel[1]"], Appearance -> None, 
+                    BaseStyle -> {}, BaselinePosition -> Baseline, 
+                    DefaultBaseStyle -> {}, ButtonFunction :> 
                     With[{Typeset`box$ = EvaluationBox[]}, 
                     If[
                     Not[
@@ -8444,8 +8457,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     0.37345400000000006`, 0.461046, 0.12992333333333334`], 
                     FrameTicks -> None, PlotRangePadding -> None, ImageSize -> 
                     Dynamic[{
-                    Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.560181, 0.691569, 0.194885]"], Appearance -> 
                     None, BaseStyle -> {}, BaselinePosition -> Baseline, 
                     DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8488,9 +8502,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.12202865833333335`, 0.14283175833333334`, 
                     0.064190125], FrameTicks -> None, PlotRangePadding -> 
                     None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
-                    
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.1830429875, 0.21424763749999998, \
 0.0962851875]"], Appearance -> None, BaseStyle -> {}, BaselinePosition -> 
                     Baseline, DefaultBaseStyle -> {}, ButtonFunction :> 
@@ -8533,8 +8547,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.09336350000000002, 0.11526149999999999`, 
                     0.032480833333333334`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.14004525, 0.17289224999999997, \
 0.048721249999999994]"], Appearance -> None, BaseStyle -> {}, 
                     BaselinePosition -> Baseline, DefaultBaseStyle -> {}, 
@@ -8581,8 +8596,9 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RGBColor[0.09336350000000002, 0.11526149999999999`, 
                     0.032480833333333334`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.14004525, 0.17289224999999997, \
 0.048721249999999994]"], Appearance -> None, BaseStyle -> {}, 
                     BaselinePosition -> Baseline, DefaultBaseStyle -> {}, 
@@ -8621,16 +8637,16 @@ bPU8CIeG5kKrxhlLSDlusgfhzJ5Rr7YM1yCYVerreHZVA3iM6lZQXJiyPk/x
                     RectangleBox[{0, 0}]}, {
                     GrayLevel[0], 
                     RectangleBox[{1, -1}]}, {
-                    RGBColor[
-                    0.14004525, 0.17289224999999997`, 0.048721249999999994`], 
-                    
+                    RGBColor[0.14004525, 0.17289224999999997`, 
+                    0.048721249999999994`], 
                     RectangleBox[{0, -1}, {2, 1}]}}, AspectRatio -> 1, Frame -> 
                     True, FrameStyle -> 
                     RGBColor[0.09336350000000002, 0.11526149999999999`, 
                     0.032480833333333334`], FrameTicks -> None, 
                     PlotRangePadding -> None, ImageSize -> 
-                    Dynamic[{Automatic, 1.35 CurrentValue["FontCapHeight"]/
-                    AbsoluteCurrentValue[Magnification]}]], 
+                    Dynamic[{Automatic, 
+                    1.35 (CurrentValue["FontCapHeight"]/AbsoluteCurrentValue[
+                    Magnification])}]], 
                     "RGBColor[0.14004525, 0.17289224999999997, \
 0.048721249999999994]"], Appearance -> None, BaseStyle -> {}, 
                     BaselinePosition -> Baseline, DefaultBaseStyle -> {}, 
@@ -31181,7 +31197,7 @@ gZzPDup8CpLzmUj10fv7frGGenfoI/ZhP2Ufcv2jT/3/AxwMKGk=
   BoxRatios->{1, 1, 1},
   DisplayFunction->Identity,
   FaceGridsStyle->Automatic,
-  ImageSize->{382.6230376262578, 348.61041700739037`},
+  ImageSize->{361.8410624583891, 351.4776885718393},
   ImageSizeRaw->Automatic,
   Method->{"DefaultBoundaryStyle" -> Directive[
       GrayLevel[0.3]]},
@@ -31191,14 +31207,25 @@ gZzPDup8CpLzmUj10fv7frGGenfoI/ZhP2Ufcv2jT/3/AxwMKGk=
     Scaled[0.02], 
     Scaled[0.02]},
   Ticks->{Automatic, Automatic, Automatic},
-  ViewPoint->{-2.250656943177967, -2.41857920175813, -0.731449225133095},
-  ViewVertical->{-0.2764773072771219, -0.2928307788818053, \
--0.9153198531116145}]], "Output",
+  ViewPoint->{-2.2509968286873425`, -2.3881821065265023`, -0.8243782525674436},
+  ViewVertical->{-0.266349829608471, -0.26667367804655545`, \
+-0.9262520810798003}]], "Output",
  CellChangeTimes->{3.764427658174947*^9, 3.764427884448739*^9, 
   3.764428351489686*^9, 
   3.764428396397562*^9},ExpressionUUID->"c0b3ab72-0fb8-483a-9731-\
 793690926541"]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"(*", " ", 
+  RowBox[{
+  "What", " ", "does", " ", "it", " ", "look", " ", "like", " ", "if", " ", 
+   "we", " ", "just", " ", "compute", " ", "the", " ", 
+   RowBox[{"pressure", "?"}]}], " ", "*)"}]], "Input",
+ CellChangeTimes->{{3.7645016406875877`*^9, 3.764501656358289*^9}, {
+  3.764501826523477*^9, 
+  3.7645018356726227`*^9}},ExpressionUUID->"a39978c3-767c-4c3a-93f1-\
+f3585ea9cb96"]
 },
 WindowSize->{1042, 911},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
@@ -31270,31 +31297,33 @@ Cell[132373, 2350, 572, 16, 32, "Input", "ExpressionUUID" -> \
 Cell[CellGroupData[{
 Cell[132970, 2370, 673, 16, 54, "Input", "ExpressionUUID" -> \
 "112e0da8-e32a-4989-8b69-b34f43b6b2c4"],
-Cell[133646, 2388, 376724, 6306, 358, "Output", "ExpressionUUID" -> \
+Cell[133646, 2388, 377082, 6322, 340, "Output", "ExpressionUUID" -> \
 "30c5a59c-0508-4553-a5fc-6e5723be5499"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[510407, 8699, 313, 7, 75, "Input", "ExpressionUUID" -> \
+Cell[510765, 8715, 313, 7, 75, "Input", "ExpressionUUID" -> \
 "752bcf96-90b5-4e84-962d-713bb5d7937e"],
-Cell[510723, 8708, 154, 4, 49, "Output", "ExpressionUUID" -> \
+Cell[511081, 8724, 154, 4, 49, "Output", "ExpressionUUID" -> \
 "b915e6fa-9bee-4fa1-9cdc-567e5909596e"],
-Cell[510880, 8714, 133, 3, 32, "Output", "ExpressionUUID" -> \
+Cell[511238, 8730, 133, 3, 32, "Output", "ExpressionUUID" -> \
 "3624c063-0454-4a3b-a51d-8db81aa17a62"],
-Cell[511016, 8719, 133, 3, 32, "Output", "ExpressionUUID" -> \
+Cell[511374, 8735, 133, 3, 32, "Output", "ExpressionUUID" -> \
 "f85d9cae-9dfa-43c0-a754-a8020db1d2d0"]
 }, Open  ]],
-Cell[511164, 8725, 3480, 97, 243, "Input", "ExpressionUUID" -> \
+Cell[511522, 8741, 3480, 97, 243, "Input", "ExpressionUUID" -> \
 "6ea7ab93-33b9-4056-be5e-ea5c95fe3e16"],
-Cell[514647, 8824, 464, 13, 32, "Input", "ExpressionUUID" -> \
+Cell[515005, 8840, 464, 13, 32, "Input", "ExpressionUUID" -> \
 "8d84fba8-5ef1-4d05-8701-eda207de404f"],
-Cell[515114, 8839, 3972, 120, 222, "Input", "ExpressionUUID" -> \
+Cell[515472, 8855, 3972, 120, 222, "Input", "ExpressionUUID" -> \
 "212bd0ee-0f0e-4d2e-bc53-153ec3925f6f"],
 Cell[CellGroupData[{
-Cell[519111, 8963, 705, 17, 32, "Input", "ExpressionUUID" -> \
+Cell[519469, 8979, 705, 17, 32, "Input", "ExpressionUUID" -> \
 "113424d9-bcd2-449b-b64b-0013962dd1f5"],
-Cell[519819, 8982, 1353128, 22217, 364, "Output", "ExpressionUUID" -> \
+Cell[520177, 8998, 1353133, 22217, 366, "Output", "ExpressionUUID" -> \
 "c0b3ab72-0fb8-483a-9731-793690926541"]
-}, Open  ]]
+}, Open  ]],
+Cell[1873325, 31218, 412, 9, 66, "Input", "ExpressionUUID" -> \
+"a39978c3-767c-4c3a-93f1-f3585ea9cb96"]
 }
 ]
 *)
