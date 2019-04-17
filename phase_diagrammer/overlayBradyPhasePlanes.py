@@ -42,20 +42,36 @@ def solvePartFrac(PeA, PeB):
         xA = 5
     return xA
 
-def bradyTheory(PeA, PeB):
-    
-    return xA
+phi0=0.90
+xi=0.2
+beta=4.0/np.pi
+def computeOmega(PE, PHI):
+    if PE == 0:
+        return 0
+    '''This will make the spinodal function a bit cleaner'''
+    omega = (((3.0/2.0)*(PE))**2) *\
+        (1-(2*PHI)-(3*xi*(PHI**2)) +\
+         ((beta*((3.0/2.0)*(PE**-1))) *\
+          ((2*PHI)*((1-(PHI/phi0))**-1) +\
+           (PHI/phi0)*((1-(PHI/phi0))**-2))))
+    return omega
 
-phi0 = 0.90
-def compute2DMonoSpinodal(PHI, PHICP):
-    top = (3 * 0.2 * (PHI**2)) + (2 * PHI) - 1
-    term = 1.0 - (PHI/PHICP)
-    bottom1 = 2.0 * PHI * ((term)**-1)
-    bottom2 = ((PHI**2)/PHICP) * ((term)**-2)
-    return top / ((4.0 / np.pi) * (bottom1 + bottom2))
+def bradySpinodal(PeA, PeB, phi):
+    '''
+        This method uses the spinodal derived from setting the entire expression
+        for the derivative of the active pressure to 0 (not each component).
+    '''
+    try:
+        xA = computeOmega(PeB, phi) / (computeOmega(PeB, phi)-computeOmega(PeA, phi))
+    except ZeroDivisionError:
+        xA = None
+    if xA > 1.0 or xA < 0.0:
+        xA = None
+    return xA
 
 x = np.arange(0.0, 160.0, 0.001)
 y = np.zeros_like(x)
+spin = np.zeros_like(x)
 
 file = 'hard_sphere_phase_separation.csv'
 ps_data = pd.read_csv(file)
@@ -77,7 +93,9 @@ for i in xrange(len(distinctPePlanes)):
                 plt.scatter(ps_data['PeA'][j], ps_data['xA'][j], facecolor = 'none', edgecolor = 'k')
     for j in xrange(len(y)):
         y[j] = solvePartFrac(x[j], distinctPePlanes[i])
+        spin[j] = bradySpinodal(float(x[j]), float(distinctPePlanes[i]), 0.6)
     plt.plot(x, y, c='k')
+    plt.plot(x, spin, c='b')
     plt.title(r'$Pe_{B}=$' + str(distinctPePlanes[i]), fontsize=30, y=1.02)
     plt.xlabel(r'$Pe_{A}$')
     plt.ylabel('$x_{A}$')
@@ -90,8 +108,8 @@ for i in xrange(len(distinctPePlanes)):
     plt.axes().yaxis.set_major_locator(ymajor)
 
     plt.tight_layout()
-    plt.savefig('HS_peB_' + str(distinctPePlanes[i]) + '.png' ,dpi=1000)
-    plt.savefig('HS_peB_' + str(count) + '.png' ,dpi=1000)
+    plt.savefig('brady_HS_peB_' + str(distinctPePlanes[i]) + '.png' ,dpi=1000)
+    plt.savefig('brady_HS_peB_' + str(count) + '.png' ,dpi=1000)
     plt.close()
 
     count += 1
