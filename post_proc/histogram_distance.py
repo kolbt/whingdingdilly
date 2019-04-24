@@ -28,6 +28,10 @@ try:
 except:
     inEps = 1
 
+try:
+    phi = int(sys.argv[7])
+except
+    phi = 60
 sys.path.append(hoomd_path)     # ensure hoomd is in your python path
 sys.path.append(gsd_path)       # ensure gsd is in your python path
 
@@ -138,12 +142,14 @@ except:
               "_pb"+str(peB)+\
               "_xa"+str(part_perc_a)+\
               "_ep"+str(inEps)+\
+              "_phi"+str(phi)+\
               ".gsd"
     # File base
     b_file = "pa" + str(peA) + \
              "_pb" + str(peB) + \
              "_xa" + str(part_perc_a) + \
-             "_ep" + str(inEps)
+             "_ep" + str(inEps) + \
+             "_phi" + str(phi)
     f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
 dumps = f.__len__()                     # get number of timesteps dumped
@@ -284,38 +290,38 @@ medianALL = np.median(ALL)
 modeALL = stats.mode(ALL)
 modeALL = modeALL[0][0]
 
-# # Comment this out if monodisperse
-# # Compute statistics for AA interactions
-# popAA = len(AA) / 2
-# minAA = min(AA)
-# maxFAA = getLJForce(minAA, eps)
-# avgAA = np.mean(AA)
-# medianAA = np.median(AA)
-# modeAA = stats.mode(AA)
-# modeAA = modeAA[0][0]
-#
-# # Compute statistics for AB interactions
-# popAB = len(AB) / 2
-# minAB = min(AB)
-# maxFAB = getLJForce(minAB, eps)
-# avgAB = np.mean(AB)
-# medianAB = np.median(AB)
-# modeAB = stats.mode(AB)
-# modeAB = modeAB[0][0]
-#
-# # Compute statistics for BB interactions
-# popBB = len(BB) / 2
-# minBB = min(BB)                 # smallest distance
-# maxFBB = getLJForce(minBB, eps) # corresponds to largest force
-# avgBB = np.mean(BB)
-# medianBB = np.median(BB)
-# modeBB = stats.mode(BB)
-# modeBB = modeBB[0][0]
+ # Comment this out if monodisperse
+ # Compute statistics for AA interactions
+ popAA = len(AA) / 2
+ minAA = min(AA)
+ maxFAA = getLJForce(minAA, eps)
+ avgAA = np.mean(AA)
+ medianAA = np.median(AA)
+ modeAA = stats.mode(AA)
+ modeAA = modeAA[0][0]
+
+ # Compute statistics for AB interactions
+ popAB = len(AB) / 2
+ minAB = min(AB)
+ maxFAB = getLJForce(minAB, eps)
+ avgAB = np.mean(AB)
+ medianAB = np.median(AB)
+ modeAB = stats.mode(AB)
+ modeAB = modeAB[0][0]
+
+ # Compute statistics for BB interactions
+ popBB = len(BB) / 2
+ minBB = min(BB)                 # smallest distance
+ maxFBB = getLJForce(minBB, eps) # corresponds to largest force
+ avgBB = np.mean(BB)
+ medianBB = np.median(BB)
+ modeBB = stats.mode(BB)
+ modeBB = modeBB[0][0]
 
 
-xmin = 0.96
+xmin = 0.9
 xmax = r_cut
-xmax = 1.04
+xmax = 1.1
 ymin = 0
 ymax = 1.0
 weights = np.ones_like(ALL)/float(len(ALL))
@@ -346,74 +352,77 @@ ax.legend(loc='upper right')
 fig.savefig('ALL_' + b_file + '.png', dpi=1000)
 plt.close()
 
-# # Plot data for AA interactions
-# fig, ax = plt.subplots()
-# plt.hist(AA,  bins=50, normed=True)
-# plt.axvline(x=avgAA, c='k', label="Average: " + str(round(avgAA, 3)))
-# plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
-# plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
-# plt.xlim(xmin, xmax)
-# plt.ylim(ymin, ymax)
-# plt.text(0.0, 0.95,
-#          "Computed for: " + str(popAA)+" pairs",
-#          transform=ax.transAxes)
-# #plt.text(0.0, 0.90,
-# #         "Maximum force: " + str(round(maxFAA,-1)),
-# #         transform=ax.transAxes)
-# #plt.text(0.0, 0.85,
-# #         "Fast Active Force: " + str(round(Fp,0)),
-# #         transform=ax.transAxes)
-# ax.set(xlabel='Center-to-center distance $(\delta$)',
-#        ylabel='Number of particles')
-# plt.legend(loc='upper right')
-# plt.savefig('AA_' + b_file + '.png', dpi=1000)
-# plt.close()
-#
-# # Plot data for AB interactions
-# fig, ax = plt.subplots()
-# plt.hist(AB,  bins=50, normed=True)
-# plt.axvline(x=avgAB, c='k', label="Average: " + str(round(avgAB, 3)))
-# plt.axvline(x=medianAB, c='g', label="Median: " + str(round(medianAB, 3)))
-# plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
-# plt.xlim(xmin, xmax)
-# plt.ylim(ymin, ymax)
-# plt.text(0.0, 0.95,
-#          "Computed for: " + str(popAB)+" pairs",
-#          transform=ax.transAxes)
-# #plt.text(0.0, 0.90,
-# #         "Maximum force: " + str(round(maxFAB,-1)),
-# #         transform=ax.transAxes)
-# #plt.text(0.0, 0.85,
-# #         "Fast Active Force: " + str(round(Fp,0)),
-# #         transform=ax.transAxes)
-# ax.set(xlabel='Center-to-center distance $(\delta$)',
-#        ylabel='Number of particles')
-# plt.legend(loc='upper right')
-# plt.savefig('AB_' + b_file + '.png', dpi=1000)
-# plt.close()
-#
-# # Plot data for BB interactions
-# fig, ax = plt.subplots()
-# plt.hist(BB,  bins=50, normed=True)
-# plt.axvline(x=avgBB, c='k', label="Average: " + str(round(avgBB, 3)))
-# plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
-# plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
-# plt.xlim(xmin, xmax)
-# plt.ylim(ymin, ymax)
-# plt.text(0.0, 0.95,
-#          "Computed for: " + str(popBB)+" pairs",
-#          transform=ax.transAxes)
-# #plt.text(0.0, 0.90,
-# #         "Maximum force: " + str(round(maxFBB,-1)),
-# #         transform=ax.transAxes)
-# #plt.text(0.0, 0.85,
-# #         "Fast Active Force: " + str(round(Fp,0)),
-# #         transform=ax.transAxes)
-# ax.set(xlabel='Center-to-center distance $(\delta$)',
-#        ylabel='Number of particles')
-# plt.legend(loc='upper right')
-# plt.savefig('BB_' + b_file + '.png', dpi=1000)
-# plt.close()
+ # Plot data for AA interactions
+weights = np.ones_like(AA)/float(len(AA))
+fig, ax = plt.subplots()
+plt.hist(AA,  weights=weights, bins=50)
+plt.axvline(x=avgAA, c='k', label="Average: " + str(round(avgAA, 3)))
+plt.axvline(x=medianAA, c='g', label="Median: " + str(round(medianAA, 3)))
+plt.axvline(x=modeAA, c='r', label="Mode: " + str(round(modeAA, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
+plt.text(0.0, 0.95,
+         "Computed for: " + str(popAA)+" pairs",
+         transform=ax.transAxes)
+ #plt.text(0.0, 0.90,
+ #         "Maximum force: " + str(round(maxFAA,-1)),
+ #         transform=ax.transAxes)
+ #plt.text(0.0, 0.85,
+ #         "Fast Active Force: " + str(round(Fp,0)),
+ #         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.legend(loc='upper right')
+plt.savefig('AA_' + b_file + '.png', dpi=1000)
+plt.close()
+
+# Plot data for AB interactions
+weights = np.ones_like(AB)/float(len(AB))
+fig, ax = plt.subplots()
+plt.hist(AB,  weights=weights, bins=50)
+plt.axvline(x=avgAB, c='k', label="Average: " + str(round(avgAB, 3)))
+plt.axvline(x=medianAB, c='g', label="Median: " + str(round(medianAB, 3)))
+plt.axvline(x=modeAB, c='r', label="Mode: " + str(round(modeAB, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
+plt.text(0.0, 0.95,
+         "Computed for: " + str(popAB)+" pairs",
+         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFAB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.legend(loc='upper right')
+plt.savefig('AB_' + b_file + '.png', dpi=1000)
+plt.close()
+
+# Plot data for BB interactions
+weights = np.ones_like(BB)/float(len(BB))
+fig, ax = plt.subplots()
+plt.hist(BB,  weights=weights, bins=50)
+plt.axvline(x=avgBB, c='k', label="Average: " + str(round(avgBB, 3)))
+plt.axvline(x=medianBB, c='g', label="Median: " + str(round(medianBB, 3)))
+plt.axvline(x=modeBB, c='r', label="Mode: " + str(round(modeBB, 3)))
+plt.xlim(xmin, xmax)
+plt.ylim(ymin, ymax)
+plt.text(0.0, 0.95,
+         "Computed for: " + str(popBB)+" pairs",
+         transform=ax.transAxes)
+#plt.text(0.0, 0.90,
+#         "Maximum force: " + str(round(maxFBB,-1)),
+#         transform=ax.transAxes)
+#plt.text(0.0, 0.85,
+#         "Fast Active Force: " + str(round(Fp,0)),
+#         transform=ax.transAxes)
+ax.set(xlabel='Center-to-center distance $(\delta$)',
+       ylabel='Number of particles')
+plt.legend(loc='upper right')
+plt.savefig('BB_' + b_file + '.png', dpi=1000)
+plt.close()
 
 
 
