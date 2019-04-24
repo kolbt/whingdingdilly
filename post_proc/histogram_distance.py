@@ -290,33 +290,33 @@ medianALL = np.median(ALL)
 modeALL = stats.mode(ALL)
 modeALL = modeALL[0][0]
 
- # Comment this out if monodisperse
- # Compute statistics for AA interactions
- popAA = len(AA) / 2
- minAA = min(AA)
- maxFAA = getLJForce(minAA, eps)
- avgAA = np.mean(AA)
- medianAA = np.median(AA)
- modeAA = stats.mode(AA)
- modeAA = modeAA[0][0]
+# Comment this out if monodisperse
+# Compute statistics for AA interactions
+popAA = len(AA) / 2
+minAA = min(AA)
+maxFAA = getLJForce(minAA, eps)
+avgAA = np.mean(AA)
+medianAA = np.median(AA)
+modeAA = stats.mode(AA)
+modeAA = modeAA[0][0]
 
- # Compute statistics for AB interactions
- popAB = len(AB) / 2
- minAB = min(AB)
- maxFAB = getLJForce(minAB, eps)
- avgAB = np.mean(AB)
- medianAB = np.median(AB)
- modeAB = stats.mode(AB)
- modeAB = modeAB[0][0]
+# Compute statistics for AB interactions
+popAB = len(AB) / 2
+minAB = min(AB)
+maxFAB = getLJForce(minAB, eps)
+avgAB = np.mean(AB)
+medianAB = np.median(AB)
+modeAB = stats.mode(AB)
+modeAB = modeAB[0][0]
 
- # Compute statistics for BB interactions
- popBB = len(BB) / 2
- minBB = min(BB)                 # smallest distance
- maxFBB = getLJForce(minBB, eps) # corresponds to largest force
- avgBB = np.mean(BB)
- medianBB = np.median(BB)
- modeBB = stats.mode(BB)
- modeBB = modeBB[0][0]
+# Compute statistics for BB interactions
+popBB = len(BB) / 2
+minBB = min(BB)                 # smallest distance
+maxFBB = getLJForce(minBB, eps) # corresponds to largest force
+avgBB = np.mean(BB)
+medianBB = np.median(BB)
+modeBB = stats.mode(BB)
+modeBB = modeBB[0][0]
 
 
 xmin = 0.9
