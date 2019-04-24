@@ -30,7 +30,7 @@ except:
 
 try:
     phi = int(sys.argv[7])
-except
+except:
     phi = 60
 sys.path.append(hoomd_path)     # ensure hoomd is in your python path
 sys.path.append(gsd_path)       # ensure gsd is in your python path
