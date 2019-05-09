@@ -72,8 +72,10 @@ def computeNetEps(FA, FB, xA):
     if FB == 0:
         FB = 1.0
     xB = 1.0 - xA
-    # The minimum epsilon is 1/6
-    epsilon = 4.0 * ((FA * xA) + (FB * xB)) / 24.0
+    # The minimum overall epsilon should be Brownian
+    epsBrown = 10.0
+    # The minimum epsilon is 1/6 + epsBrown
+    epsilon = (4.0 * ((FA * xA) + (FB * xB)) / 24.0) + epsBrown
     return epsilon
 
 def computeTauLJ(epsilon):
