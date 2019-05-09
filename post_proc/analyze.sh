@@ -37,7 +37,7 @@ python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/computeRDF.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/heatmapType.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/extrinsic_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/extrinsic_all_time.py $pa $pb $xa $hoomd_path $gsd_path $ep
 python $script_path/sim_to_txt_no_cutoff.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/convergence_analysis.py $pa $pb $xa $hoomd_path $gsd_path $ep $num
 #python $script_path/extrinsic_all_time_back_compat.py $pa $pb $xa $hoomd_path $gsd_path $ep
