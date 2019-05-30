@@ -295,6 +295,16 @@ for iii in range(start, end):
                         else:                                   # AB distance
                             AB.append(format(r, '.4f'))
 
+# Check for empty lists (monodisperse sims)
+if not ALL:
+    ALL.append('None')  # Output 'None' in column
+if not AA:
+    AA.append('None')
+if not AB:
+    AB.append('None')
+if not BB:
+    BB.append('None')
+
 # Create the headers for my text output
 myOut = b_file + '.txt'
 f = open(myOut, 'w') # write file headings
