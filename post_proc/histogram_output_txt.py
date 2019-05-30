@@ -295,16 +295,6 @@ for iii in range(start, end):
                         else:                                   # AB distance
                             AB.append(format(r, '.4f'))
 
-# Check for empty lists (monodisperse sims)
-if not ALL:
-    ALL.append('None')  # Output 'None' in column
-if not AA:
-    AA.append('None')
-if not AB:
-    AB.append('None')
-if not BB:
-    BB.append('None')
-
 # Create the headers for my text output
 myOut = b_file + '.txt'
 f = open(myOut, 'w') # write file headings
@@ -314,7 +304,8 @@ f.write('ALL'.center(5) + '\t' +\
         'BB'.center(5) + '\n')
 f.close()
 # This will write my lists to a text file
+import itertools as it
+lis=[ALL, AA, AB, BB]
 with open(myOut, 'a') as f:
-    lis=[ALL, AA, AB, BB]
-    for x in zip(*lis):
+    for x in it.izip_longest(*lis, fillvalue=''):
         f.write("{0}\t{1}\t{2}\t{3}\n".format(*x))
