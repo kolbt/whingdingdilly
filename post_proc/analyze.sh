@@ -30,7 +30,8 @@ ep=$7
 #python $script_path/dense_CoM.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
-python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/histogram_output_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
