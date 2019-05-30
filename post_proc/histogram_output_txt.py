@@ -287,13 +287,13 @@ for iii in range(start, end):
                     
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
-                        ALL.append(r)                           # All particles
+                        ALL.append(format(r, '.4f'))                           # All particles
                         if typ[jjj] == 0 and typ[ref] == 0:     # AA distance
-                            AA.append(r)
+                            AA.append(format(r, '.4f'))
                         elif typ[jjj] == 1 and typ[ref] == 1:   # BB distance
-                            BB.append(r)
+                            BB.append(format(r, '.4f'))
                         else:                                   # AB distance
-                            AB.append(r)
+                            AB.append(format(r, '.4f'))
 
 # Create the headers for my text output
 myOut = b_file + '.txt'
