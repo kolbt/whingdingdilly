@@ -137,34 +137,34 @@ try:
              "_pb" + str(peB) + \
              "_xa" + str(part_perc_a)
     f = hoomd.open(name=in_file, mode='rb') # open gsd file with hoomd
-# Use this if phi is not in filename
-except:
-    in_file = "pa"+str(peA)+\
-              "_pb"+str(peB)+\
-              "_xa"+str(part_perc_a)+\
-              "_ep"+str(inEps)+\
-              ".gsd"
-    # File base
-    b_file = "pa" + str(peA) + \
-             "_pb" + str(peB) + \
-             "_xa" + str(part_perc_a) + \
-             "_ep" + str(inEps)
-    f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
-## Use this if phi is in filename
+## Use this if phi is not in filename
 #except:
 #    in_file = "pa"+str(peA)+\
 #              "_pb"+str(peB)+\
 #              "_xa"+str(part_perc_a)+\
 #              "_ep"+str(inEps)+\
-#              "_phi"+str(phi)+\
 #              ".gsd"
 #    # File base
 #    b_file = "pa" + str(peA) + \
 #             "_pb" + str(peB) + \
 #             "_xa" + str(part_perc_a) + \
-#             "_ep" + str(inEps) + \
-#             "_phi" + str(phi)
+#             "_ep" + str(inEps)
 #    f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
+# Use this if phi is in filename
+except:
+    in_file = "pa"+str(peA)+\
+              "_pb"+str(peB)+\
+              "_xa"+str(part_perc_a)+\
+              "_ep"+str(inEps)+\
+              "_phi"+str(phi)+\
+              ".gsd"
+    # File base
+    b_file = "pa" + str(peA) + \
+             "_pb" + str(peB) + \
+             "_xa" + str(part_perc_a) + \
+             "_ep" + str(inEps) + \
+             "_phi" + str(phi)
+    f = hoomd.open(name=in_file, mode='rb')  # open gsd file with hoomd
 
 dumps = f.__len__()                     # get number of timesteps dumped
 
