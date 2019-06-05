@@ -1,10 +1,6 @@
 #!/bin/sh
 camPath="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
-
-# Keep xA as a variable (since we can use it now)
-# Find where EITHER
-# 1. xA = 0 or 100
-# 2. peA = peB
+procDir=$(pwd)
 
 # Resolution of an individual simulation frame
 size=600
@@ -18,29 +14,45 @@ while [ ${pea} -le 150 ]; do
     composite="pb${pea}.png"
     # x-position for this frame
     x=$(bc <<< "scale=0;((($pea/10))*$size)")
-    # Get the name of the gsd to use
-    for getfile in $(ls pa${pea}_pb0_xa100*gsd); do
-        file=$getfile
-    done
-    # Get rid of .gsd suffix
-    base=${file%.gsd}
-    # Create the frame (with green particles)
-    ovitos ${camPath}/png_final_tstep.py $file 1 $size
-
 
     # This places the monodisperse simulation in the vertical column (PeA=PeB)
     xa=10
     while [ ${xa} -le 90 ]; do
+        # Get the name of the gsd to use
+        cd mono_snap_gsds
+        gsdDir=$(pwd)
+        for getfile in $(ls final_mono_pa${pea}_xa${xa}.gsd); do
+            file=$getfile
+        done
+        cd ..
+        # Get rid of .gsd suffix
+        base=${file%.gsd}
+        # Create the frame (with green particles)
+        ovitos ${camPath}/png_final_tstep.py "${gsdDir}/${file}" 0 $size
+        mv "${gsdDir}/${base}.png" ${procDir}
+
         # y-position on composite
-        y=$(bc <<< "scale=0;((($xa/10))*$size)")
+        xf=$(( 100 - $xa ))
+        y=$(bc <<< "scale=0;((($xf/10))*$size)")
         # Place image on composite
         python ${camPath}/placeOnComp.py $composite "${base}.png" $x $y
         # Increment xA
         xa=$(( $xa + 10 ))
+        rm ${base}.png
     done
 
 
     # This places the bottom row of frames (xA=0)
+    cd mono_snap_gsds
+    for getfile in $(ls final_mono_pa${pea}_xa0.gsd); do
+        file=$getfile
+    done
+    cd ..
+    # Get rid of .gsd suffix
+    base=${file%.gsd}
+    # Create the frame (with green particles)
+    ovitos ${camPath}/png_final_tstep.py "${gsdDir}/${file}" 0 $size
+    mv "${gsdDir}/${base}.png" ${procDir}
     xvar=0
     while [ ${xvar} -le 150 ]; do
         # Get the x position
@@ -52,12 +64,20 @@ while [ ${pea} -le 150 ]; do
         # Increment x-position
         xvar=$(( $xvar + 10 ))
     done
-
-
-    # Remove B-colored image
     rm ${base}.png
-    # Create A-colored image
-    ovitos ${camPath}/png_final_tstep.py $file 0 $size
+
+
+    # This places the bottom row of frames (xA=0)
+    cd mono_snap_gsds
+    for getfile in $(ls final_mono_pa${pea}_xa100.gsd); do
+        file=$getfile
+    done
+    cd ..
+    # Get rid of .gsd suffix
+    base=${file%.gsd}
+    # Create the frame (with green particles)
+    ovitos ${camPath}/png_final_tstep.py "${gsdDir}/${file}" 0 $size
+    mv "${gsdDir}/${base}.png" ${procDir}
     # Place image on each PeB frame in top row
     frames=0
     while [ $frames -le 150 ]; do
@@ -71,7 +91,7 @@ while [ ${pea} -le 150 ]; do
         frames=$(( $frames + 10 ))
     done
 
-    # Remove the A-colored image
+    # Remove the image
     rm ${base}.png
     # Increment peB plane counter
     pea=$(( $pea + 10 ))
