@@ -20,13 +20,13 @@ a = 0
 final = node.source.num_frames - 1                      # index of last frame
 
 # Particle colors
-r_grn = 0.0
-g_grn = 1.0
-b_grn = 0.0
+r_tel = 0.294
+g_tel = 0.654
+b_tel = 0.611
 
-r_pnk = 1.0
-g_pnk = 0.0
-b_pnk = 1.0
+r_orn = 0.807
+g_orn = 0.650
+b_orn = 0.321
 
 # made this a while loop so that I could handle exceptions
 while a == 0:
@@ -41,11 +41,11 @@ while a == 0:
     ovito.dataset.anim.current_frame = final                # grab final snapshot
     vp = ovito.dataset.viewports.active_vp
     
-    # Flip the color scheme A to pink, B to green
+    # Flip the color scheme A to orange, B to teal
     if flip:
         node.modifiers.append(SelectParticleTypeModifier(property='Particle Type',
                                                          types={0}))
-        node.modifiers.append(AssignColorModifier(color=(r_grn, g_grn, b_grn)))
+        node.modifiers.append(AssignColorModifier(color=(r_tel, g_tel, b_tel)))
 
     # catch any corrupted data errors
     try:
@@ -55,11 +55,11 @@ while a == 0:
         final -= 1
         a = 0
 
-    # Flip the color scheme A: green, B: pink
+    # Flip the color scheme A: teal, B: orange
     if flip:
         node.modifiers.append(SelectParticleTypeModifier(property='Particle Type',
                                                      types={1}))
-        node.modifiers.append(AssignColorModifier(color=(r_pnk, g_pnk, b_pnk)))
+        node.modifiers.append(AssignColorModifier(color=(r_orn, g_orn, b_orn)))
 
     # this block will only run if we haven't thrown an exception
     if a == 1:
