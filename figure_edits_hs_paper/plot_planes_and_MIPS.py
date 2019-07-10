@@ -8,6 +8,10 @@ import numpy as np
 import pandas as pd
 from scipy.misc import imread
 
+# Import the PeB plane value
+inPeB = float(sys.argv[1])
+print(inPeB)
+
 ## Here are my rc parameters for matplotlib
 mpl.rc('font', serif='Helvetica Neue')
 mpl.rcParams.update({'font.size': 18})
@@ -50,19 +54,13 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 
 for j in xrange(len(y)):
-    y[j] = solvePartFrac(x[j], 10.0)
+    y[j] = solvePartFrac(x[j], inPeB)
 ax.plot(x, y, c='k', linestyle='--', zorder=1)
 
 # Plot the phase plane as background
-img = imread("pb10.png")
+img = imread('pb' + str(int(inPeB)) + '.png')
 ax.imshow(img, zorder=0, extent=[-5.0, 155, -0.05, 1.05])
-
-#plt.title(r'$Pe_{B}=10$', fontsize=30, y=1.02)
-#plt.xlabel(r'$Pe_{A}$')
-#plt.ylabel(r'$x_{A}$')
-#plt.xlim((-5, 155.0))
-#plt.ylim((-0.05, 1.05))
-ax.set_title(r'$Pe_{B}=10$', fontsize=30, y=1.02)
+ax.set_title(r'$Pe_{B}=$' + str(int(inPeB)), fontsize=30, y=1.02)
 ax.set_xlabel(r'$Pe_{A}$')
 ax.set_ylabel(r'$x_{A}$')
 ax.set_xlim((-5, 155.0))
@@ -81,6 +79,5 @@ ybottom, ytop = ax.get_ylim()
 ax.set_aspect(abs((xright-xleft)/(ybottom-ytop))*ratio)
 
 #plt.tight_layout()
-plt.savefig('HS_peB_10.png' ,dpi=1000)
-#plt.show()
+plt.savefig('HS_peB_' + str(int(inPeB)) + '.png' ,dpi=1000)
 plt.close()
