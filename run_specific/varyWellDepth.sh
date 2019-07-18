@@ -10,14 +10,16 @@ if [ $answer == "y" ]; then
     hoomd_path='/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
-    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/varyWellDepth.py'
+#    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/varyWellDepth.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/epsilonKBT.py'
     sedtype='sed'
     submit='sbatch'
 else
     hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/varyWellDepth.py'
+#    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/varyWellDepth.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/epsilonKBT.py'
     sedtype='gsed'
     submit='sh'
 fi
@@ -32,17 +34,17 @@ fi
 
 # Default values for simulations
 phi=$(( 60 ))
-runfor=$(( 100 ))
+runfor=$(( 10 ))
 dump_freq=$(( 20000 ))
 pe_a=$(( 0 ))
 pe_b=$(( 500 ))
-xa=$(( 50 ))
-partNum=$(( 10000 ))
+xa=$(( 90 ))
+partNum=$(( 100000 ))
 
 # These are the parameters for my loop
 a_count=$(( 1 ))
 a_spacer=$(( 1 ))
-a_max=$(( 4 ))
+a_max=$(( 1 ))
 
 echo "Time to set some seeds!"
 echo "Positional seed"
