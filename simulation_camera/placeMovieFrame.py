@@ -5,7 +5,7 @@ from PIL import Image
 file = str(sys.argv[1])
 comp = str(sys.argv[2])
 pos = int(sys.argv[3])
-factor = 4
+factor = 5
 
 # What are the coordinates? (2000x1500)
 width = 2000 * factor

@@ -4,7 +4,7 @@ script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 sedtype='gsed'
 
 flip=0
-size=2000
+size=5000
 
 pa=()
 pb=()

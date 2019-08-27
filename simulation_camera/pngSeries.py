@@ -43,7 +43,7 @@ vp = ovito.dataset.viewports.active_vp
 # Change this to .png
 rs = RenderSettings(
     filename = outfile + "_frame_" + ".png",
-    size = (1000,1000),
+    size = (2000,2000),
     background_color = (1.0, 1.0, 1.0),
     range = RenderSettings.Range.ANIMATION,
     renderer = OpenGLRenderer()

@@ -77,9 +77,9 @@ do
         ep=$(echo $sim | $sedtype 's/^.*ep\([0-9]*\)..*/\1/')
     fi
     # Make an individual ffmpeg movie
-#    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame_%04d.png\
-#     -vcodec libx264 -s 1000x1000 -pix_fmt yuv420p\
-#     -threads 1 pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame_%04d.png\
+     -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p\
+     -threads 1 pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
 
     # Get the png's index
     if [ ${var} == "pa" ]; then
@@ -134,6 +134,10 @@ done
 
 # This will make a movie using the wall pngs, via ffmpeg
 ffmpeg -framerate 10 -i wall_%04d.png\
+ -vcodec libx264 -s 6000x4500 -pix_fmt yuv420p\
+ -threads 1 wallOutLarge.mp4
+
+ffmpeg -framerate 10 -i wall_%04d.png\
  -vcodec libx264 -s 2000x1500 -pix_fmt yuv420p\
  -threads 1 wallOut.mp4
 
@@ -146,4 +150,4 @@ ffmpeg -framerate 10 -i wall_%04d.png\
  -threads 1 wallOutsmall.mp4
 
 # Get rid of the source pngs
-rm wall_*.png
+#rm wall_*.png
