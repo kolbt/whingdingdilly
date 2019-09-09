@@ -31,7 +31,7 @@ ep=$7
 #python $script_path/number_densities.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/force_diff_sources.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/histogram_distance.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/histogram_output_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/histogram_output_txt.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/plotNumberDensities.py $pa $pb $xa
 #python $script_path/pairCorrelationRelations.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/mesh_nearest_neighbor.py $pa $pb $xa $hoomd_path $gsd_path
@@ -51,6 +51,8 @@ python $script_path/histogram_output_txt.py $pa $pb $xa $hoomd_path $gsd_path $e
 #python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/analyze_alpha.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
 #python $script_path/alpha_diameter_histogram.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
+#python $script_path/voronoi_tessellation.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/mesh_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 
 # Movie for RDF
 #ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
