@@ -43,6 +43,9 @@ from freud import cluster
 import numpy as np
 from scipy import stats
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+
 def computeR(part1, part2):
     """Computes distance"""
     return np.sqrt(((part2[0]-part1[0])**2)+((part2[1]-part1[1])**2))
@@ -92,72 +95,51 @@ def chkSort(array):
 
 try:
     # This is for the long timescale data
-    long_file = "pa" + str(pe_a) + \
+    gsd_file = "pa" + str(pe_a) + \
                 "_pb" + str(pe_b) + \
                 "_xa" + str(part_perc_a) + \
                 ".gsd"
-    # This is for the fine timescale data
-    short_file = "log_pa" + str(pe_a) + \
-                 "_pb" + str(pe_b) + \
-                 "_xa" + str(part_perc_a) + \
-                 ".gsd"
     # File to write all data to
-    all_file = "diam_pa" + str(pe_a) + \
+    out_file = "defects_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
-               ".txt"
-    f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
-    g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+               "_frame"
+    f = hoomd.open(name=gsd_file, mode='rb') # open gsd file with hoomd
 except:
     try:
         eps = str(sys.argv[6])
     except:
         eps = 1
         
-    long_file = "pa" + str(pe_a) + \
+    gsd_file = "pa" + str(pe_a) + \
                 "_pb" + str(pe_b) + \
                 "_xa" + str(part_perc_a) + \
                 "_ep" + str(eps) + \
                 ".gsd"
-    short_file = "log_pa" + str(pe_a) + \
-                 "_pb" + str(pe_b) + \
-                 "_xa" + str(part_perc_a) + \
-                 "_ep" + str(eps) + \
-                 ".gsd"
     # File to write all data to
-    all_file = "diam_pa" + str(pe_a) + \
+    out_file = "defects_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
-               "_ep" + str(eps) +\
-               ".txt"
-    f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
-    g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
+               "_ep" + str(eps) + \
+               "_frame"
+    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
 
-dump_long = int(f.__len__())                # get number of timesteps dumped
-dump_short = int(g.__len__())               # get number of timesteps dumped
+dumps = int(f.__len__())                # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
-end = dump_long + dump_short    # gives last frame to read
+end = dumps                     # gives last frame to read
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
 box_data = np.zeros((1), dtype=np.ndarray)          # box dimensions
 timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 
-# Get relevant data from short.gsd file
-with hoomd.open(name=short_file, mode='rb') as t:
+# Get relevant data from long.gsd file
+with hoomd.open(name=gsd_file, mode='rb') as t:
     snap = t[0]
     box_data = snap.configuration.box
-    for iii in range(start, dump_short):
+    for iii in range(start, end):
         snap = t[iii]                               # snapshot of frame
-        types[iii] = snap.particles.typeid          # get types
-        positions[iii] = snap.particles.position    # get positions
-        timesteps[iii] = snap.configuration.step    # get timestep
-# Get relevant data from long.gsd file
-with hoomd.open(name=long_file, mode='rb') as t:
-    snap = t[0]
-    for iii in range(dump_short, end):
-        snap = t[iii - dump_short]                  # snapshot of frame
         types[iii] = snap.particles.typeid          # get types
         positions[iii] = snap.particles.position    # get positions
         timesteps[iii] = snap.configuration.step    # get timestep
@@ -184,39 +166,6 @@ part_B = partNum - part_A
 l_box = box_data[0]
 h_box = l_box / 2.0
 a_box = l_box * l_box
-f_box = box.Box(Lx = l_box, Ly = l_box, is2D = True)    # make freud box
-my_clust = cluster.Cluster(box = f_box,                 # init cluster class
-                           rcut = 1.005)                # distance to search
-c_props = cluster.ClusterProperties(box = f_box)        # compute properties
-
-# Parameters for sorting dense from dilute
-min_size_abso = 1000
-min_size_perc = 0.05 * partNum  # minimum cluster size 5% of all particles
-min_size = min_size_abso if min_size_abso < min_size_perc else min_size_perc
-
-f = open(all_file, 'w') # write file headings
-f.write('Timestep'.center(10) + ' ' +\
-        'Gas_A'.center(10) + ' ' +\
-        'Gas_B'.center(10) + ' ' +\
-        'Gas_tot'.center(10) + ' ' +\
-        'Dense_A'.center(10) + ' ' +\
-        'Dense_B'.center(10) + ' ' +\
-        'Dense_tot'.center(10) + ' ' +\
-        'Lc_numA'.center(10) + ' ' +\
-        'Lc_numB'.center(10) + ' ' +\
-        'Lg_clust'.center(10) + ' ' +\
-        'MCS'.center(10) + ' ' +\
-        'sigALL'.center(10) + ' ' +\
-        'sigAA'.center(10) + ' ' +\
-        'sigAB'.center(10) + ' ' +\
-        'sigBB'.center(10) + ' ' +\
-        'phiEff'.center(10) + ' ' +\
-        'lg_clustA'.center(10) + ' ' +\
-        'tot_clustA'.center(10) + ' ' +\
-        'LC_density'.center(10) + ' ' +\
-        'DP_density'.center(10) + ' ' +\
-        'GP_density'.center(10) + '\n')
-f.close()
 
 # Make the mesh
 r_cut = 1.122
@@ -224,6 +173,7 @@ sizeBin = r_cut
 nBins = int(l_box / sizeBin)
 nBins += 1  # account for integer rounding
 
+#for j in range(start, end):
 for j in range(start, end):
 
     # Mesh array
@@ -235,12 +185,6 @@ for j in range(start, end):
     typ = types[j]
     tst = timesteps[j]
 
-    # Lists for effective diameter
-    ALL = []
-    AA = []
-    AB = []
-    BB = []
-
     # Put particles in their respective bins
     for k in range(0, partNum):
         # Get mesh indices
@@ -250,6 +194,11 @@ for j in range(start, end):
         y_ind = int(tmp_posY / sizeBin)
         # Append particle id to appropriate bin
         binParts[x_ind][y_ind].append(k)
+    
+    # Make an array that will hold the number of nearest neighbors
+    near_neigh = [0] * partNum
+    A_neigh = [0] * partNum
+    B_neigh = [0] * partNum
 
     # Compute distance, each pair will be counted twice
     for k in range(0, partNum):
@@ -294,138 +243,26 @@ for j in range(start, end):
 
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
-                        ALL.append(r)  # All particles
-                        if typ[k] == 0 and typ[ref] == 0:  # AA distance
-                            AA.append(r)
-                        elif typ[k] == 1 and typ[ref] == 1:  # BB distance
-                            BB.append(r)
-                        else:  # AB distance
-                            AB.append(r)
+                        near_neigh[k] += 1
+                        if typ[ref] == 0:   # neighbor is A particle
+                            A_neigh[k] += 1
+                        else:               # neighbor is B particle
+                            B_neigh[k] += 1
 
-    # Now compute the mode radii for each type of interaction
-    # ALL
-    modeALL = stats.mode(ALL)
-    modeALL = round(modeALL[0][0], 4)
-    # fALL = computeLJForce(modeALL, epsHS[i])
-    phiEff = modeALL * 0.6  # Effective area fraction phi=0.6
+    # Plot position colored by neighbor number
+    scatter = plt.scatter(pos[:,0], pos[:,1], c=near_neigh[:], cmap='viridis_r')
+    # Get colorbar
+    plt.clim(0, 6)  # limit the colorbar
+    cbar = plt.colorbar(scatter)
+    cbar.set_label('# of Neighbors', rotation=270, labelpad=15)
 
-    # AA
-    try:
-        modeAA = stats.mode(AA)
-        modeAA = round(modeAA[0][0], 4)
-        # fAA = computeLJForce(modeAA, epsHS[i])
-    except:
-        modeAA = 0.0
-        fAA = 0.0
-
-    # AB
-    try:
-        modeAB = stats.mode(AB)
-        modeAB = round(modeAB[0][0], 4)
-        # fAB = computeLJForce(modeAB, epsHS[i])
-    except:
-        modeAB = 0.0
-        fAB = 0.0
-
-    # BB
-    try:
-        modeBB = stats.mode(BB)
-        modeBB = round(modeBB[0][0], 4)
-        # fBB = computeLJForce(modeBB, epsHS[i])
-    except:
-        modeBB = 0.0
-        fBB = 0.0
-
-    # Values to write out after computations are complete
-    gas_A = 0       # number of A-particles in gas phase
-    gas_B = 0       # number of B-particles in gas phase
-    gas_num = 0     # number of particles in gas phase
-    dense_A = 0     # number of A-particles in dense phase
-    dense_B = 0     # number of B-particles in dense phase
-    dense_num = 0       # number of particles in dense phase
-    l_clust = 0         # largest cluster size
-    mcs = 0             # mean cluster size
-    lcA = 0.0           # largest cluster area
-    tcA = 0.0           # total cluster area
-    dp_density = 0.0    # density of dense phase
-    gp_density = 0.0    # density of gas phase
-
-    # Run freud computations
-    my_clust.computeClusters(pos)           # feed in position
-    ids = my_clust.getClusterIdx()          # get id of each cluster
-    c_props.computeProperties(pos, ids)     # find cluster properties
-    clust_size = c_props.getClusterSizes()  # find cluster sizes
-
-    # Querry array, that tells whether cluster ID is of sufficient size
-    q_clust = np.zeros((len(clust_size)), dtype=np.int)
-    clust_num = 0   # number of clusters
-    lcIndex = 0     # id of largest cluster
-    lc_numA = 0     # number of A particles in largest cluster
-    lc_numB = 0     # number of B particles in largest cluster
-
-    for k in range(0, len(clust_size)):
-        if clust_size[k] > min_size:
-            q_clust[k] = 1
-            clust_num += 1
-        if clust_size[k] > l_clust:
-            l_clust = clust_size[k]
-            lcIndex = k
-
-    for k in range(0, partNum):
-        # Data pertaining to largest cluster
-        if ids[k] == lcIndex:
-            if typ[k] == 0:
-                lc_numA += 1
-            else:
-                lc_numB += 1
-        # This is in gas phase
-        if q_clust[ids[k]] == 0:
-            gas_num += 1
-            if typ[k] == 0:
-                gas_A += 1
-            else:
-                gas_B += 1
-        # This is in dense phase
-        else:
-            dense_num += 1
-            if typ[k] == 0:
-                dense_A += 1
-            else:
-                dense_B += 1
-
-    # Compute some things...
-    if clust_num != 0:
-        mcs = dense_num / clust_num
-    lcA = (lc_numA * computeA(modeAA)) + (lc_numB * computeA(modeBB))
-    tcA = (dense_A * computeA(modeAA)) + (dense_B * computeA(modeBB))
-    # Number densities (number per unit area)
-    if lcA != 0.0:
-        lc_density = l_clust / lcA
-    if tcA != 0.0:
-        dp_density = dense_num / tcA
-    gp_density = gas_num / (a_box - tcA)
-
-    # Values have been set, write to text files
-    f = open(all_file, 'a')
-    f.write(('{0:.2f}'.format(tst)).center(10) + ' ' +\
-            str(gas_A).center(10) + ' ' +\
-            str(gas_B).center(10) + ' ' +\
-            str(gas_num).center(10) + ' ' +\
-            str(dense_A).center(10) + ' ' +\
-            str(dense_B).center(10) + ' ' +\
-            str(dense_num).center(10) + ' ' +\
-            str(lc_numA).center(10) + ' ' +\
-            str(lc_numB).center(10) + ' ' +\
-            str(l_clust).center(10) + ' ' +\
-            str(mcs).center(10) + ' ' + \
-            '{0:.4f}'.format(modeALL).center(10) + ' ' + \
-            '{0:.4f}'.format(modeAA).center(10) + ' ' + \
-            '{0:.4f}'.format(modeAB).center(10) + ' ' + \
-            '{0:.4f}'.format(modeBB).center(10) + ' ' + \
-            '{0:.2f}'.format(phiEff).center(10) + ' ' + \
-            '{0:.1f}'.format(lcA).center(10) + ' ' + \
-            '{0:.1f}'.format(tcA).center(10) + ' ' +\
-            '{0:.2f}'.format(lc_density).center(10) + ' ' +\
-            '{0:.2f}'.format(dp_density).center(10) + ' ' +\
-            '{0:.2f}'.format(gp_density).center(10) + '\n')
-    f.close()
+    # Limits and ticks
+    plt.xlim(-h_box, h_box)
+    plt.ylim(-h_box, h_box)
+    plt.tick_params(axis='both', which='both',
+                    bottom=False, top=False, left=False, right=False,
+                    labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+                    
+    pad = str(j).zfill(4)
+    plt.savefig(out_file + pad + '.png', dpi=1000)
+    plt.close()
