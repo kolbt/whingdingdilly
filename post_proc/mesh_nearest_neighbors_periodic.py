@@ -302,6 +302,7 @@ for j in range(start, end):
     scatter = plt.scatter(pos[:,0], pos[:,1],
                           c=near_neigh[:], cmap=myCols,
                           s=sz, edgecolors='none')
+    # I can plot this in a simpler way: subtract from all particles without looping
     xImages, yImages = zip(*imageParts)
     periodicIm = plt.scatter(xImages, yImages, c='#DCDCDC', s=sz, edgecolors='none')
     # Get colorbar
