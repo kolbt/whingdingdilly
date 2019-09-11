@@ -322,7 +322,7 @@ for j in range(start, end):
     if drawBins:
         # Add the bins as vertical and horizontal lines:
         for binInd in xrange(nBins):
-            coord = (r_cut * binInd) - h_box
+            coord = (sizeBin * binInd) - h_box
             plt.axvline(x=coord, c='k', lw=1.0, zorder=0)
             plt.axhline(y=coord, c='k', lw=1.0, zorder=0)
     
