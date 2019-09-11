@@ -297,12 +297,12 @@ for j in range(start, end):
                             B_neigh[k] += 1
 
     # Plot position colored by neighbor number
-    sz = 50
+    sz = 0.75
     scatter = plt.scatter(pos[:,0], pos[:,1],
                           c=near_neigh[:], cmap=myCols,
-                          s=sz)
+                          s=sz, edgecolors='none')
     xImages, yImages = zip(*imageParts)
-    periodicIm = plt.scatter(xImages, yImages, c='#DCDCDC', s=sz)
+    periodicIm = plt.scatter(xImages, yImages, c='#DCDCDC', s=sz, edgecolors='none')
     # Get colorbar
     plt.clim(0, 6)  # limit the colorbar
     cbar = plt.colorbar(scatter)
