@@ -43,7 +43,8 @@ from freud import cluster
 import numpy as np
 from scipy import stats
 
-import matplotlib as mpl
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def computeR(part1, part2):
