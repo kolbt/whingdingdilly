@@ -45,6 +45,7 @@ from scipy import stats
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import matplotlib.collections
 
 def computeR(part1, part2):
     """Computes distance"""
@@ -188,9 +189,10 @@ buff = float(int(r_cut * 2.0) + 1)
 
 # Image rendering options
 drawBins = False
-myCols = 'viridis'
-#myCols = 'jet_r'
-#myCols = 'gist_rainbow_r'
+#myCols = plt.cm.viridis
+#myCols = plt.cm.jet
+myCols = plt.cm.jet_r
+
 
 #for j in range(start, end):
 for j in range(end - 2, end):
@@ -263,40 +265,30 @@ for j in range(end - 2, end):
                         if r < effSigma[k]:
                             effSigma[k] = r
 
-#    # I need to get the size of particles in pixels
-#    outDPI = 500
-#    pixel = 72. / outDPI
-    outDPI = 500
-    sz = 0.75
-    # Plot position colored by neighbor number
-    scatter = plt.scatter(pos[:,0], pos[:,1],
-                          c=effSigma[:], cmap=myCols,
-                          s=sz, edgecolors='none')
-
-    ax = plt.gca()
-    # Calculate radius in pixels :
-    rr_pix = (ax.transData.transform(np.vstack([effSigma, effSigma]).T) -
-              ax.transData.transform(np.vstack([np.zeros(partNum), np.zeros(partNum)]).T))
-    rpix, _ = rr_pix.T
-    # Calculate and update size in points:
-    size_pt = (2*rpix/outDPI*72)**2
-    scatter.set_sizes(size_pt)
-
-    # Get colorbar
-    cMin = min(effSigma)
-    plt.clim(cMin, 1.0)  # limit the colorbar
-    cbar = plt.colorbar(scatter)
-    cbar.set_label(r'Effective diameter $(\sigma_{eff})$', rotation=270, labelpad=15)
+    outDPI = 500.
+    fig, ax = plt.subplots()
+    xy = np.delete(pos, 2, 1)
+    coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
+                                                    np.zeros_like(effSigma),
+                                                    offsets=xy, units='xy',
+                                                    cmap=myCols,
+                                                    transOffset=ax.transData)
+    coll.set_array(np.ravel(effSigma))
+    minCol = min(effSigma)
+    coll.set_clim([minCol, 1.0])
+    ax.add_collection(coll)
+    cbar = plt.colorbar(coll, format='%.3f')
+    cbar.set_label(r'Effective diameter $(\sigma_{eff})$', labelpad=20, rotation=270)
 
     # Limits and ticks
     viewBuff = buff / 2.0
     viewBuff = 0.0
-    plt.xlim(-h_box - viewBuff, h_box + viewBuff)
-    plt.ylim(-h_box - viewBuff, h_box + viewBuff)
-    plt.tick_params(axis='both', which='both',
-                    bottom=False, top=False, left=False, right=False,
-                    labelbottom=False, labeltop=False, labelleft=False, labelright=False)
-                    
+    ax.set_xlim(-h_box - viewBuff, h_box + viewBuff)
+    ax.set_ylim(-h_box - viewBuff, h_box + viewBuff)
+    ax.tick_params(axis='both', which='both',
+                   bottom=False, top=False, left=False, right=False,
+                   labelbottom=False, labeltop=False, labelleft=False, labelright=False)
+
     pad = str(j).zfill(4)
     
     if drawBins:
@@ -305,7 +297,8 @@ for j in range(end - 2, end):
             coord = (sizeBin * binInd) - h_box
             plt.axvline(x=coord, c='k', lw=1.0, zorder=0)
             plt.axhline(y=coord, c='k', lw=1.0, zorder=0)
-    
+
+    ax.set_aspect('equal')
     plt.tight_layout()
     plt.savefig(out_file + pad + '.png', dpi=outDPI)
     plt.close()
