@@ -260,13 +260,14 @@ for j in range(end - 2, end):
 
                     # If LJ potential is on, store into a list (omit self)
                     if 0.1 < r <= r_cut:
-                        if r < effSigma[k]
+                        if r < effSigma[k]:
                             effSigma[k] = r
 
 #    # I need to get the size of particles in pixels
 #    outDPI = 500
 #    pixel = 72. / outDPI
-
+    outDPI = 500
+    sz = 0.75
     # Plot position colored by neighbor number
     scatter = plt.scatter(pos[:,0], pos[:,1],
                           c=effSigma[:], cmap=myCols,
