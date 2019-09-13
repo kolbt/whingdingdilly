@@ -265,7 +265,7 @@ for j in range(end - 2, end):
                         if r < effSigma[k]:
                             effSigma[k] = r
 
-    outDPI = 500.
+    outDPI = 1500.
     fig, ax = plt.subplots()
     xy = np.delete(pos, 2, 1)
     coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
