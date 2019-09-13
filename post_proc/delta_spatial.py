@@ -8,9 +8,8 @@ What does this file do?
 3a.) Place all particles in appropriate mesh grid
 3b.) Loop through all particles ...
 3b.i.) Compute distance to every particle in adjacent grids
-3.b.ii.) If distance is equal to particle diameter, increment neighbor count
-3c.) Plot particle position colored by nearest neighbors (0-6)
-
+3.b.ii.) If distance is less than LJ cutoff, store as effective diameter
+3c.) Plot particle position colored by effective diameter
 
 '''
 
@@ -204,34 +203,6 @@ for j in range(end - 2, end):
     # pos = np.delete(pos, 2, 1)
     typ = types[j]
     tst = timesteps[j]
-    
-    imageParts = []                                 # append (x, y) tuples
-    # Duplicate replicate positions
-    for k in range(0, partNum):
-        
-        # x-coordinate image creation
-        if pos[k][0] + h_box < buff:                # against left box edge
-            imageParts.append((pos[k][0] + l_box, pos[k][1]))
-            # Create image of corners of periodic box
-            if pos[k][1] + h_box < buff: # bottom left corner
-                imageParts.append((pos[k][0] + l_box, pos[k][1] + l_box))
-            if (pos[k][1] + h_box - l_box) > -buff: # top left corner
-                imageParts.append((pos[k][0] + l_box, pos[k][1] - l_box))
-    
-        if (pos[k][0] + h_box - l_box) > -buff:     # against right box edge
-            imageParts.append((pos[k][0] - l_box, pos[k][1]))
-            # Create image of corners of periodic box
-            if pos[k][1] + h_box < buff: # bottom right corner
-                imageParts.append((pos[k][0] - l_box, pos[k][1] + l_box))
-            if (pos[k][1] + h_box - l_box) > -buff: # top right corner
-                imageParts.append((pos[k][0] - l_box, pos[k][1] - l_box))
-        
-        # y-coordinate image creation
-        if pos[k][1] + h_box < buff:                # against bottom box edge
-            imageParts.append((pos[k][0], pos[k][1] + l_box))
-        
-        if (pos[k][1] + h_box - l_box) > -buff:     # against top box edge
-            imageParts.append((pos[k][0], pos[k][1] - l_box))
 
     # Put particles in their respective bins
     for k in range(0, partNum):
@@ -292,14 +263,24 @@ for j in range(end - 2, end):
                         if r < effSigma[k]
                             effSigma[k] = r
 
+#    # I need to get the size of particles in pixels
+#    outDPI = 500
+#    pixel = 72. / outDPI
+
     # Plot position colored by neighbor number
-    sz = 0.75
     scatter = plt.scatter(pos[:,0], pos[:,1],
                           c=effSigma[:], cmap=myCols,
                           s=sz, edgecolors='none')
-    # I can plot this in a simpler way: subtract from all particles without looping
-    xImages, yImages = zip(*imageParts)
-    periodicIm = plt.scatter(xImages, yImages, c='#DCDCDC', s=sz, edgecolors='none')
+
+    ax = plt.gca()
+    # Calculate radius in pixels :
+    rr_pix = (ax.transData.transform(np.vstack([effSigma, effSigma]).T) -
+              ax.transData.transform(np.vstack([np.zeros(partNum), np.zeros(partNum)]).T))
+    rpix, _ = rr_pix.T
+    # Calculate and update size in points:
+    size_pt = (2*rpix/outDPI*72)**2
+    scatter.set_sizes(size_pt)
+
     # Get colorbar
     cMin = min(effSigma)
     plt.clim(cMin, 1.0)  # limit the colorbar
@@ -308,6 +289,7 @@ for j in range(end - 2, end):
 
     # Limits and ticks
     viewBuff = buff / 2.0
+    viewBuff = 0.0
     plt.xlim(-h_box - viewBuff, h_box + viewBuff)
     plt.ylim(-h_box - viewBuff, h_box + viewBuff)
     plt.tick_params(axis='both', which='both',
@@ -324,5 +306,5 @@ for j in range(end - 2, end):
             plt.axhline(y=coord, c='k', lw=1.0, zorder=0)
     
     plt.tight_layout()
-    plt.savefig(out_file + pad + '.png', dpi=500)
+    plt.savefig(out_file + pad + '.png', dpi=outDPI)
     plt.close()

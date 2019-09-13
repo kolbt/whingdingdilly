@@ -53,12 +53,13 @@ ep=$7
 #python $script_path/alpha_diameter_histogram.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
 #python $script_path/voronoi_tessellation.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/mesh_nearest_neighbors_periodic.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/mesh_nearest_neighbors_periodic.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 
-# Movie for defects
-ffmpeg -start_number 0 -framerate 6 -i defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%04d.png\
- -vcodec libx264 -s 1600x1200 -pix_fmt yuv420p -threads 1\
- defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+## Movie for defects
+#ffmpeg -start_number 0 -framerate 6 -i defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%04d.png\
+# -vcodec libx264 -s 1600x1200 -pix_fmt yuv420p -threads 1\
+# defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
 
 # Movie for RDF
 #ffmpeg -framerate 10 -i RDF_pa${pa}_pb${pb}_xa${xa}_ep${ep}_fm%d.png\
