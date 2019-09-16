@@ -54,7 +54,9 @@ ep=$7
 #python $script_path/voronoi_tessellation.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors_periodic.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
+
 
 ## Movie for defects
 #ffmpeg -start_number 0 -framerate 6 -i defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%04d.png\
