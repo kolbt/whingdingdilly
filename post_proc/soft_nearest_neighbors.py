@@ -193,6 +193,8 @@ myCols = plt.cm.viridis
 #myCols = plt.cm.jet
 #myCols = plt.cm.jet_r
 
+factor = r_cut
+#factor = 1.20
 
 #for j in range(start, end):
 for j in range(end - 2, end):
@@ -273,7 +275,7 @@ for j in range(end - 2, end):
                     r = round(r, 4)  # round value to 4 decimal places
 
                     # If particles are near enough, increment neighbor count
-                    if 0.1 < r < (1.1 * effSigma[k]):
+                    if 0.1 < r < (factor * effSigma[k]):
                         nearNeigh[k] += 1
                             
 
@@ -287,8 +289,7 @@ for j in range(end - 2, end):
                                                     transOffset=ax.transData)
     coll.set_array(np.ravel(nearNeigh))
     minCol = min(nearNeigh)
-    maxCol = max(nearNeigh)
-    coll.set_clim([minCol, maxCol])
+    coll.set_clim([minCol, 6])
     ax.add_collection(coll)
     cbar = plt.colorbar(coll)
     cbar.set_label(r'Nearest neighbors', labelpad=20, rotation=270)
