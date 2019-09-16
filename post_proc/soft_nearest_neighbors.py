@@ -101,7 +101,7 @@ try:
                 "_xa" + str(part_perc_a) + \
                 ".gsd"
     # File to write all data to
-    out_file = "spatial_delta_pa" + str(pe_a) + \
+    out_file = "near_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_frame"
@@ -118,7 +118,7 @@ except:
                 "_ep" + str(eps) + \
                 ".gsd"
     # File to write all data to
-    out_file = "spatial_delta_pa" + str(pe_a) + \
+    out_file = "near_pa" + str(pe_a) + \
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_ep" + str(eps) + \
@@ -189,9 +189,9 @@ buff = float(int(r_cut * 2.0) + 1)
 
 # Image rendering options
 drawBins = False
-#myCols = plt.cm.viridis
+myCols = plt.cm.viridis
 #myCols = plt.cm.jet
-myCols = plt.cm.jet_r
+#myCols = plt.cm.jet_r
 
 
 #for j in range(start, end):
@@ -218,7 +218,7 @@ for j in range(end - 2, end):
     
     # Make an array that will hold the effective diameter
     effSigma = [1.0] * partNum
-    nearNeigh = [0.0] * partNum
+    nearNeigh = [0] * partNum
 
     # Compute distance, each pair will be counted twice
     for k in range(0, partNum):
@@ -285,12 +285,13 @@ for j in range(end - 2, end):
                                                     offsets=xy, units='xy',
                                                     cmap=myCols,
                                                     transOffset=ax.transData)
-    coll.set_array(np.ravel(effSigma))
-    minCol = min(effSigma)
-    coll.set_clim([minCol, 1.0])
+    coll.set_array(np.ravel(nearNeigh))
+    minCol = min(nearNeigh)
+    maxCol = max(nearNeigh)
+    coll.set_clim([minCol, maxCol])
     ax.add_collection(coll)
-    cbar = plt.colorbar(coll, format='%.3f')
-    cbar.set_label(r'Effective diameter $(\sigma_{eff})$', labelpad=20, rotation=270)
+    cbar = plt.colorbar(coll)
+    cbar.set_label(r'Nearest neighbors', labelpad=20, rotation=270)
 
     # Limits and ticks
     viewBuff = buff / 2.0
@@ -302,7 +303,7 @@ for j in range(end - 2, end):
                    labelbottom=False, labeltop=False, labelleft=False, labelright=False)
 
     pad = str(j).zfill(4)
-    
+
     if drawBins:
         # Add the bins as vertical and horizontal lines:
         for binInd in xrange(nBins):
