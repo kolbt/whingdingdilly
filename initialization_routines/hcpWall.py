@@ -18,7 +18,7 @@ import numpy as np
 # Some parameters:
 nCol = 100                  # number of lattice rows
 nRow = 20                   # number of lattice columns
-lat = 0.9                   # lattice spacing
+lat = 1.0                   # lattice spacing
 ver = np.sqrt(0.75) * lat   # vertical shift between lattice rows
 hor = lat / 2.0             # horizontal shift between lattice rows
 
