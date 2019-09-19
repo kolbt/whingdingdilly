@@ -14,7 +14,7 @@ if [ $answer == "y" ]; then
     sedtype='sed'
     submit='sbatch'
 else
-    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue_11_8_17/hoomd-blue/build'
+    hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
     template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/smallHS.py'
@@ -31,22 +31,13 @@ if [ $gpu == "y" ]; then
 fi
 
 # Default values for simulations
-part_num=$(( 50000 ))
+part_num=$(( 100000 ))
 runfor=$(( 100 ))
-dump_freq=$(( 20000 ))
-rad_spacer=$(( 10 ))
-x_a_spacer=$(( 10 ))
-pe_a_spacer=$(( 10 ))
-pe_b=$(( 500 ))
-
-rad_count=$(( 40 ))
-rad_max=$(( 50 ))
-rad_start=$rad_count
-x_count=$(( 50 ))  # start at lowest desired fraction of a
-x_max=$(( 50 ))    # end at highest desired fraction of a
-pe_start=$(( 0 )) # minimum pe value
-pe_max=$(( 500 ))   # maximum pe value
-
+dump_freq=$(( 10 ))
+pe_count=$(( 0 ))
+pe_spacer=$(( 10 ))
+pe_max=$(( 500 ))
+phi=$(( 60 ))
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
@@ -71,46 +62,10 @@ do
         dump_freq=$input
     fi
 
-    echo "phi_start is ${phi_count}, input new value or same value."
+    echo "pe_start is ${pe_count}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
-        phi_start=$input
-    fi
-
-    echo "phi_max is ${phi_max}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        phi_max=$input
-    fi
-
-    echo "phi_spacer is ${phi_spacer}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        phi_spacer=$input
-    fi
-
-    echo "x_start is ${x_count}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        x_count=$input
-    fi
-
-    echo "x_max is ${x_max}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        x_max=$input
-    fi
-
-    echo "x_a_spacer is ${x_a_spacer}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        x_a_spacer=$input
-    fi
-
-    echo "pe_start is ${pe_start}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        pe_start=$input
+        pe_count=$input
     fi
 
     echo "pe_max is ${pe_max}, input new value or same value."
@@ -119,16 +74,16 @@ do
         pe_max=$input
     fi
 
-    echo "pe_a_spacer is ${pe_a_spacer}, input new value or same value."
+    echo "pe_spacer is ${pe_spacer}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
-        pe_a_spacer=$input
+        pe_spacer=$input
     fi
 
-    echo "PeB is ${pe_b}, input new value or same value."
+    echo "phi is ${phi}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
-        pe_b=$input
+        phi=$input
     fi
 
     # this shows how long the simulation will run
@@ -137,16 +92,10 @@ do
     echo "part_num is ${part_num}"
     echo "runfor is ${runfor}"
     echo "dump_freq is ${dump_freq}"
-    echo "phi_start is ${phi_start}"
-    echo "phi_max is ${phi_max}"
-    echo "phi_spacer is ${phi_spacer}"
-    echo "x_start is ${x_count}"
-    echo "x_max is ${x_max}"
-    echo "xa_spacer is ${x_a_spacer}"
-    echo "pe_start is ${pe_start}"
+    echo "pe_start is ${pe_count}"
     echo "pe_max is ${pe_max}"
-    echo "pe_a_spacer is ${pe_a_spacer}"
-    echo "PeB is ${pe_b}"
+    echo "pe_spacer is ${pe_spacer}"
+    echo "phi is ${phi}"
     echo "Simulation will run for ${tsteps} timesteps"
 
     echo "Are these values okay (y/n)?"
@@ -163,8 +112,6 @@ echo "Orientational seed"
 read seed3
 echo "A activity seed"
 read seed4
-echo "B activity seed"
-read seed5
 
 
 mkdir ${current}_parent
@@ -172,46 +119,25 @@ cd ${current}_parent
 
 
 # this segment of code writes the infiles
-while [ $x_count -le $x_max ]       # loop through particle fraction
+while [ $pe_count -le $pe_max ]       # loop through particle fraction
 do
 
-    pe_count=$(( $pe_start ))    # start value for each set of fixed x_a simulations
+    infile=pa${pe_count}_pb${pe_b}_xa${x_count}_phi${phi_count}.py          # set unique infile name
+    #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+    $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
+    $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
+    $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
+    $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
+    $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
+    $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $infile                        # write activity to infile
+    $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
+    $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
+    $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
+    $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
+    $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
 
-    while [ $pe_count -le $pe_max ] # loop through activity at constant particle fraction
-    do
+    $submit $script_path $infile
 
-        phi_count=$(( $phi_start )) # start value for each set of fixed pe_a and x_a simulations
-
-        while [ $phi_count -le $phi_max ] # loop through activity at constant particle fraction
-        do
-
-            infile=pa${pe_count}_pb${pe_b}_xa${x_count}_phi${phi_count}.py          # set unique infile name
-            #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-            $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
-            $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
-            $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $infile                      # write particle number
-            $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
-            $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
-            $sedtype -i 's/\${part_frac_a}/'"${x_count}"'/g' $infile                # write particle fraction to infile
-            $sedtype -i 's/\${pe_a}/'"${pe_count}"'/g' $infile                      # write activity of A to infile
-            $sedtype -i 's/\${pe_b}/'"${pe_b}"'/g' $infile                          # write activity of B to infile
-            $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
-            $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
-            $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
-            $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
-            $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
-            $sedtype -i 's/\${seed5}/'"${seed5}"'/g' $infile
-
-            $submit $script_path $infile
-
-            phi_count=$(( $phi_count + $phi_spacer ))
-
-        done
-
-        pe_count=$(( $pe_count + $pe_a_spacer ))
-
-    done
-
-    x_count=$(( $x_count + $x_a_spacer ))
+    pe_count=$(( $pe_count + $pe_spacer ))
 
 done
