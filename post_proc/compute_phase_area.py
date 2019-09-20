@@ -121,7 +121,11 @@ try:
                "_xa" + str(part_perc_a) + \
                ".txt"
     f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
-    g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+    try:
+        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+        dump_short = int(g.__len__())              # get number of timesteps dumped
+    except:
+        dump_short = 0
 except:
     try:
         eps = str(sys.argv[6])
@@ -145,10 +149,13 @@ except:
                "_ep" + str(eps) +\
                ".txt"
     f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
-    g = hoomd.open(name=short_file, mode='rb')  # open gsd file with hoomd
+    try:
+        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+        dump_short = int(g.__len__())              # get number of timesteps dumped
+    except:
+        dump_short = 0
 
 dump_long = int(f.__len__())                # get number of timesteps dumped
-dump_short = int(g.__len__())               # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
 end = dump_long + dump_short    # gives last frame to read
@@ -159,17 +166,19 @@ box_data = np.zeros((1), dtype=np.ndarray)          # box dimensions
 timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 
 # Get relevant data from short.gsd file
-with hoomd.open(name=short_file, mode='rb') as t:
-    snap = t[0]
-    box_data = snap.configuration.box
-    for iii in range(start, dump_short):
-        snap = t[iii]                               # snapshot of frame
-        types[iii] = snap.particles.typeid          # get types
-        positions[iii] = snap.particles.position    # get positions
-        timesteps[iii] = snap.configuration.step    # get timestep
+if dump_short != 0:
+    with hoomd.open(name=short_file, mode='rb') as t:
+        snap = t[0]
+        box_data = snap.configuration.box
+        for iii in range(start, dump_short):
+            snap = t[iii]                               # snapshot of frame
+            types[iii] = snap.particles.typeid          # get types
+            positions[iii] = snap.particles.position    # get positions
+            timesteps[iii] = snap.configuration.step    # get timestep
 # Get relevant data from long.gsd file
 with hoomd.open(name=long_file, mode='rb') as t:
     snap = t[0]
+    box_data = snap.configuration.box
     for iii in range(dump_short, end):
         snap = t[iii - dump_short]                  # snapshot of frame
         types[iii] = snap.particles.typeid          # get types
@@ -250,14 +259,10 @@ while (intDivBox % intBinSize) != 0:
 sizeBin = (intBinSize / convert)    # divisible bin size
 nBins = int(divBox / sizeBin)       # must be an integer
 
-# Image rendering options
-drawBins = False
-myCols = plt.cm.viridis
-# Search distance for each reference particle
-factor = r_cut
+# Conversion for area calculations
 con = (np.pi / 4.)
 
-for j in range(start, end):
+for j in range(end - 2, end):
 
     # Mesh array
     binParts = [[[] for b in range(nBins)] for a in range(nBins)]
@@ -390,12 +395,14 @@ for j in range(start, end):
 
     # Run freud computations
     my_clust.computeClusters(pos)           # feed in position
-    ids = my_clust.getClusterIdx()          # get id of each cluster
+    ids = my_clust.cluster_idx              # get id of each cluster
+    n_clust = my_clust.num_clusters         # get number of clusters
     c_props.computeProperties(pos, ids)     # find cluster properties
-    clust_size = c_props.getClusterSizes()  # find cluster sizes
+    clust_size = c_props.cluster_sizes       # find cluster sizes
+    
 
     # Querry array, that tells whether cluster ID is of sufficient size
-    q_clust = np.zeros((len(clust_size)), dtype=np.int)
+    q_clust = np.zeros((n_clust), dtype=np.int)
     clust_num = 0   # number of clusters
     lcIndex = 0     # id of largest cluster
     lc_numA = 0     # number of A particles in largest cluster
@@ -412,7 +419,7 @@ for j in range(start, end):
     BgasArea = 0.   # area of B particles in gas phase
     phiEff = 0.     # effective area fraction
 
-    for k in range(0, len(clust_size)):
+    for k in range(0, n_clust):
         if clust_size[k] > min_size:
             q_clust[k] = 1
             clust_num += 1
