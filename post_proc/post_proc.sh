@@ -28,41 +28,55 @@ fi
 echo "Epsilon in filename?"
 read isEps
 
-if [ $isEps == 'n' ]; then
-    ep=$(( 1 ))
-    for filename in $( ls pa*.gsd )
-    #for filename in $( ls *pa*_0.png )
-    #for filename in $( ls all_pa*.txt )
-    do
+echo "Monodisperse simulation?"
+read isMono
 
-        # pull parameters from filename
+if [ $isMono == 'n' ]; then
+    if [ $isEps == 'n' ]; then
+        ep=$(( 1 ))
+        for filename in $( ls pa*.gsd )
+        #for filename in $( ls *pa*_0.png )
+        #for filename in $( ls all_pa*.txt )
+        do
 
-        pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-        pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
-        xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+            # pull parameters from filename
 
-        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
+            pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+            pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
+            xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
 
-    done
+            $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
 
+        done
+
+    else
+        for filename in $( ls pa*.gsd )
+        do
+
+            # Pull parameters from filename
+            pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
+            pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
+            xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)_.*/\1/')
+            ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)..*/\1/')
+    #        phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
+    #        al=$(echo $filename | $sedtype 's/^.*alpha\([0-9]*\)..*/\1/')
+    #        num=$(echo $filename | $sedtype 's/^.*N\([0-9]*\)..*/\1/')
+
+    #        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep $num
+            $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
+
+        done
+    fi
+    
 else
-    for filename in $( ls pa*.gsd )
+    for filename in $( ls pe*.gsd )
     do
+    
+        pe=$(echo $filename | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
+        ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
+        phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
+        $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $phi
 
-        # pull parameters from filename
-
-        pa=$(echo $filename | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-        pb=$(echo $filename | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
-        xa=$(echo $filename | $sedtype 's/^.*xa\([0-9]*\)_.*/\1/')
-        ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)..*/\1/')
-#        phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
-#        al=$(echo $filename | $sedtype 's/^.*alpha\([0-9]*\)..*/\1/')
-#        num=$(echo $filename | $sedtype 's/^.*N\([0-9]*\)..*/\1/')
-
-#        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep $num
-        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
-
-    done
 fi
 
 #pa=100

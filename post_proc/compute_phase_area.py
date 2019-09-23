@@ -104,57 +104,64 @@ def chkSort(array):
             return False
     return True
 
-try:
-    # This is for the long timescale data
-    long_file = "pa" + str(pe_a) + \
-                "_pb" + str(pe_b) + \
-                "_xa" + str(part_perc_a) + \
-                ".gsd"
-    # This is for the fine timescale data
-    short_file = "log_pa" + str(pe_a) + \
-                 "_pb" + str(pe_b) + \
-                 "_xa" + str(part_perc_a) + \
-                 ".gsd"
-    # File to write all data to
-    all_file = "diam_pa" + str(pe_a) + \
-               "_pb" + str(pe_b) + \
-               "_xa" + str(part_perc_a) + \
-               ".txt"
-    f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
-    try:
-        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
-        dump_short = int(g.__len__())              # get number of timesteps dumped
-    except:
-        dump_short = 0
-except:
-    try:
-        eps = str(sys.argv[6])
-    except:
-        eps = 1
-        
-    long_file = "pa" + str(pe_a) + \
-                "_pb" + str(pe_b) + \
-                "_xa" + str(part_perc_a) + \
-                "_ep" + str(eps) + \
-                ".gsd"
-    short_file = "log_pa" + str(pe_a) + \
-                 "_pb" + str(pe_b) + \
-                 "_xa" + str(part_perc_a) + \
-                 "_ep" + str(eps) + \
-                 ".gsd"
-    # File to write all data to
-    all_file = "diam_pa" + str(pe_a) + \
-               "_pb" + str(pe_b) + \
-               "_xa" + str(part_perc_a) + \
-               "_ep" + str(eps) +\
-               ".txt"
-    f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
-    try:
-        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
-        dump_short = int(g.__len__())              # get number of timesteps dumped
-    except:
-        dump_short = 0
-
+#try:
+#    # This is for the long timescale data
+#    long_file = "pa" + str(pe_a) + \
+#                "_pb" + str(pe_b) + \
+#                "_xa" + str(part_perc_a) + \
+#                ".gsd"
+#    # This is for the fine timescale data
+#    short_file = "log_pa" + str(pe_a) + \
+#                 "_pb" + str(pe_b) + \
+#                 "_xa" + str(part_perc_a) + \
+#                 ".gsd"
+#    # File to write all data to
+#    all_file = "diam_pa" + str(pe_a) + \
+#               "_pb" + str(pe_b) + \
+#               "_xa" + str(part_perc_a) + \
+#               ".txt"
+#    f = hoomd.open(name=long_file, mode='rb') # open gsd file with hoomd
+#    try:
+#        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+#        dump_short = int(g.__len__())              # get number of timesteps dumped
+#    except:
+#        dump_short = 0
+#except:
+#    try:
+#        eps = str(sys.argv[6])
+#    except:
+#        eps = 1
+#
+#    long_file = "pa" + str(pe_a) + \
+#                "_pb" + str(pe_b) + \
+#                "_xa" + str(part_perc_a) + \
+#                "_ep" + str(eps) + \
+#                ".gsd"
+#    short_file = "log_pa" + str(pe_a) + \
+#                 "_pb" + str(pe_b) + \
+#                 "_xa" + str(part_perc_a) + \
+#                 "_ep" + str(eps) + \
+#                 ".gsd"
+#    # File to write all data to
+#    all_file = "diam_pa" + str(pe_a) + \
+#               "_pb" + str(pe_b) + \
+#               "_xa" + str(part_perc_a) + \
+#               "_ep" + str(eps) +\
+#               ".txt"
+#    f = hoomd.open(name=long_file, mode='rb')  # open gsd file with hoomd
+#    try:
+#        g = hoomd.open(name=short_file, mode='rb') # open gsd file with hoomd
+#        dump_short = int(g.__len__())              # get number of timesteps dumped
+#    except:
+#        dump_short = 0
+eps = str(sys.argv[6])                       # read epsilon
+phi = str(sys.argv[7])
+long_file = "pe" + str(pe_a) + \
+            "_ep" + str(eps) + \
+            "_phi" + str(phi) + \
+            ".gsd"
+f = hoomd.open(name=long_file, mode='rb')   # open gsd file with hoomd
+dump_short = 0
 dump_long = int(f.__len__())                # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
