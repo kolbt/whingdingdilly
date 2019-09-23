@@ -496,9 +496,9 @@ for j in range(start, end):
     phiG = tgA / a_box
     phiEff *= ( con / a_box )
     # Now get number densities
-    rhoLC = float(lc_num) / lcArea
-    rhoC = float(dense_num) / denseArea
-    rhoG = float(gas_num) / tgA
+    rhoLC = (float(lc_num) / lcArea) if lcArea > 0. else 0.
+    rhoC = (float(dense_num) / denseArea) if denseArea > 0. else 0.
+    rhoG = (float(gas_num) / tgA) if tgA > 0. else 0.
 
     # Values have been set, write to text files
     f = open(all_file, 'a')
