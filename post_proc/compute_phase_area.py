@@ -273,7 +273,7 @@ nBins = int(divBox / sizeBin)       # must be an integer
 # Conversion for area calculations
 con = (np.pi / 4.)
 
-for j in range(end - 2, end):
+for j in range(start, end):
 
     # Mesh array
     binParts = [[[] for b in range(nBins)] for a in range(nBins)]
