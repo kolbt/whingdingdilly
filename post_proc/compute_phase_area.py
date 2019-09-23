@@ -160,6 +160,10 @@ long_file = "pe" + str(pe_a) + \
             "_ep" + str(eps) + \
             "_phi" + str(phi) + \
             ".gsd"
+all_file = "area_pe" + str(pe_a) + \
+           "_ep" + str(eps) + \
+           "_phi" + str(phi) + \
+           ".txt"
 f = hoomd.open(name=long_file, mode='rb')   # open gsd file with hoomd
 dump_short = 0
 dump_long = int(f.__len__())                # get number of timesteps dumped
