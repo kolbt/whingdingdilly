@@ -50,28 +50,14 @@ do
     ep=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
     phi=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
     # Make an individual ffmpeg movie
-    ffmpeg -framerate 10 -i pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame_%04d.png\
+    ffmpeg -framerate 10 -i pe${pe}_ep${ep}_phi${phi}_frame_%04d.png\
      -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p\
-     -threads 1 pa${pa}_pb${pb}_xa${xa}_ep${ep}.mp4
+     -threads 1 pe${pe}_ep${ep}_phi${phi}.mp4
 
     # Get the png's index
-    if [ ${var} == "pa" ]; then
+    if [ ${var} == "pe" ]; then
         for iii in ${!sortVar[@]}; do
-            if [ "${sortVar[$iii]}" == "${pa}" ]; then
-                pos=$iii
-            fi
-        done
-
-    elif [ ${var} == "pb" ]; then
-        for iii in ${!sortVar[@]}; do
-            if [ "${sortVar[$iii]}" == "${pb}" ]; then
-                pos=$iii
-            fi
-        done
-
-    elif [ ${var} == "xa" ]; then
-        for iii in ${!sortVar[@]}; do
-            if [ "${sortVar[$iii]}" == "${xa}" ]; then
+            if [ "${sortVar[$iii]}" == "${pe}" ]; then
                 pos=$iii
             fi
         done
@@ -80,13 +66,20 @@ do
         for iii in ${!sortVar[@]}; do
             if [ "${sortVar[$iii]}" == "${ep}" ]; then
                 pos=$iii
-        fi
-    done
+            fi
+        done
 
+    elif [ ${var} == "phi" ]; then
+        for iii in ${!sortVar[@]}; do
+            if [ "${sortVar[$iii]}" == "${phi}" ]; then
+                pos=$iii
+            fi
+        done
+        
     fi
 
     # Place image on wall composite
-    for image in $(ls pa${pa}_pb${pb}_xa${xa}*frame_*.png)
+    for image in $(ls pe${pe}_ep${ep}_phi${phi}*frame_*.png)
     do
 
         # Get frame number
