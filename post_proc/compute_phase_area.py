@@ -255,23 +255,25 @@ f.write('Timestep'.center(10) + ' ' +\
 f.close()
 
 # Make the mesh
-r_cut = 1.122
-# Make size of bin divisible by l_box:
-divBox = round(l_box, 4)    # round l_box
-if divBox - l_box < 0:
-    divBox += 0.0001        # make sure rounded > actual
+r_cut = 2**(1./6.)
 
-# Adjust sizeBin so that it divides into divBox:
-convert = 100000.0
-intBinSize = int(r_cut * convert)
-intDivBox = int(divBox * convert)
-while (intDivBox % intBinSize) != 0:
-    intBinSize += 1
-sizeBin = (intBinSize / convert)    # divisible bin size
-nBins = int(divBox / sizeBin)       # must be an integer
-
+def getNBins(length, minSz=(2**(1./6.))):
+    "Given box size, return number of bins"
+    initGuess = int(length) + 1
+    nBins = initGuess
+    # This loop only exits on function return
+    while True:
+        if length / nBins > minSz:
+            return nBins
+        else:
+            nBins -= 1
+            
+# Compute mesh
+nBins = (getNBins(l_box, r_cut))
+sizeBin = (l_box / nBins)
 # Check to see the size of the bin in use
-print("Size of bin is: {}").format(sizeBin)
+print("Length of box: {}").format(l_box)
+print("{} bins of size {}").format(nBins, sizeBin)
 
 # Conversion for area calculations
 con = (np.pi / 4.)
