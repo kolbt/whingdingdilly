@@ -46,9 +46,9 @@ do
     # Make png series for a simulation
     ovitos ${script_path}/pngSeries.py ${sim}
     # Get everything before the file extension
-    pe=$(echo $sim | $sedtype 's/^.*pa\([0-9]*\)_.*/\1/')
-    ep=$(echo $sim | $sedtype 's/^.*pb\([0-9]*\)_.*/\1/')
-    phi=$(echo $sim | $sedtype 's/^.*xa\([0-9]*\)..*/\1/')
+    pe=$(echo $sim | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
+    ep=$(echo $sim | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
+    phi=$(echo $sim | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
     # Make an individual ffmpeg movie
     ffmpeg -framerate 10 -i pe${pe}_ep${ep}_phi${phi}_frame_%04d.png\
      -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p\
