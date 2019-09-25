@@ -270,6 +270,9 @@ while (intDivBox % intBinSize) != 0:
 sizeBin = (intBinSize / convert)    # divisible bin size
 nBins = int(divBox / sizeBin)       # must be an integer
 
+# Check to see the size of the bin in use
+print("Size of bin is: {}").format(sizeBin)
+
 # Conversion for area calculations
 con = (np.pi / 4.)
 
