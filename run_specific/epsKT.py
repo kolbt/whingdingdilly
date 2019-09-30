@@ -70,7 +70,7 @@ else:                               # A particles are Brownian
 tauLJ = computeTauLJ(eps)                       # get LJ time unit
 cut = (2**(1./6.)) * effSig                     # the cutoff for the LJ potential
 
-dt = 0.000005 * tauLJ                           # timestep size
+dt = 0.000001 * tauLJ                           # timestep size
 simLength = runFor * tauBrown                   # how long to run (in tauBrown)
 simTauLJ = simLength / tauLJ                    # how long to run (in tauLJ)
 totTsteps = int(simLength / dt)                 # how many tsteps to run
