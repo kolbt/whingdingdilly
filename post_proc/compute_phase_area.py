@@ -55,6 +55,7 @@ from freud import density
 from freud import cluster
 
 import numpy as np
+import math
 from scipy import stats
 
 def computeR(part1, part2):
@@ -267,10 +268,15 @@ def getNBins(length, minSz=(2**(1./6.))):
             return nBins
         else:
             nBins -= 1
-            
+        
+# Round up size of bins to account for floating point inaccuracy
+def roundUp(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
 # Compute mesh
 nBins = (getNBins(l_box, r_cut))
-sizeBin = (l_box / nBins)
+sizeBin = roundUp((l_box / nBins), 6)
 # Check to see the size of the bin in use
 print("Length of box: {}").format(l_box)
 print("{} bins of size {}").format(nBins, sizeBin)
