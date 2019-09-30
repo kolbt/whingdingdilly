@@ -44,7 +44,8 @@ for sim in $(ls pe*.gsd)
 do
 
     # Make png series for a simulation
-    ovitos ${script_path}/pngSeries.py ${sim}
+#    ovitos ${script_path}/pngSeries.py ${sim}
+    python ${script_path}/movieWSigma.py ${sim}
     # Get everything before the file extension
     pe=$(echo $sim | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
     ep=$(echo $sim | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
