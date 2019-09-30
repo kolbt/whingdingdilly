@@ -86,6 +86,8 @@ def chkSort(array):
     return True
     
 # Grab files
+slowCol = '#d8b365'
+fastCol = '#5ab4ac'
 infile = str(sys.argv[1])                               # gsd file
 print("Creating images for: {}").format(infile)
 file_name = os.path.basename(infile)
@@ -235,6 +237,7 @@ for j in range(start, end):
     coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
                                                     np.zeros_like(effSigma),
                                                     offsets=xy, units='xy',
+                                                    facecolor=slowCol,
                                                     transOffset=ax.transData)
     ax.add_collection(coll)
 
