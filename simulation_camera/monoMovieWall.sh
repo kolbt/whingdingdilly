@@ -1,8 +1,15 @@
 #!/bin/sh
 
-script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
-sedtype='gsed'
+echo "Running on longleaf? (y/n)"
+read lleaf
 
+if [ $lleaf == 'y' ]; then
+    script_path="/nas/longleaf/home/kolbt/whingdingdilly/simulation_camera"
+    sedtype='sed'
+else
+    script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
+    sedtype='gsed'
+fi
 
 pe=()
 ep=()
@@ -44,7 +51,6 @@ for sim in $(ls pe*.gsd)
 do
 
     # Make png series for a simulation
-#    ovitos ${script_path}/pngSeries.py ${sim}
     python ${script_path}/movieWSigma.py ${sim}
     # Get everything before the file extension
     pe=$(echo $sim | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
