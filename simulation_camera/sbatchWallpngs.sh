@@ -10,6 +10,9 @@ script_path=$2
 
 python ${script_path}/movieWSigma.py ${sim}
 
+echo "Path: ${script_path}"
+echo "Simulation: ${sim}"
+
 # Get everything before the file extension
 pe=$(echo $sim | sed 's/^.*pe\([0-9]*\)_.*/\1/')
 ep=$(echo $sim | sed 's/^.*ep\([0-9]*\)_.*/\1/')
