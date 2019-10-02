@@ -53,7 +53,7 @@ def computeActiveForce(velocity):
 def computeNetEps(activeForce):
     "Given particle activity, output repulsion well depth"
     # The minimum overall epsilon should be Brownian
-    epsBrown = 10.0
+    epsBrown = 1.0
     epsilon = ((4.0 * activeForce) / 24.0) + epsBrown
     return epsilon
 
