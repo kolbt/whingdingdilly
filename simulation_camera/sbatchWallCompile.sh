@@ -1,22 +1,32 @@
 #!/bin/sh
 #SBATCH -p general                          # partition to run on
 #SBATCH -n 1                                # number of cores
-#SBATCH -t 11-00:00                         # time (D-HH:MM)
+#SBATCH -t 3-00:00                         # time (D-HH:MM)
 
 # Command to increase memory allocated --mem=100g
 
-sim=$1
-script_path=$2
+pe=$1
+ep=$2
+phi=$3
+pos=$4
+script_path=$5
 
-python ${script_path}/movieWSigma.py ${sim}
+# Place image on wall composite
+for image in $(ls pe${pe}_ep${ep}_phi${phi}*frame_*.png)
+do
 
-# Get everything before the file extension
-pe=$(echo $sim | sed 's/^.*pe\([0-9]*\)_.*/\1/')
-ep=$(echo $sim | sed 's/^.*ep\([0-9]*\)_.*/\1/')
-phi=$(echo $sim | sed 's/^.*phi\([0-9]*\)..*/\1/')
-# Make an individual ffmpeg movie
-ffmpeg -framerate 10 -i pe${pe}_ep${ep}_phi${phi}_frame_%04d.png\
- -vcodec libx264 -s 2000x2000 -pix_fmt yuv420p\
- -threads 1 pe${pe}_ep${ep}_phi${phi}.mp4
+    # Get frame number
+    frame=$(echo $image | $sedtype 's/^.*frame_\([0-9]*\)..*/\1/')
+    # Check if wall frame exists, if not, create it
+    wallFrame="wall_${frame}.png"
+    if [ ! -f ${wallFrame} ]; then
+        python ${script_path}/makeWallFrame.py ${wallFrame}
+    fi
+    # Add each png to corresponding wall frame
+    python ${script_path}/placeMovieFrame.py ${image} ${wallFrame} ${pos}
+    # Remove pngs after adding
+    rm ${image}
+
+done
 
 

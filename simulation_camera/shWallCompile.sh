@@ -71,39 +71,6 @@ do
         
     fi
 
-    # Place image on wall composite
-    for image in $(ls pe${pe}_ep${ep}_phi${phi}*frame_*.png)
-    do
-
-        # Get frame number
-        frame=$(echo $image | $sedtype 's/^.*frame_\([0-9]*\)..*/\1/')
-        # Check if wall frame exists, if not, create it
-        wallFrame="wall_${frame}.png"
-        if [ ! -f ${wallFrame} ]; then
-            python ${script_path}/makeWallFrame.py ${wallFrame}
-        fi
-        # Add each png to corresponding wall frame
-        python ${script_path}/placeMovieFrame.py ${image} ${wallFrame} ${pos}
-        # Remove pngs after adding
-        rm ${image}
-
-    done
+    sbatch ${script_path}/sbatchWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
 
 done
-
-# This will make a movie using the wall pngs, via ffmpeg
-ffmpeg -framerate 10 -i wall_%04d.png\
- -vcodec libx264 -s 6000x4500 -pix_fmt yuv420p\
- -threads 1 wallOutLarge.mp4
-
-ffmpeg -framerate 10 -i wall_%04d.png\
- -vcodec libx264 -s 2000x1500 -pix_fmt yuv420p\
- -threads 1 wallOut.mp4
-
-ffmpeg -framerate 10 -i wall_%04d.png\
- -vcodec libx264 -s 1600x1200 -pix_fmt yuv420p\
- -threads 1 wallOutmedium.mp4
-
-ffmpeg -framerate 10 -i wall_%04d.png\
- -vcodec libx264 -s 1000x750 -pix_fmt yuv420p\
- -threads 1 wallOutsmall.mp4
