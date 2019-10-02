@@ -64,8 +64,8 @@ def computeTauLJ(epsilon):
 
 def computeSigma(activity):
     "We fitted a power law relation to mode separation vs activity"
-    m = -0.0958
-    b = 0.3068
+    m = -0.0957707250171
+    b = 0.306774161185
     effectiveSigma = (activity**m) * (np.exp(b))
     return effectiveSigma
 
