@@ -54,7 +54,7 @@ def computeNetEps(activeForce):
     "Given particle activity, output repulsion well depth"
     # The minimum overall epsilon should be Brownian
     epsBrown = 1.0
-    epsilon = ((2.0 * activeForce) / 24.0) + epsBrown
+    epsilon = ((1.0 * activeForce) / 24.0) + epsBrown
     return epsilon
 
 def computeTauLJ(epsilon):
