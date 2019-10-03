@@ -8,6 +8,7 @@ read answer
 
 if [ $answer == "y" ]; then
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
+    script_path='/nas/longleaf/home/kolbt/whingdingdilly/run_gpu.sh'
     template='/nas/longleaf/home/kolbt/whingdingdilly/case_studies/hcpBallistic.py'
     sedtype='sed'
     submit='sbatch'
