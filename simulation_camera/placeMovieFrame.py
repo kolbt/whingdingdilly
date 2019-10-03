@@ -1,5 +1,7 @@
 import sys
-from PIL import Image
+from PIL import Image, ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+import time
 
 # Read in image and parameters
 file = str(sys.argv[1])
@@ -36,9 +38,9 @@ else:
     y = bottom
 
 
-img = Image.open(file)              # read in final tstep image
+img = Image.open(file)
 comp_img = Image.open(comp)
 
-img2 = img.resize((500*factor,500*factor))        # resize to prepare for paste
-comp_img.paste(img2,(x,y))          # paste into composite image
-comp_img.save(comp)                 # resave image
+img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
+comp_img.paste(img2,(x,y))                  # paste into composite image
+comp_img.save(comp)                         # resave image
