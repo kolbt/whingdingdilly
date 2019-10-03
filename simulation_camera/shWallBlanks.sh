@@ -14,7 +14,7 @@ do
     if [ ! -f ${wallFrame} ]; then
         sbatch ${script_path}/sbatchWallBlanks.sh ${wallFrame} ${script_path}
         # We don't want to regenerate files that are being made
-        sleep 5
+        #sleep 1
     fi
 
 done
