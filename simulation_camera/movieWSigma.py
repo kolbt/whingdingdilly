@@ -149,10 +149,15 @@ def getNBins(length, minSz=(2**(1./6.))):
             return nBins
         else:
             nBins -= 1
-            
+
+# Round up size of bins to account for floating point inaccuracy
+def roundUp(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
 # Compute mesh
 nBins = (getNBins(l_box, r_cut))
-sizeBin = (l_box / nBins)
+sizeBin = roundUp((l_box / nBins), 6)
 
 # Enlarge the box to include the periodic images
 buff = float(int(r_cut * 2.0) + 1)
