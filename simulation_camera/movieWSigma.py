@@ -30,6 +30,7 @@ from freud import box
 from freud import density
 from freud import cluster
 
+import math
 import numpy as np
 from scipy import stats
 
