@@ -1,9 +1,14 @@
 #!/bin/sh
 
+# Longleaf
 script_path="/nas/longleaf/home/kolbt/whingdingdilly/simulation_camera"
-#script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 sedtype='sed'
+submit='sbatch'
+
+# Desktop
+#script_path="/Users/kolbt/Desktop/compiled/whingdingdilly/simulation_camera"
 #sedtype='gsed'
+#submit='sh'
 
 pe=()
 ep=()
@@ -73,7 +78,6 @@ do
         
     fi
 
-    sbatch ${script_path}/sbatchWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
-#    sh ${script_path}/sbatchWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
+    ${submit} ${script_path}/sbatchWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
 
 done

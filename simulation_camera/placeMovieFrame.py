@@ -1,6 +1,6 @@
 import sys
 from PIL import Image, ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+#ImageFile.LOAD_TRUNCATED_IMAGES = True
 import time
 
 # Read in image and parameters
@@ -37,10 +37,16 @@ elif 4 <= pos <= 7:
 else:
     y = bottom
 
-
 img = Image.open(file)
-comp_img = Image.open(comp)
+while True:
+    try:
+        # Only exit loop upon opening and succesfully pasting png
+        comp_img = Image.open(comp)                 # open composite
+        img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
+        comp_img.paste(img2,(x,y))                  # paste into composite image
+        break
+    except IOError:
+        # Try again in 5 seconds
+        time.sleep(5)
 
-img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
-comp_img.paste(img2,(x,y))                  # paste into composite image
 comp_img.save(comp)                         # resave image
