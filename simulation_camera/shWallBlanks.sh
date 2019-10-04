@@ -12,7 +12,7 @@ do
     # Check if wall frame exists, if not, create it
     wallFrame="wall_${frame}.png"
     if [ ! -f ${wallFrame} ]; then
-        sbatch ${script_path}/sbatchWallBlanks.sh ${wallFrame} ${script_path}
+        sbatch ${script_path}/sbWallBlanks.sh ${wallFrame} ${script_path}
     fi
 
 done

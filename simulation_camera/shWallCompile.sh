@@ -78,7 +78,7 @@ do
         
     fi
 
-    ${submit} ${script_path}/sbatchWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
+    ${submit} ${script_path}/sbWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
     sleep 10
 
 done
