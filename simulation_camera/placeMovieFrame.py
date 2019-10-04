@@ -42,7 +42,7 @@ else:
 
 time.sleep(random.random()*10.)
 img = Image.open(file)
-fo = open(comp, 'a+')
+fo = open(comp, 'ab')
 while True:
     try:
         # Lock the file if not in use
