@@ -40,7 +40,7 @@ elif 4 <= pos <= 7:
 else:
     y = bottom
 
-time.sleep(random.random()*5.)
+time.sleep(random.random()*10.)
 img = Image.open(file)
 fo = open(comp, 'a+')
 while True:
@@ -53,7 +53,7 @@ while True:
         print("Drat! It's locked! Sleeping... ")
         time.sleep(random.random()*5.)
 
-comp_img = Image.open(fo)                   # open composite
+comp_img = Image.open(comp)                 # open composite
 img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
 comp_img.paste(img2,(x,y))                  # paste into composite image
 comp_img.save(comp)                         # resave image
