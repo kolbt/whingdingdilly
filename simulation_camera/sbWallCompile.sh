@@ -15,6 +15,8 @@ script_path=$5
 sedtype='sed'
 #sedtype='gsed'
 
+sleep ${pe}
+
 # Place image on wall composite
 for image in $(ls pe${pe}_ep${ep}_phi${phi}*frame_*.png)
 do
