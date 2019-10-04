@@ -79,6 +79,5 @@ do
     fi
 
     ${submit} ${script_path}/sbWallCompile.sh ${pe} ${ep} ${phi} ${pos} ${script_path}
-    sleep 10
 
 done

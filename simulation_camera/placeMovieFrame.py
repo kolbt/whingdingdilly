@@ -2,6 +2,9 @@ import sys
 from PIL import Image, ImageFile
 #ImageFile.LOAD_TRUNCATED_IMAGES = True
 import time
+import fcntl
+import errno
+import random
 
 # Read in image and parameters
 file = str(sys.argv[1])
@@ -38,15 +41,21 @@ else:
     y = bottom
 
 img = Image.open(file)
+fo = open(comp, 'a+')
 while True:
     try:
-        # Only exit loop upon opening and succesfully pasting png
-        comp_img = Image.open(comp)                 # open composite
-        img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
-        comp_img.paste(img2,(x,y))                  # paste into composite image
+        # Lock the file if not in use
+        fcntl.flock(fo, fcntl.LOCK_EX | fcntl.LOCK_NB)
         break
-    except IOError:
-        # Try again in 5 seconds
-        time.sleep(5)
+    except:
+        # If file is locked, sleep for random time
+        print("Drat! It's locked! Sleeping... ")
+        time.sleep(random.random()*2.)
 
+comp_img = Image.open(fo)                   # open composite
+img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
+comp_img.paste(img2,(x,y))                  # paste into composite image
 comp_img.save(comp)                         # resave image
+
+# Unlock the file
+fcntl.flock(fo, fcntl.LOCK_UN)
