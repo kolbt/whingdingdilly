@@ -7,9 +7,9 @@
 
 # Command to increase memory allocated --mem=100g
 
-ffmpeg -framerate 10 -i wall_%04d.png\
- -vcodec libx264 -s 6000x4500 -pix_fmt yuv420p\
- -threads 1 wallOutLarge.mp4
+#ffmpeg -framerate 10 -i wall_%04d.png\
+# -vcodec libx264 -s 6000x4500 -pix_fmt yuv420p\
+# -threads 1 wallOutLarge.mp4
 
 ffmpeg -framerate 10 -i wall_%04d.png\
  -vcodec libx264 -s 2000x1500 -pix_fmt yuv420p\
