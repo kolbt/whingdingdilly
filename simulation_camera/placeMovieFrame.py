@@ -1,10 +1,16 @@
 import sys
+import os
+import shutil
 from PIL import Image, ImageFile
 #ImageFile.LOAD_TRUNCATED_IMAGES = True
 import time
-import fcntl
-import errno
 import random
+
+# Paths for preserving files
+current = os.getcwd()
+work = current + "/work"
+if not (os.path.isdir(work)):
+    os.mkdir(work)
 
 # Read in image and parameters
 file = str(sys.argv[1])
@@ -40,23 +46,23 @@ elif 4 <= pos <= 7:
 else:
     y = bottom
 
-#time.sleep(random.random()*10.)
-img = Image.open(file)
-fo = open(comp, 'ab')
+time.sleep(random.random()*10.)     # sleep to prevent simultaneous access
+img = Image.open(file)              # open the image to paste
+
 while True:
     try:
-        # Lock the file if not in use
-        fcntl.flock(fo, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # Try to move the file
+        shutil.move(current + "/" + comp, work + "/" + comp)
         break
     except:
-        # If file is locked, sleep for random time
-        print("Drat! It's locked! Sleeping... ")
-        time.sleep(random.random()*5.)
+        # If you can't find the file, then wait
+        time.sleep(10.)
 
-comp_img = Image.open(fo)                   # open composite
+os.chdir(work)                              # change to working directory
+comp_img = Image.open(comp)                 # open composite
 img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
 comp_img.paste(img2,(x,y))                  # paste into composite image
 comp_img.save(comp)                         # resave image
 
-# Unlock the file
-fcntl.flock(fo, fcntl.LOCK_UN)
+# Move the file back
+shutil.move(work + "/" + comp, current + "/" + comp)
