@@ -1,16 +1,5 @@
 import sys
-import os
-import shutil
-from PIL import Image, ImageFile
-#ImageFile.LOAD_TRUNCATED_IMAGES = True
-import time
-import random
-
-# Paths for preserving files
-current = os.getcwd()
-work = current + "/work"
-if not (os.path.isdir(work)):
-    os.mkdir(work)
+from PIL import Image
 
 # Read in image and parameters
 file = str(sys.argv[1])
@@ -46,23 +35,8 @@ elif 4 <= pos <= 7:
 else:
     y = bottom
 
-time.sleep(random.random()*10.)     # sleep to prevent simultaneous access
-img = Image.open(file)              # open the image to paste
-
-while True:
-    try:
-        # Try to move the file
-        shutil.move(current + "/" + comp, work + "/" + comp)
-        break
-    except:
-        # If you can't find the file, then wait
-        time.sleep(10.)
-
-os.chdir(work)                              # change to working directory
+img = Image.open(file)                      # open the image to paste
 comp_img = Image.open(comp)                 # open composite
 img2 = img.resize((500*factor,500*factor))  # resize to prepare for paste
 comp_img.paste(img2,(x,y))                  # paste into composite image
 comp_img.save(comp)                         # resave image
-
-# Move the file back
-shutil.move(work + "/" + comp, current + "/" + comp)
