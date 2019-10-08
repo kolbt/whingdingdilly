@@ -161,7 +161,9 @@ rightLJWall.force_coeff.set('A', epsilon=10.0, sigma=1.0)
 rightLJWall.force_coeff.set('B', epsilon=0.0, sigma=1.0)
 
 # Active motion initially oriented towards the HCP phase
-activity = (-swimForce, 0, 0)
+activity = []
+tuple = (-swimForce, 0, 0)
+activity.append(tuple)
 hoomd.md.force.active(group=active,
                       seed=seed2,
                       f_lst=activity,
