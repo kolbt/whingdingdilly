@@ -13,8 +13,8 @@ We want to know:
 import sys
 
 isBallistic = str(sys.argv[1])  # ballistic or active simulation
-pe = float(sys.argv[2])           # activity of active particle
-lat = float(sys.argv[3])          # lattice spacing of HCP phase
+pe = float(sys.argv[2])         # activity of active particle
+lat = float(sys.argv[3])        # lattice spacing of HCP phase
 
 gsd_path = '/nas/longleaf/home/kolbt/programs/gsd/build'
 gsd_path = '/Users/kolbt/Desktop/compiled/gsd/build'
@@ -138,7 +138,10 @@ for i in range(start + 1, end):
 #plt.show()
 
 # Compute and overlay the average
-avgVelHCP = actVelHCP[actVelHCP!=0].mean()
+if np.any(actVelHCP):
+    avgVelHCP = actVelHCP[actVelHCP!=0].mean()
+else:
+    avgVelHCP = 0.
 avgVelFree = actVelFree[actVelFree!=0].mean()
 print('Mean HCP velocity: {}').format(avgVelHCP)
 print('Mean free velocity: {}').format(avgVelFree)
