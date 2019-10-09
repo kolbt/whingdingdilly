@@ -56,12 +56,14 @@ def computeTauPerTstep(epsilon, mindt=0.000001):
     
 # Base filename
 inFile = "pe" + str(pe) + "_lattice" + str(lat) + ".gsd"
+outFile = "pe" + str(pe) + "_lattice" + str(lat) + ".txt"
 # File name for ballistic simulation
 if isBallistic == "y":
     f = hoomd.open(name=inFile, mode='rb')
 # File name for active simulation
 else:
     inFile = "active_" + inFile
+    outFile = "active_" + outFile
     f = hoomd.open(name=inFile, mode='rb')
 
 dump = int(f.__len__())         # get number of timesteps dumped
@@ -106,6 +108,7 @@ hcpMin = min(hcpPos[0][:,0])
 hcpMax = max(hcpPos[0][:,0])
 actVelHCP = np.zeros((end), dtype=np.float64)
 actVelFree = np.zeros((end), dtype=np.float64)
+infil = 'n'
 
 # Compute the MSD in the HCP phase
 for i in range(start + 1, end):
@@ -120,22 +123,23 @@ for i in range(start + 1, end):
     # Is/was the particle in the HCP phase
     if hcpMin < actPos[i][0] < hcpMax and hcpMin < actPos[i-1][0] < hcpMax:
         actVelHCP[i] = (np.sqrt((dx**2)+(dy**2))) / dtau
+        infil='y'
     else:
         actVelFree[i] = (np.sqrt((dx**2)+(dy**2))) / dtau
   
-# We can plot the free and dense phase active particle velocity
-plt.plot(timesteps, actVelFree, c='r', label='Free')
-plt.plot(timesteps, actVelHCP, c='b', ls='--', label='HCP')
+## We can plot the free and dense phase active particle velocity
+#plt.plot(timesteps, actVelFree, c='r', label='Free')
+#plt.plot(timesteps, actVelHCP, c='b', ls='--', label='HCP')
+#plt.xlabel(r'Time $(\tau_{B})$')
+#plt.ylabel(r'Velocity $\left(\frac{d\sigma}{d\tau_{B}}\right)$')
+#plt.legend(loc=1)
+#plt.xlim(0, max(timesteps))
+#plt.ylim(0, pe)
+#plt.show()
+
 # Compute and overlay the average
 avgVelHCP = actVelHCP[actVelHCP!=0].mean()
 avgVelFree = actVelFree[actVelFree!=0].mean()
-plt.xlabel(r'Time $(\tau_{B})$')
-plt.ylabel(r'Velocity $\left(\frac{d\sigma}{d\tau_{B}}\right)$')
-plt.legend(loc=1)
-plt.xlim(0, max(timesteps))
-plt.ylim(0, pe)
-plt.show()
-
 print('Mean HCP velocity: {}').format(avgVelHCP)
 print('Mean free velocity: {}').format(avgVelFree)
 
@@ -146,22 +150,33 @@ print('Mean free velocity: {}').format(avgVelFree)
 #print(hcpPos[-1])       # last timestep
 #print(hcpPos[-1][:,0])  # last timestep x coordinates
 
-# Plot the data
-mysz = 15.
-x, y, z = zip(*actPos)
-# Plot the HCP phase
-plt.scatter(hcpPos[-1][:,0], hcpPos[-1][:,1], c='#D3D3D3', s=mysz)
-# Plot the time resolved active particle
-plt.scatter(x, y, c=(timesteps/timesteps[-1]), s=mysz, cmap='jet')
-#plt.scatter(x, y, c=plt.cm.jet(timesteps/timesteps[-1]), s=mysz)
-#plt.scatter(x, y, facecolors='none', edgecolors=plt.cm.jet(timesteps/timesteps[-1]))
+## Plot the data
+#mysz = 15.
+#x, y, z = zip(*actPos)
+## Plot the HCP phase
+#plt.scatter(hcpPos[-1][:,0], hcpPos[-1][:,1], c='#D3D3D3', s=mysz)
+## Plot the time resolved active particle
+#plt.scatter(x, y, c=(timesteps/timesteps[-1]), s=mysz, cmap='jet')
+#plt.xlim(-hx_box, hx_box)
+#plt.ylim(-hy_box, hy_box)
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#cbar = plt.colorbar(ticks=[], fraction=0.02675, pad=0.05, label='Time')
+#plt.text(1.085, 0.015, r'$\tau_{initial}$', transform=ax.transAxes, fontsize=14)
+#plt.text(1.085, 0.95, r'$\tau_{final}$', transform=ax.transAxes, fontsize=14)
+#plt.show()
 
-plt.xlim(-hx_box, hx_box)
-plt.ylim(-hy_box, hy_box)
-ax = plt.gca()
-ax.set_aspect('equal')
-cbar = plt.colorbar(ticks=[], fraction=0.02675, pad=0.05, label='Time')
-plt.text(1.085, 0.015, r'$\tau_{initial}$', transform=ax.transAxes, fontsize=14)
-plt.text(1.085, 0.95, r'$\tau_{final}$', transform=ax.transAxes, fontsize=14)
+# Make text file for relevant quantities
+f = open(outFile, 'w') # write file headings
+f.write('Activity'.center(10) + ' ' +\
+        'Lattice'.center(10) + ' ' +\
+        'Infiltrate'.center(10) + ' ' +\
+        'Velocity'.center(10) + '\n')
+f.close()
 
-plt.show()
+f = open(outFile, 'a')
+f.write('{0:.1f}'.format(pe).center(10) + ' ' +\
+        '{0:.2f}'.format(lat).center(10) + ' ' + \
+        str(infil).center(10) + ' ' +\
+        '{0:.2f}'.format(avgVelHCP).center(10) + '\n')
+f.close()
