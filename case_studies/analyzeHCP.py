@@ -17,6 +17,7 @@ pe = float(sys.argv[2])         # activity of active particle
 lat = float(sys.argv[3])        # lattice spacing of HCP phase
 
 gsd_path = '/nas/longleaf/home/kolbt/programs/gsd/build'
+sys.path.append(gsd_path)       # ensure gsd is in your python path
 gsd_path = '/Users/kolbt/Desktop/compiled/gsd/build'
 sys.path.append(gsd_path)       # ensure gsd is in your python path
 
