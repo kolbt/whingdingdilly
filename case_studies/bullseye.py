@@ -50,13 +50,15 @@ seed2 = 2394                            # orientation seed
 seed3 = 183                             # activity seed
 
 # Some parameters (from command line):
-pe1 = float(sys.argv[1])    # fed in first, bullseye
-pe2 = float(sys.argv[2])    # second, second rign (and so on)
+pe1 = float(sys.argv[1])        # fed in first, bullseye
+pe2 = float(sys.argv[2])        # second, second ring (and so on)
 pe3 = float(sys.argv[3])
-r1 = float(sys.argv[4])
+r1 = float(sys.argv[4])         # radius of first hcp phase
 w2 = float(sys.argv[5])
 w3 = float(sys.argv[6])
-rAlign = float(sys.argv[7])
+rAlign = float(sys.argv[7])     # thickness of aligned layers
+peg = float(sys.argv[8])        # activity of gas phase
+phig = float(sys.argv[9])       # density of gas phase
 
 def computeLat(activity):
     "Get lattice spacing based on effective diameter"
@@ -151,16 +153,107 @@ for i in xrange(len(peList)):
         # Increment counter
         x += lat
 
+# Get number of particle in gas phase
+peList.append(peg)
+lbox = 3. * rList[-1]
+hbox = lbox / 2.
+agas = (lbox**2) - (np.pi * (rList[-1]**2))
+ngas = (phig * agas) / (np.pi * (0.25))
+
+# Make a mesh for random particle placement
+def getNBins(length, minSz=(2**(1./6.))):
+    "Given box size, return number of bins"
+    initGuess = int(length) + 1
+    nBins = initGuess
+    # This loop only exits on function return
+    while True:
+        if length / nBins > minSz:
+            return nBins
+        else:
+            nBins -= 1
+# Round up size of bins to account for floating point inaccuracy
+def roundUp(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+# Compute mesh
+r_cut = 2**(1./6.)
+nBins = (getNBins(lbox, r_cut))
+sizeBin = roundUp((lbox / nBins), 6)
+
+# Place particles in gas phase
+count = 0
+gaspos = []
+binParts = [[[] for b in range(nBins)] for a in range(nBins)]
+while count < ngas:
+    # Generate random position
+    gasx = (np.random.rand() - 0.5) * lbox
+    gasy = (np.random.rand() - 0.5) * lbox
+    r = computeDistance(gasx, gasy)
+    
+    # Is this an HCP bin?
+    if r <= rList[-1]:
+        continue
+    
+    # Are any gas particles too close?
+    tmpx = gasx + hbox
+    tmpy = gasy + hbox
+    indx = int(tmpx / sizeBin)
+    indy = int(tmpy / sizeBin)
+    # Get index of surrounding bins
+    lbin = indx - 1  # index of left bins
+    rbin = indx + 1  # index of right bins
+    bbin = indy - 1  # index of bottom bins
+    tbin = indy + 1  # index of top bins
+    if rbin == nBins:
+        rbin -= nBins  # adjust if wrapped
+    if tbin == nBins:
+        tbin -= nBins  # adjust if wrapped
+    hlist = [lbin, indx, rbin]  # list of horizontal bin indices
+    vlist = [bbin, indy, tbin]  # list of vertical bin indices
+
+    # Loop through all bins
+    for h in range(0, len(hlist)):
+        for v in range(0, len(vlist)):
+            # Take care of periodic wrapping for position
+            wrapX = 0.0
+            wrapY = 0.0
+            if h == 0 and hlist[h] == -1:
+                wrapX -= lbox
+            if h == 2 and hlist[h] == 0:
+                wrapX += lbox
+            if v == 0 and vlist[v] == -1:
+                wrapY -= lbox
+            if v == 2 and vlist[v] == 0:
+                wrapY += lbox
+            # Compute distance between particles
+            if binParts[h_list[h]][v_list[v]]:
+                for b in range(0, len(binParts[h_list[h]][v_list[v]])):
+                    ref = binParts[h_list[h]][v_list[v]][b]
+                    r = getDistance(pos[k],
+                                    pos[ref][0] + wrapX,
+                                    pos[ref][1] + wrapY)
+                    r = round(r, 4)  # round value to 4 decimal places
+
+#### BIN AND PLACE THINGS IN GAS ####
+    
+    # Place particle and increment
+    binParts[indx][indy].append(count)
+    gaspos.append((gasx, gasy, z))
+    rOrient.append(0)               # not oriented
+    typ.append(len(peList) - 1)     # final particle type
+    count += 1                      # increment count
+
+
 # Get each coordinate in a list
 x, y, z = zip(*pos)
 
-## Plot as scatter
-#cs = np.divide(typ, float(len(peList)))
-#cs = rOrient
-#plt.scatter(x, y, s=2., c=cs, cmap='jet')
-#ax = plt.gca()
-#ax.set_aspect('equal')
-#plt.show()
+# Plot as scatter
+cs = np.divide(typ, float(len(peList)))
+cs = rOrient
+plt.scatter(x, y, s=2., c=cs, cmap='jet')
+ax = plt.gca()
+ax.set_aspect('equal')
+plt.show()
 
 partNum = len(pos)
 xBox = 3. * (max(x))
@@ -241,7 +334,7 @@ hoomd.md.force.active(group=all,
                       orientation_link=False,
                       orientation_reverse_link=True)
 
-# brownian integration
+# Brownian integration
 hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
@@ -254,10 +347,9 @@ out += "r"
 for i in range(1, len(rList)):
     out += str(int(rList[i]))
     out += "_"
-    
 out += "rAlign_" + str(rAlign) + ".gsd"
 
-#write dump
+# Write dump
 hoomd.dump.gsd(out,
                period=dumpFreq,
                group=all,
@@ -265,5 +357,5 @@ hoomd.dump.gsd(out,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-#run
+# Run
 hoomd.run(totTsteps)
