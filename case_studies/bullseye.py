@@ -18,8 +18,9 @@ from hoomd import md
 from hoomd import dem
 from hoomd import deprecated
 from hoomd import data
-import numpy as np
 
+import math
+import numpy as np
 import matplotlib.pyplot as plt
 
 # Set some constants
@@ -39,8 +40,8 @@ def computeTauLJ(epsilon):
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
-dumpPerBrownian = 2500.                 # number of dumps per 1 tauB
-simLength = 0.5 * tauBrown              # how long to run (in tauBrown)
+dumpPerBrownian = 500.                  # number of dumps per 1 tauB
+simLength = 1.0 * tauBrown              # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency
@@ -69,6 +70,9 @@ def computeLat(activity):
     
 def computeDistance(x, y):
     return np.sqrt((x**2) + (y**2))
+    
+def interDist(x1, y1, x2, y2):
+    return np.sqrt((x2 - x1)**2 + (y2 - y1)**2)
     
 def orientToOrigin(x, y, act):
     "Using similar triangles to find sides"
@@ -159,6 +163,7 @@ lbox = 3. * rList[-1]
 hbox = lbox / 2.
 agas = (lbox**2) - (np.pi * (rList[-1]**2))
 ngas = (phig * agas) / (np.pi * (0.25))
+tooClose = 0.8
 
 # Make a mesh for random particle placement
 def getNBins(length, minSz=(2**(1./6.))):
@@ -185,13 +190,14 @@ count = 0
 gaspos = []
 binParts = [[[] for b in range(nBins)] for a in range(nBins)]
 while count < ngas:
+    place = 1
     # Generate random position
     gasx = (np.random.rand() - 0.5) * lbox
     gasy = (np.random.rand() - 0.5) * lbox
     r = computeDistance(gasx, gasy)
     
     # Is this an HCP bin?
-    if r <= rList[-1]:
+    if r <= (rList[-1] + (tooClose / 2.)):
         continue
     
     # Are any gas particles too close?
@@ -226,25 +232,34 @@ while count < ngas:
             if v == 2 and vlist[v] == 0:
                 wrapY += lbox
             # Compute distance between particles
-            if binParts[h_list[h]][v_list[v]]:
-                for b in range(0, len(binParts[h_list[h]][v_list[v]])):
-                    ref = binParts[h_list[h]][v_list[v]][b]
-                    r = getDistance(pos[k],
-                                    pos[ref][0] + wrapX,
-                                    pos[ref][1] + wrapY)
-                    r = round(r, 4)  # round value to 4 decimal places
-
-#### BIN AND PLACE THINGS IN GAS ####
-    
-    # Place particle and increment
-    binParts[indx][indy].append(count)
-    gaspos.append((gasx, gasy, z))
-    rOrient.append(0)               # not oriented
-    typ.append(len(peList) - 1)     # final particle type
-    count += 1                      # increment count
-
+            if binParts[hlist[h]][vlist[v]]:
+                for b in range(0, len(binParts[hlist[h]][vlist[v]])):
+                    # Get index of nearby particle
+                    ref = binParts[hlist[h]][vlist[v]][b]
+                    r = interDist(gasx, gasy,
+                                  gaspos[ref][0] + wrapX,
+                                  gaspos[ref][1] + wrapY)
+                    # Round to 4 decimal places
+                    r = round(r, 4)
+                    # If too close, generate new position
+                    if r <= tooClose:
+                        place = 0
+                        break
+            if place == 0:
+                break
+        if place == 0:
+            break
+            
+    # Is it safe to append the particle?
+    if place == 1:
+        binParts[indx][indy].append(count)
+        gaspos.append((gasx, gasy, z))
+        rOrient.append(0)               # not oriented
+        typ.append(len(peList) - 1)     # final particle type
+        count += 1                      # increment count
 
 # Get each coordinate in a list
+pos = pos + gaspos
 x, y, z = zip(*pos)
 
 # Plot as scatter
@@ -256,8 +271,6 @@ ax.set_aspect('equal')
 plt.show()
 
 partNum = len(pos)
-xBox = 3. * (max(x))
-yBox = xBox
 # Get the number of types
 uniqueTyp = []
 for i in typ:
@@ -286,8 +299,8 @@ for i in typ:
 hoomd.context.initialize()
 # A small shift to help with the periodic box
 snap = hoomd.data.make_snapshot(N = partNum,
-                                box = hoomd.data.boxdim(Lx=xBox,
-                                                        Ly=yBox,
+                                box = hoomd.data.boxdim(Lx=lbox,
+                                                        Ly=lbox,
                                                         dimensions=2),
                                 particle_types = unique_char_types)
 
