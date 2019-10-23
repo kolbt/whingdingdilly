@@ -55,23 +55,23 @@ seed = 71996                            # brownian integration seed
 seed2 = 9376                            # orientation seed
 seed3 = 2394                            # activity seed
 
-# Some parameters (from command line):
-nCol = int(sys.argv[1])         # number of lattice rows
-nRow = nCol                     # keep square box
-lat = float(sys.argv[2])        # lattice spacing
-lat /= 100.                     # bash only works with integers
-swimForce = float(sys.argv[3])  # swim force of active particle
+## Some parameters (from command line):
+#nCol = int(sys.argv[1])         # number of lattice rows
+#nRow = nCol                     # keep square box
+#lat = float(sys.argv[2])        # lattice spacing
+#lat /= 100.                     # bash only works with integers
+#swimForce = float(sys.argv[3])  # swim force of active particle
 
-## Replace to have permanent input file
-#nCol = ${nCol}              # number of lattice rows
-#nCol = int(nCol)
-#nRow = ${nRow}              # number of lattice columns
-#nRow = int(nRow)
-#lat = ${latCount}           # lattice spacing
-#lat = float(lat)
-#lat /= 100.                 # bash only works with integers
-#swimForce = ${swimCount}    # swim force of active particle
-#swimForce = float(swimForce)
+# Replace to have permanent input file
+nCol = ${nCol}              # number of lattice rows
+nCol = int(nCol)
+nRow = ${nRow}              # number of lattice columns
+nRow = int(nRow)
+lat = ${latCount}           # lattice spacing
+lat = float(lat)
+lat /= 100.                 # bash only works with integers
+swimForce = ${swimCount}    # swim force of active particle
+swimForce = float(swimForce)
 
 ver = np.sqrt(0.75) * lat       # vertical shift between lattice rows
 hor = lat / 2.0                 # horizontal shift between lattice rows
@@ -174,14 +174,14 @@ hoomd.md.force.active(group=active,
                       orientation_link=False,
                       orientation_reverse_link=True)
 
-# brownian integration
+# Brownian integration
 hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
 out = "active_in_bulk_pe" + str(swimForce) + "_lattice" + str(lat) + ".gsd"
 outBulk = "bulkHCP_pe" + str(swimForce) + "_lattice" + str(lat) + ".gsd"
 
-#write dump
+# Write dump
 hoomd.dump.gsd(out,
                period=1,
                group=active,
@@ -189,5 +189,5 @@ hoomd.dump.gsd(out,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-#run
+# Run
 hoomd.run(totTsteps)
