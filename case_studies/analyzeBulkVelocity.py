@@ -80,15 +80,10 @@ with hoomd.open(name=inFile, mode='rb') as t:
 
 # Normalize timesteps
 tauPerDT = computeTauPerTstep(epsilon=1.)
-dtInTauB = int(1. / (tauPerDT))
-looping = 0
-while looping == 0:
-    if dtInTauB % 3 != 0 and tInTauB % 2 != 0:
-        dtInTauB += 1
-    else:
-        looping = 1
-dtInTauR = dtInTauB / 3
-dtHalfTauR = dtInTauR / 2
+# Compute smallest unit to enforce larger timeaverages are multiples of it
+dtHalfTauR = int(1. / (6. * tauPerDT))
+dtInTauR = dtHalfTauR * 2
+dtInTauB = dtHalfTauR * 6
 timesteps -= timesteps[0]
 dt = timesteps[-1] - timesteps[-2]
 # Brownian time
@@ -119,70 +114,75 @@ for i in range(start + 1, end):
         dx = x_box - dx
     if dy > hy_box:
         dy = y_box - dy
-    instV.append(np.sqrt((dx**2)+(dy**2))) / dtau
+    instV.append( (np.sqrt((dx**2)+(dy**2))) / dtau )
     
     # Is this a multiple of a larger timescale (0.5 * tauR)?
     if i % dtHalfTauR == 0:
         print("At half tauR")
-        dx = abs(actPos[i][0] - actPos[i-dtHalfTauR][0])
-        dy = abs(actPos[i][1] - actPos[i-dtHalfTauR][1])
+        ind = i - dtHalfTauR
+        dx = abs(actPos[i][0] - actPos[ind][0])
+        dy = abs(actPos[i][1] - actPos[ind][1])
         if dx > hx_box:
             dx = x_box - dx
         if dy > hy_box:
             dy = y_box - dy
-        halfV.append(np.sqrt((dx**2)+(dy**2))) / (dtau * dtHalfTauR)
+        halfV.append( (np.sqrt((dx**2)+(dy**2))) / (dtau * dtHalfTauR) )
+
         # Is this a multiple of tauR
         if i % dtInTauR == 0:
             print("At tauR")
-            dx = abs(actPos[i][0] - actPos[i-dtInTauR][0])
-            dy = abs(actPos[i][1] - actPos[i-dtInTauR][1])
+            ind = i - dtInTauR
+            dx = abs(actPos[i][0] - actPos[ind][0])
+            dy = abs(actPos[i][1] - actPos[ind][1])
             if dx > hx_box:
                 dx = x_box - dx
             if dy > hy_box:
                 dy = y_box - dy
-            taurV.append(np.sqrt((dx**2)+(dy**2))) / (dtau * dtInTauR)
+            taurV.append( (np.sqrt((dx**2)+(dy**2))) / (dtau * dtInTauR) )
+
             # Is this a multiple of tauB
             if i % dtInTauB == 0:
                 print("At tauB")
-                dx = abs(actPos[i][0] - actPos[i-dtInTauB][0])
-                dy = abs(actPos[i][1] - actPos[i-dtInTauB][1])
+                ind = i - dtInTauB
+                dx = abs(actPos[i][0] - actPos[ind][0])
+                dy = abs(actPos[i][1] - actPos[ind][1])
                 if dx > hx_box:
                     dx = x_box - dx
                 if dy > hy_box:
                     dy = y_box - dy
-                taubV.append(np.sqrt((dx**2)+(dy**2))) / (dtau * dtInTauB)
+                taubV.append( (np.sqrt((dx**2)+(dy**2))) / (dtau * dtInTauB) )
                 
-# We can plot the free and dense phase active particle velocity
-plt.plot(timesteps[start+1, end], instV, c='b', ls='--', label=r'$\nu_{inst.}$')
-plt.plot(timesteps[start+1, end], halfV, c='r', ls='--', label=r'$\nu_{\tau_{r}/2}$')
-plt.plot(timesteps[start+1, end], taurV, c='g', ls='--', label=r'$\nu_{\tau_{r}}$')
-plt.plot(timesteps[start+1, end], taubV, c='k', ls='--', label=r'$\nu_{\tau_{B}}$')
-plt.xlabel(r'Time $(\tau_{B})$')
-plt.ylabel(r'Velocity $\left(\frac{d\sigma}{d\tau_{B}}\right)$')
-plt.legend(loc=1)
-plt.xlim(0, max(timesteps))
-plt.ylim(0, pe)
-plt.show()
+## We can plot the free and dense phase active particle velocity
+#plt.plot(timesteps[start+1:end], instV, c='b', ls='--', label=r'$\nu_{inst.}$')
+##plt.plot(timesteps[start+1:end], halfV, c='r', ls='--', label=r'$\nu_{\tau_{r}/2}$')
+##plt.plot(timesteps[start+1:end], taurV, c='g', ls='--', label=r'$\nu_{\tau_{r}}$')
+##plt.plot(timesteps[start+1:end], taubV, c='k', ls='--', label=r'$\nu_{\tau_{B}}$')
+#plt.xlabel(r'Time $(\tau_{B})$')
+#plt.ylabel(r'Velocity $\left(\frac{d\sigma}{d\tau_{B}}\right)$')
+#plt.legend(loc=1)
+#plt.xlim(0, max(timesteps))
+#plt.ylim(0, pe)
+#plt.show()
 
 # Compute and overlay the average
-avgInstV = mean(instV)
-avgHalfV = mean(halfV)
-avgTaurV = mean(taurV)
-avgTaubV = mean(taubV)
+avgInstV = float(sum(instV)) / float(len(instV))
+avgHalfV = float(sum(halfV)) / float(len(halfV))
+avgTaurV = float(sum(taurV)) / float(len(taurV))
+avgTaubV = float(sum(taubV)) / float(len(taubV))
 
-# Plot the data
-mysz = 15.
-x, y, z = zip(*actPos[start:end])
-# Plot the time resolved active particle
-plt.scatter(x, y, c=(timesteps[start:end]/max(timesteps)), s=mysz, cmap='jet')
-plt.xlim(-hx_box, hx_box)
-plt.ylim(-hy_box, hy_box)
-ax = plt.gca()
-ax.set_aspect('equal')
-cbar = plt.colorbar(ticks=[], fraction=0.02675, pad=0.05, label='Time')
-plt.text(1.085, 0.015, r'$\tau_{initial}$', transform=ax.transAxes, fontsize=14)
-plt.text(1.085, 0.95, r'$\tau_{final}$', transform=ax.transAxes, fontsize=14)
-plt.show()
+## Plot the data
+#mysz = 15.
+#x, y, z = zip(*actPos[start:end])
+## Plot the time resolved active particle
+#plt.scatter(x, y, c=(timesteps[start:end]/max(timesteps)), s=mysz, cmap='jet')
+#plt.xlim(-hx_box, hx_box)
+#plt.ylim(-hy_box, hy_box)
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#cbar = plt.colorbar(ticks=[], fraction=0.02675, pad=0.05, label='Time')
+#plt.text(1.085, 0.015, r'$\tau_{initial}$', transform=ax.transAxes, fontsize=14)
+#plt.text(1.085, 0.95, r'$\tau_{final}$', transform=ax.transAxes, fontsize=14)
+#plt.show()
 
 # Make text file for relevant quantities
 f = open(outFile, 'w')
