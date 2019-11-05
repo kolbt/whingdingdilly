@@ -32,8 +32,8 @@ yminor = MultipleLocator(0.1)
 ymajor = MultipleLocator(0.5)
 
 # Theory fits 99.3% of the data
-#kappa = 3.8
-kappa = 4.05
+kappa = 3.6
+#kappa = 4.05
 phi_min = 0.6
 
 def solvePartFrac(PeA, PeB):
@@ -41,9 +41,15 @@ def solvePartFrac(PeA, PeB):
     if xA <= 0.0:
         xA = 5
     return xA
+    
+def solvePeNetCrit(PeA, PeB, PeNCrit=45.):
+    '''Pe_net = (PeA * xA) + (PeB - (PeB * xA))'''
+    xA = (PeNCrit - PeB) / (PeA - PeB)
+    return xA
 
 x = np.arange(0.0, 160.0, 0.001)
 y = np.zeros_like(x)
+y2 = np.zeros_like(x)
 
 file = 'hard_sphere_phase_separation.csv'
 ps_data = pd.read_csv(file)
@@ -65,7 +71,9 @@ for i in xrange(len(distinctPePlanes)):
                 plt.scatter(ps_data['PeA'][j], ps_data['xA'][j], facecolor = 'none', edgecolor = 'k')
     for j in xrange(len(y)):
         y[j] = solvePartFrac(x[j], distinctPePlanes[i])
+        y2[j] = solvePeNetCrit(x[j], distinctPePlanes[i])
     plt.plot(x, y, c='k', linestyle='--')
+    plt.plot(x, y2, c='b', linestyle='--')
     plt.title(r'$Pe_{B}=$' + str(distinctPePlanes[i]), fontsize=30, y=1.02)
     plt.xlabel(r'$Pe_{A}$')
     plt.ylabel('$x_{A}$')
