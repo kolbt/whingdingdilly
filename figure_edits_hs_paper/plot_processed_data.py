@@ -32,7 +32,7 @@ yminor = MultipleLocator(0.1)
 ymajor = MultipleLocator(0.5)
 
 # Theory fits 99.3% of the data
-kappa = 3.6
+kappa = 3.6475626
 #kappa = 4.05
 phi_min = 0.6
 
