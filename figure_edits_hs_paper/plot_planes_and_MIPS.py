@@ -38,7 +38,8 @@ ymajor = MultipleLocator(0.5)
 
 # Theory fits 99.3% of the data
 #kappa = 3.8
-kappa = 4.05
+#kappa = 4.05
+kappa = 3.6475626
 phi_min = 0.6
 
 def solvePartFrac(PeA, PeB):

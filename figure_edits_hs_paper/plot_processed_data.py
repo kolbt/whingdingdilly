@@ -73,7 +73,7 @@ for i in xrange(len(distinctPePlanes)):
         y[j] = solvePartFrac(x[j], distinctPePlanes[i])
         y2[j] = solvePeNetCrit(x[j], distinctPePlanes[i])
     plt.plot(x, y, c='k', linestyle='--')
-    plt.plot(x, y2, c='b', linestyle='--')
+#    plt.plot(x, y2, c='b', linestyle='--')
     plt.title(r'$Pe_{B}=$' + str(distinctPePlanes[i]), fontsize=30, y=1.02)
     plt.xlabel(r'$Pe_{A}$')
     plt.ylabel('$x_{A}$')
