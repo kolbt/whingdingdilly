@@ -10,4 +10,5 @@ pe=$1
 lat=$2
 script_path=$3
 
-python $script_path/analyzeBulkVelocity.py ${pe} ${lat}
+#python $script_path/analyzeBulkVelocity.py ${pe} ${lat}
+python $script_path/analyzeBulkVelocityMEMORY.py ${pe} ${lat}
