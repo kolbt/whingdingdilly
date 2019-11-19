@@ -136,6 +136,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
                 dx = x_box - dx
             if dy > hy_box:
                 dy = y_box - dy
+            # dtau gives the answer in units of dr/dtau_B (dtHalfTauR gives # of timesteps)
             halfV += ( (np.sqrt((dx**2)+(dy**2))) / (dtau * dtHalfTauR) )
             halfC += 1
 

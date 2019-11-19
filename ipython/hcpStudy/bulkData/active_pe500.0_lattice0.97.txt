@@ -1,2 +1,0 @@
- Activity   Lattice   Infiltrate  Velocity 
-  500.0       0.97        y        96.38   
