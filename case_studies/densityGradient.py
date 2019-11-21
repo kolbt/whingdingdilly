@@ -1,15 +1,11 @@
 '''
 #                        This is an 80 character line                          #
-We want to simulate soft spheres pushing through a stationary HCP wall...
+We want to simulate soft spheres getting sorted by a density gradient...
 
-    Reads in: 1.) # of columns in HCP phase
-              2.) # of rows in HCP phase
-              3.) lattice spacing
-              4.) the swim force (for the ballistic particle)
-              
-    and runs a simulation accordingly :) Use this to sweep through
-    lattice spacing vs force. Plot to understand penetration of faster
-    particles into soft sphere dense phase.
+IN:
+    -list of densities
+    -layer thickness
+    -particle activity
 '''
 # Initial imports
 import sys
@@ -25,6 +21,8 @@ from hoomd import dem
 from hoomd import deprecated
 from hoomd import data
 import numpy as np
+
+import matplotlib.pyplot as plt
 
 # Set some constants
 kT = 1.0                        # temperature
@@ -43,7 +41,7 @@ def computeTauLJ(epsilon):
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
-dumpPerBrownian = 25.                   # number of dumps per 1 tauB
+dumpPerBrownian = 30.                   # number of dumps per 1 tauB
 simLength = 20. * tauBrown              # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
@@ -52,48 +50,104 @@ dumpFreq = int(dumpFreq)                # ensure this is an integer
 seed = 71996                            # a random seed
 seed2= 2394                             # activity seed
 
-## Some parameters (from command line):
-#nCol = int(sys.argv[1])         # number of lattice rows
-#nRow = int(sys.argv[2])         # number of lattice columns
-#lat = float(sys.argv[3])        # lattice spacing
-#lat /= 100.                     # bash only works with integers
-#swimForce = float(sys.argv[4])  # swim force of active particle
+# Parameters I'll need for this
+densities = [1., 0.98, 0.96, 0.94, 0.92, 0.90]
+# Thickness/height is in number of particles
+thickness = 10.
+height = 50
+activity = 500.
 
-# Replace to have permanent input file
-nCol = ${nCol}              # number of lattice rows
-nCol = int(nCol)
-nRow = ${nRow}              # number of lattice columns
-nRow = int(nRow)
-lat = ${latCount}           # lattice spacing
-lat = float(lat)
-lat /= 100.                 # bash only works with integers
-swimForce = ${swimCount}    # swim force of active particle
-swimForce = float(swimForce)
+def vertShift(lat):
+    '''This will change depending on the density of the layer'''
+    return np.sqrt(0.75) * lat
+    
+def horzShift(lat):
+    '''Lattice-spacing dependent'''
+    return lat / 2.
 
-ver = np.sqrt(0.75) * lat       # vertical shift between lattice rows
-hor = lat / 2.0                 # horizontal shift between lattice rows
-
-# Grab the box coordinates
-xBox = (nCol * lat) - hor
-xBox *= 1.5
-yBox = (nRow * ver) - ver
-
-# Make the mesh find positions for the HCP particles
+# Start at (0,0) for ease, slide all positions over once placed
 pos = []
-y = 0
-for i in xrange(nRow):
-    # Every other row needs to be shifted in the x direction
-    if i % 2 == 0:
-        x = 0.0
-    else:
-        x = hor
+id = []
+layer = 0
+lshift = 0.
+wallx = []
+for i in densities:
+    vert = vertShift(i)
+    horz = horzShift(i)
+    # Shift particles over according to previous lattices
+    if i != densities[0]:
+        lshift += ((thickness + 1.5) * i)
+    wallx.append(lshift - 0.1)
+    # Reset y layer
+    ny = 0
+    while ny <= height:
+        # Should the layer get shifted
+        if ny % 2 != 0:
+            xshift = horz
+        else:
+            xshift = 0.
+            
+        # Reset x layer
+        nx = 0
+        while nx <= thickness:
+            xpos = (nx * i) + xshift + lshift
+            ypos = (ny * vert)
+            zpos = 0.5
+            pos.append([xpos, ypos, zpos])
+            id.append(layer)
+            # Increment x layer
+            nx += 1
+        # Increment y layer
+        ny += 1
+    layer += 1
 
-    for j in xrange(nCol):
-        pos.append([x, y, 0.5]) # place particle
-        x += lat                # move a lattice spacing to the right
+# Let's give this a haircut (so that height is uniform)
+xmin = -10.
+xmax = pos[-1][0]
+ymin = 0
+ymax = pos[-1][1] + 0.5
+for i in range(len(pos) - 1, -1, -1):
+    if pos[i][0] > xmax:
+        xmax = pos[i][0]
+    if pos[i][1] > ymax:
+        del pos[i]
+        del id[i]
+     
+## Plotting script to check particle/wall placement
+#xyz = zip(*pos)
+#x = list(xyz[0])
+#y = list(xyz[1])
+#z = list(xyz[2])
+#plt.xlim(xmin, xmax)
+#plt.ylim(ymin, ymax)
+#plt.scatter(x, y, c=id, s=5)
+#for i in wallx:
+#    plt.axvline(x=i)
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#plt.show()
 
-    # Every row increases by the same y-value
-    y += ver
+xBox = xmax - xmin
+yBox = ymax - ymin
+for i in pos:
+    i[0] -= ((xBox + (2. * xmin)) / 2.)
+    i[1] -= (yBox / 2.)
+for i in xrange(len(wallx)):
+    wallx[i] -= ((xBox + (2. * xmin)) / 2.)
+    
+## Plotting script to check box adjustment
+#xyz = zip(*pos)
+#x = list(xyz[0])
+#y = list(xyz[1])
+#z = list(xyz[2])
+#plt.scatter(x, y, c=id, s=5)
+#for i in wallx:
+#    plt.axvline(x=i)
+#plt.xlim(-(xBox/2.), (xBox/2.))
+#plt.ylim(-(yBox/2.), (yBox/2.))
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#plt.show()
 
 nHex = len(pos)     # number of lattice particles
 partNum = nHex + 1  # particle we are testing
@@ -101,10 +155,9 @@ partNum = nHex + 1  # particle we are testing
 # Now we make the system in hoomd
 hoomd.context.initialize()
 # A small shift to help with the periodic box
-per = ver
 snap = hoomd.data.make_snapshot(N = partNum,
-                                box = hoomd.data.boxdim(Lx=xBox + per,
-                                                        Ly=yBox + per,
+                                box = hoomd.data.boxdim(Lx=xBox,
+                                                        Ly=yBox,
                                                         dimensions=2),
                                 particle_types = ['A', 'B'])
 
