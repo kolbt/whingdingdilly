@@ -55,7 +55,7 @@ densities = [1., 0.98, 0.96, 0.94, 0.92, 0.90]
 # Thickness/height is in number of particles
 thickness = 10.
 height = 50
-activity = 500.
+swimForce = 500.
 
 def vertShift(lat):
     '''This will change depending on the density of the layer'''
@@ -112,7 +112,23 @@ for i in range(len(pos) - 1, -1, -1):
     if pos[i][1] > ymax:
         del pos[i]
         del id[i]
-     
+
+# Get the unique type IDs
+uniqueID = []
+uniqueChar = []
+for i in id:
+    if i not in uniqueID:
+        uniqueID.append(i)
+        uniqueChar.append(chr(ord('@') + i+1))
+# Don't forget to add the active particle
+uniqueID.append(max(uniqueID) + 1)
+uniqueChar.append( chr(ord('@') + uniqueID[-1]+1) )
+
+# Convert all IDs to chars
+chars = []
+for i in id:
+    chars.append(chr(ord('@') + i+1))
+
 ## Plotting script to check particle/wall placement
 #xyz = zip(*pos)
 #x = list(xyz[0])
@@ -134,7 +150,10 @@ for i in pos:
     i[1] -= (yBox / 2.)
 for i in xrange(len(wallx)):
     wallx[i] -= ((xBox + (2. * xmin)) / 2.)
+    wallx[i] -= 0.5
+wallx.append((xBox / 2.))
     
+#print(len(wallx))
 ## Plotting script to check box adjustment
 #xyz = zip(*pos)
 #x = list(xyz[0])
@@ -156,66 +175,63 @@ partNum = nHex + 1  # particle we are testing
 hoomd.context.initialize()
 # A small shift to help with the periodic box
 snap = hoomd.data.make_snapshot(N = partNum,
-                                box = hoomd.data.boxdim(Lx=xBox,
-                                                        Ly=yBox,
+                                box = hoomd.data.boxdim(Lx=xBox + 1.,
+                                                        Ly=yBox + 1.,
                                                         dimensions=2),
-                                particle_types = ['A', 'B'])
+                                particle_types = uniqueChar)
 
-# Get position for subject particle
-xSub = ((nCol * lat) - hor) + 1.
-ySub = yBox / 2.0
+# Get position/id/char for subject particle
+xSub = -(xBox/2.) + 5.
+ySub = 0.
 subject = [xSub, ySub, 0.5]
 pos.append(subject)
-
-# You have to shift the positions
-xShift = xBox / 2.0
-yShift = yBox / 2.0
-for i in xrange(len(pos)):
-    pos[i][0] -= xShift
-    pos[i][1] -= yShift
+id.append(uniqueID[-1])
+chars.append(uniqueChar[-1])
 
 # Set positions/types for all particles
 snap.particles.position[:] = pos[:]
-snap.particles.typeid[:] = 0
-snap.particles.types[:] = 'A'
-snap.particles.typeid[-1] = 1
-snap.particles.types[-1] = 'B'
+snap.particles.typeid[:] = id[:]
+snap.particles.types[:] = chars[:]
 
 # Initialize the system
 system = hoomd.init.read_snapshot(snap)
 all = hoomd.group.all()
-hcp = hoomd.group.type(type='A')
-active = hoomd.group.type(type='B')
+active = hoomd.group.type(type=uniqueChar[-1])
 
 # Set particle potentials
 nl = hoomd.md.nlist.cell()
 lj = hoomd.md.pair.lj(r_cut=2**(1/6), nlist=nl)
 lj.set_params(mode='shift')
-lj.pair_coeff.set('A', 'A', epsilon=eps, sigma=sigma)
-lj.pair_coeff.set('A', 'B', epsilon=eps, sigma=sigma)
-lj.pair_coeff.set('B', 'B', epsilon=eps, sigma=sigma)
+for i in xrange(len(uniqueChar)):
+    for j in range(i, len(uniqueChar)):
+        lj.pair_coeff.set(uniqueChar[i],
+                          uniqueChar[j],
+                          epsilon=eps, sigma=sigma)
 
-# Add a wall potential that acts on the HCP particles
-wallShift = 5.0 * lat
-wallShift = 0.0
-xyzLWall = (((xBox + per) / -2.0), 0, 0)
-xyzRWall = ((nCol * lat) - xShift + wallShift, 0, 0)
-leftWall = hoomd.md.wall.group(hoomd.md.wall.plane(origin=xyzLWall,
-                                                   normal=(1,0,0),
-                                                   inside=True))
-rightWall = hoomd.md.wall.group(hoomd.md.wall.plane(origin=xyzRWall,
-                                                    normal=(1,0,0),
-                                                    inside=False))
-leftLJWall = hoomd.md.wall.slj(leftWall, r_cut=1.112)
-rightLJWall = hoomd.md.wall.slj(rightWall, r_cut=1.112)
-leftLJWall.force_coeff.set('A', epsilon=10.0, sigma=1.0)
-leftLJWall.force_coeff.set('B', epsilon=0.0, sigma=1.0)
-rightLJWall.force_coeff.set('A', epsilon=10.0, sigma=1.0)
-rightLJWall.force_coeff.set('B', epsilon=0.0, sigma=1.0)
+# Add wall potentials that maintain density gradient
+walls = []
+wallPots = []
+for i in xrange(len(wallx)):
+    if i != (len(wallx) - 1):
+        walls.append(hoomd.md.wall.group(hoomd.md.wall.plane(origin=(wallx[i], 0, 0),
+                                                             normal=(1,0,0),
+                                                             inside=True)))
+    else:
+        walls.append(hoomd.md.wall.group(hoomd.md.wall.plane(origin=(wallx[i], 0, 0),
+                                                             normal=(1,0,0),
+                                                             inside=False)))
+    wallPots.append(hoomd.md.wall.slj(walls[i], r_cut=(2**(1./6.)) ))
+    for j in xrange(len(uniqueChar)):
+        # Each wall will only interact with one particle type
+        if i == j:
+            wallPots[i].force_coeff.set(uniqueChar[j], epsilon=10.0, sigma=1.0)
+        # Other interactions are set to zero
+        else:
+            wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
 
 # Active motion initially oriented towards the HCP phase
 activity = []
-tuple = (-swimForce, 0, 0)
+tuple = (swimForce, 0, 0)
 activity.append(tuple)
 hoomd.md.force.active(group=active,
                       seed=seed2,
@@ -228,15 +244,22 @@ hoomd.md.force.active(group=active,
 hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
-out = "active_pe" + str(swimForce) + "_lattice" + str(lat) + ".gsd"
+out = "gradient_density_pe" + str(swimForce) + ".gsd"
 
 #write dump
+#hoomd.dump.gsd(out,
+#               period=dumpFreq,
+#               group=all,
+#               overwrite=True,
+#               phase=-1,
+#               dynamic=['attribute', 'property', 'momentum'])
+               
 hoomd.dump.gsd(out,
-               period=dumpFreq,
+               period=1000,
                group=all,
                overwrite=True,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
 #run
-hoomd.run(totTsteps)
+hoomd.run(100000)
