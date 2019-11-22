@@ -151,22 +151,22 @@ for i in pos:
 for i in xrange(len(wallx)):
     wallx[i] -= ((xBox + (2. * xmin)) / 2.)
     wallx[i] -= 0.5
-wallx.append((xBox / 2.))
+wallx.append((xBox / 2.) + 0.5)
     
-#print(len(wallx))
-## Plotting script to check box adjustment
-#xyz = zip(*pos)
-#x = list(xyz[0])
-#y = list(xyz[1])
-#z = list(xyz[2])
-#plt.scatter(x, y, c=id, s=5)
-#for i in wallx:
-#    plt.axvline(x=i)
-#plt.xlim(-(xBox/2.), (xBox/2.))
-#plt.ylim(-(yBox/2.), (yBox/2.))
-#ax = plt.gca()
-#ax.set_aspect('equal')
-#plt.show()
+print(len(wallx))
+# Plotting script to check box adjustment
+xyz = zip(*pos)
+x = list(xyz[0])
+y = list(xyz[1])
+z = list(xyz[2])
+plt.scatter(x, y, c=id, s=5)
+for i in wallx:
+    plt.axvline(x=i)
+plt.xlim(-(xBox/2.) - 5, (xBox/2.) + 5)
+plt.ylim(-(yBox/2.) - 5, (yBox/2.) + 5)
+ax = plt.gca()
+ax.set_aspect('equal')
+plt.show()
 
 nHex = len(pos)     # number of lattice particles
 partNum = nHex + 1  # particle we are testing
@@ -222,12 +222,21 @@ for i in xrange(len(wallx)):
                                                              inside=False)))
     wallPots.append(hoomd.md.wall.slj(walls[i], r_cut=(2**(1./6.)) ))
     for j in xrange(len(uniqueChar)):
-        # Each wall will only interact with one particle type
-        if i == j:
+        print("")
+        print("")
+        print(uniqueChar[j])
+        print("")
+        print("")
+        # Final wall needs to bound the particles on the right
+        if  i == (len(wallx) - 1) and j == (len(uniqueChar) - 2):
             wallPots[i].force_coeff.set(uniqueChar[j], epsilon=10.0, sigma=1.0)
-        # Other interactions are set to zero
         else:
-            wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
+            # Each wall will only interact with one particle type (not the active particle)
+            if i == j and j != (len(uniqueChar) - 1):
+                wallPots[i].force_coeff.set(uniqueChar[j], epsilon=10.0, sigma=1.0)
+            # Other interactions are set to zero
+            else:
+                wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
 
 # Active motion initially oriented towards the HCP phase
 activity = []
