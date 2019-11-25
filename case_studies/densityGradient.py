@@ -145,28 +145,29 @@ for i in id:
 
 xBox = xmax - xmin
 yBox = ymax - ymin
+relax = 0.5
 for i in pos:
     i[0] -= ((xBox + (2. * xmin)) / 2.)
     i[1] -= (yBox / 2.)
 for i in xrange(len(wallx)):
     wallx[i] -= ((xBox + (2. * xmin)) / 2.)
-    wallx[i] -= 0.5
-wallx.append((xBox / 2.) + 0.5)
+    wallx[i] -= 0.1
+wallx.append((xBox / 2.) + (relax / 2.))
     
-print(len(wallx))
-# Plotting script to check box adjustment
-xyz = zip(*pos)
-x = list(xyz[0])
-y = list(xyz[1])
-z = list(xyz[2])
-plt.scatter(x, y, c=id, s=5)
-for i in wallx:
-    plt.axvline(x=i)
-plt.xlim(-(xBox/2.) - 5, (xBox/2.) + 5)
-plt.ylim(-(yBox/2.) - 5, (yBox/2.) + 5)
-ax = plt.gca()
-ax.set_aspect('equal')
-plt.show()
+#print(len(wallx))
+## Plotting script to check box adjustment
+#xyz = zip(*pos)
+#x = list(xyz[0])
+#y = list(xyz[1])
+#z = list(xyz[2])
+#plt.scatter(x, y, c=id, s=5)
+#for i in wallx:
+#    plt.axvline(x=i)
+#plt.xlim(-(xBox/2.) - 5, (xBox/2.) + 5)
+#plt.ylim(-(yBox/2.) - 5, (yBox/2.) + 5)
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#plt.show()
 
 nHex = len(pos)     # number of lattice particles
 partNum = nHex + 1  # particle we are testing
@@ -175,8 +176,8 @@ partNum = nHex + 1  # particle we are testing
 hoomd.context.initialize()
 # A small shift to help with the periodic box
 snap = hoomd.data.make_snapshot(N = partNum,
-                                box = hoomd.data.boxdim(Lx=xBox + 1.,
-                                                        Ly=yBox + 1.,
+                                box = hoomd.data.boxdim(Lx=xBox + relax,
+                                                        Ly=yBox + relax,
                                                         dimensions=2),
                                 particle_types = uniqueChar)
 
