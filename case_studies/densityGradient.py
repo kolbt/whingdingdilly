@@ -22,7 +22,7 @@ from hoomd import deprecated
 from hoomd import data
 import numpy as np
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 # Set some constants
 kT = 1.0                        # temperature
@@ -41,8 +41,9 @@ def computeTauLJ(epsilon):
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
-dumpPerBrownian = 30.                   # number of dumps per 1 tauB
-simLength = 20. * tauBrown              # how long to run (in tauBrown)
+# Must be multiple of 3 (to account for tau_r)
+dumpPerBrownian = 12.                   # number of dumps per 1 tauB
+simLength = 50. * tauBrown              # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency
@@ -53,9 +54,9 @@ seed2= 2394                             # activity seed
 # Parameters I'll need for this
 densities = [1., 0.98, 0.96, 0.94, 0.92, 0.90]
 # Thickness/height is in number of particles
-thickness = 10.
-height = 50
-swimForce = 500.
+thickness = 20.
+height = 100
+swimForce = ${swimCount}
 
 def vertShift(lat):
     '''This will change depending on the density of the layer'''
@@ -223,11 +224,6 @@ for i in xrange(len(wallx)):
                                                              inside=False)))
     wallPots.append(hoomd.md.wall.slj(walls[i], r_cut=(2**(1./6.)) ))
     for j in xrange(len(uniqueChar)):
-        print("")
-        print("")
-        print(uniqueChar[j])
-        print("")
-        print("")
         # Final wall needs to bound the particles on the right
         if  i == (len(wallx) - 1) and j == (len(uniqueChar) - 2):
             wallPots[i].force_coeff.set(uniqueChar[j], epsilon=10.0, sigma=1.0)
@@ -256,20 +252,13 @@ bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
 out = "gradient_density_pe" + str(swimForce) + ".gsd"
 
-#write dump
-#hoomd.dump.gsd(out,
-#               period=dumpFreq,
-#               group=all,
-#               overwrite=True,
-#               phase=-1,
-#               dynamic=['attribute', 'property', 'momentum'])
-               
+# Write output
 hoomd.dump.gsd(out,
-               period=1000,
+               period=dumpFreq,
                group=all,
                overwrite=True,
                phase=-1,
                dynamic=['attribute', 'property', 'momentum'])
 
-#run
-hoomd.run(100000)
+# Run
+hoomd.run(totTsteps)
