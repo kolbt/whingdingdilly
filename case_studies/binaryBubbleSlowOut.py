@@ -68,7 +68,10 @@ def computeLat(activity):
     "Get lattice spacing based on effective diameter"
     m = -0.0957707250171
     b = 0.306774161185
-    lattice = (activity**m) * (np.exp(b))
+    if activity > 0:
+        lattice = (activity**m) * (np.exp(b))
+    else:
+        lattice = 1.
     return lattice
     
 lats = computeLat(pes)
@@ -126,7 +129,7 @@ for i in xrange(len(peList)):
     while y < rMax:
         r = computeDistance(x, y)
         # Check if x-position is large enough
-        if r < rMin:
+        if r < (rMin + (lat / 2.)):
             x += lat
             continue
             
@@ -181,7 +184,7 @@ areaParts = N * np.pi * (0.25)
 abox = (areaParts / 0.6)
 lbox = np.sqrt(abox)
 hbox = lbox / 2.
-tooClose = 0.8
+tooClose = 1.
 
 # Make a mesh for random particle placement
 def getNBins(length, minSz=(2**(1./6.))):
@@ -344,6 +347,12 @@ for i in xrange(len(unique_char_types)):
                           unique_char_types[j],
                           epsilon=eps, sigma=sigma)
 
+# Brownian integration
+brownEquil = 10000
+hoomd.md.integrate.mode_standard(dt=dt)
+bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
+hoomd.run(brownEquil)
+
 # Set activity of each group
 np.random.seed(seed2)                           # seed for random orientations
 angle = np.random.rand(partNum) * 2 * np.pi     # random particle orientation
@@ -364,10 +373,6 @@ hoomd.md.force.active(group=all,
                       rotation_diff=D_r,
                       orientation_link=False,
                       orientation_reverse_link=True)
-
-# Brownian integration
-hoomd.md.integrate.mode_standard(dt=dt)
-bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
 # Name the file from parameters
 out = "outside_slow_pe"

@@ -15,7 +15,8 @@ if [ $answer == "y" ]; then
     submit='sbatch'
 else
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/case_studies/densityGradient.py'
+    slowOut='/Users/kolbt/Desktop/compiled/whingdingdilly/case_studies/binaryBubbleSlowOut.py'
+    fastOut='/Users/kolbt/Desktop/compiled/whingdingdilly/case_studies/binaryBubbleFastOut.py'
     sedtype='gsed'
     submit='sh'
 fi
