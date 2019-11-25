@@ -69,7 +69,7 @@ do
 
     infile=density_gradient_pe${swimCount}.py                   # set unique infile name
     #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-    $sedtype -i 's/\${swimCount}/'"${swimCount}"'/g' $infile    # write time in tau to infile
+    $sedtype -e 's/\${swimCount}/'"${swimCount}"'/g' $template > $infile    # write time in tau to infile
 
     $submit $script_path $infile
 

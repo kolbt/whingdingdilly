@@ -42,8 +42,8 @@ def computeTauLJ(epsilon):
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
-dumpPerBrownian = 500.                  # number of dumps per 1 tauB
-simLength = 1.0 * tauBrown              # how long to run (in tauBrown)
+dumpPerBrownian = 12.                  # number of dumps per 1 tauB
+simLength = 50.0 * tauBrown              # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency
@@ -57,9 +57,10 @@ N = 100000.                 # number of particles
 xF = 0.5                    # fraction of each type
 Ns = N * (1. - xF)          # number of slow particles
 Nf = N - Ns                 # number of fast particles
-pes = 50                    # slow activity
-pef = 500                   # fast activity
-phig = 0.04                 # area fraction of gas phase (penet dependent)
+pes = ${slowAct}            # slow activity
+pef = ${fastAct}            # fast activity
+phig = ${phiG}              # area fraction of gas phase
+phig /= 100.
 phitot = 0.6                # total area fraciton
 Ng = (phig / phitot) * N    # number of gas particles
 

@@ -57,9 +57,10 @@ N = 100000.                 # number of particles
 xF = 0.5                    # fraction of each type
 Ns = N * (1. - xF)          # number of slow particles
 Nf = N - Ns                 # number of fast particles
-pes = 50                    # slow activity
-pef = 500                   # fast activity
-phig = 0.04                 # area fraction of gas phase
+pes = ${slowAct}            # slow activity
+pef = ${fastAct}            # fast activity
+phig = ${phiG}              # area fraction of gas phase
+phig /= 100.
 phitot = 0.6                # total area fraciton
 Ng = (phig / phitot) * N    # number of gas particles
 
