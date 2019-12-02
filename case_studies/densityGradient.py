@@ -49,7 +49,7 @@ numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency
 dumpFreq = int(dumpFreq)                # ensure this is an integer
 seed = 71996                            # a random seed
-seed2= 2394                             # activity seed
+seed2= ${inSeed}                        # activity seed
 
 # Parameters I'll need for this
 densities = [1., 0.98, 0.96, 0.94, 0.92, 0.90]

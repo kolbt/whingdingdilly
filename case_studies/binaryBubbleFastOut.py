@@ -42,8 +42,8 @@ def computeTauLJ(epsilon):
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
-dumpPerBrownian = 12.                  # number of dumps per 1 tauB
-simLength = 50.0 * tauBrown              # how long to run (in tauBrown)
+dumpPerBrownian = 12.                   # number of dumps per 1 tauB
+simLength = 200.0 * tauBrown            # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency

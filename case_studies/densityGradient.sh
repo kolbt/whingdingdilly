@@ -61,18 +61,33 @@ done
 mkdir ${current}_parent
 cd ${current}_parent
 
-# Reset swim force counter
-swimCount=$(( $swimStart ))
+# This is a simple way to get different seeds
+seeds=(2937 1949 1929 719 3784)
+# Initialize count to 0
+count=$(( 0 ))
 
-while [ $swimCount -le $swimMax ]
+for i in ${seeds[@]}
 do
+    # Run at next seed
+    inSeed=${seeds[${count}]}
+    # Reset swim force counter
+    swimCount=$(( $swimStart ))
 
-    infile=density_gradient_pe${swimCount}.py                   # set unique infile name
-    #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-    $sedtype -e 's/\${swimCount}/'"${swimCount}"'/g' $template > $infile    # write time in tau to infile
+    while [ $swimCount -le $swimMax ]
+    do
 
-    $submit $script_path $infile
+        infile=density_gradient_pe${swimCount}_seed${inSeed}.py                   # set unique infile name
+        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+        $sedtype -e 's/\${swimCount}/'"${swimCount}"'/g' $template > $infile    # write time in tau to infile
+        $sedtype -i 's/\${inSeed}/'"${inSeed}"'/g' $infile
 
-    swimCount=$(( $swimCount + $swimSpace ))
+        $submit $script_path $infile
 
+        swimCount=$(( $swimCount + $swimSpace ))
+
+    done
+    
+    # Increment counter
+    count=$(( $count + 1 ))
+    
 done
