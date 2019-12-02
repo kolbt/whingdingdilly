@@ -43,7 +43,7 @@ tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.000001 * tauLJ                   # timestep
 # Must be multiple of 3 (to account for tau_r)
 dumpPerBrownian = 12.                   # number of dumps per 1 tauB
-simLength = 50. * tauBrown              # how long to run (in tauBrown)
+simLength = 100. * tauBrown             # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped
 dumpFreq = totTsteps / numDumps         # normalized dump frequency
