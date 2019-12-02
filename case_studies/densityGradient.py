@@ -198,7 +198,8 @@ snap.particles.types[:] = chars[:]
 # Initialize the system
 system = hoomd.init.read_snapshot(snap)
 all = hoomd.group.all()
-active = hoomd.group.type(type=uniqueChar[-1])
+active = hoomd.group.type(name='active', type=uniqueChar[-1])
+nonActive = hoomd.group.difference(name="nonActive", a=all, b=active)
 
 # Set particle potentials
 nl = hoomd.md.nlist.cell()
@@ -238,7 +239,7 @@ for i in xrange(len(wallx)):
 # Brownian integration
 brownEquil = 10000
 hoomd.md.integrate.mode_standard(dt=dt)
-bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
+bd = hoomd.md.integrate.brownian(group=nonActive, kT=kT, seed=seed)
 hoomd.run(brownEquil)
 
 # Active motion initially oriented towards the HCP phase
