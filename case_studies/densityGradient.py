@@ -77,7 +77,7 @@ for i in densities:
     horz = horzShift(i)
     # Shift particles over according to previous lattices
     if i != densities[0]:
-        lshift += ((thickness + 1.5) * i)
+        lshift += ((thickness * i) + 1.5)
     wallx.append(lshift - 0.1)
     # Reset y layer
     ny = 0
@@ -237,10 +237,11 @@ for i in xrange(len(wallx)):
                 wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
 
 # Brownian integration
-brownEquil = 10000
+brownEquil = 100000
 hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=nonActive, kT=kT, seed=seed)
 hoomd.run(brownEquil)
+bd.disable()
 
 # Active motion initially oriented towards the HCP phase
 activity = []
@@ -252,6 +253,8 @@ hoomd.md.force.active(group=active,
                       rotation_diff=D_r,
                       orientation_link=False,
                       orientation_reverse_link=True)
+                      
+bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
 out = "gradient_density_pe" + str(swimForce) + ".gsd"
 
