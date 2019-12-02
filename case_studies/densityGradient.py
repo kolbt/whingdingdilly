@@ -237,7 +237,7 @@ for i in xrange(len(wallx)):
                 wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
 
 # Brownian integration
-brownEquil = 100000
+brownEquil = 500000
 hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=nonActive, kT=kT, seed=seed)
 hoomd.run(brownEquil)

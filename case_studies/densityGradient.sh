@@ -22,7 +22,7 @@ fi
 # Ballistic particle force
 swimStart=$(( 50 ))
 swimCount=$(( 50 ))
-swimSpace=$(( 10 ))
+swimSpace=$(( 50 ))
 swimMax=$(( 500 ))
 
 # This script is for the specific types of jobs (one row or column of a plane)
