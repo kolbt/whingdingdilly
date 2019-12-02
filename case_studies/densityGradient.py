@@ -235,6 +235,12 @@ for i in xrange(len(wallx)):
             else:
                 wallPots[i].force_coeff.set(uniqueChar[j], epsilon=0.0, sigma=1.0)
 
+# Brownian integration
+brownEquil = 10000
+hoomd.md.integrate.mode_standard(dt=dt)
+bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
+hoomd.run(brownEquil)
+
 # Active motion initially oriented towards the HCP phase
 activity = []
 tuple = (swimForce, 0, 0)
@@ -245,10 +251,6 @@ hoomd.md.force.active(group=active,
                       rotation_diff=D_r,
                       orientation_link=False,
                       orientation_reverse_link=True)
-
-# brownian integration
-hoomd.md.integrate.mode_standard(dt=dt)
-bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
 
 out = "gradient_density_pe" + str(swimForce) + ".gsd"
 
