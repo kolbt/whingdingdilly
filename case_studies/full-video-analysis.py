@@ -114,9 +114,9 @@ def quatToAngle(quat):
 inFile = str(sys.argv[1])
 f = hoomd.open(name=inFile, mode='rb')
 
-# I NEED TO GRAB THE ACTIVITES AND POSITION FROM THE FILENAME
-peIn = 150.
-peOut = 500.
+# Inside and outside activity from command line
+peIn = float(sys.argv[2])
+peOut = float(sys.argv[3])
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
@@ -429,6 +429,6 @@ with hoomd.open(name=inFile, mode='rb') as t:
         
         # Save the file
         pad = str(j).zfill(4)
-        plt.savefig('peIn' + str(peIn) + '_peOut' + str(peOut) + '_fm' + str(pad) + '.jpg', dpi=1000,
+        plt.savefig('peIn' + str(int(peIn)) + '_peOut' + str(int(peOut)) + '_fm' + str(pad) + '.jpg', dpi=1000,
                     bbox_inches='tight', pad_inches=0.05)
         plt.close()
