@@ -431,3 +431,4 @@ with hoomd.open(name=inFile, mode='rb') as t:
         pad = str(j).zfill(4)
         plt.savefig('peIn' + str(peIn) + '_peOut' + str(peOut) + '_fm' + str(pad) + '.jpg', dpi=1000,
                     bbox_inches='tight', pad_inches=0.05)
+        plt.close()
