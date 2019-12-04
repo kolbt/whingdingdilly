@@ -40,13 +40,14 @@ import random
 from scipy import stats
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.collections
 from matplotlib import colors
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.gridspec as gridspec
+import matplotlib.patches as patches
 plt.rcParams.update({'font.size': 4})
+plt.rcParams['axes.linewidth'] = 0.5
 plt.rcParams["xtick.major.size"] = 1
 plt.rcParams["xtick.major.width"] = 0.5
 plt.rcParams["xtick.minor.size"] = 1
@@ -130,12 +131,26 @@ tauPerDT = computeTauPerTstep(epsilon=1.)   # brownian time per timestep
 myCols = plt.cm.viridis
 fast = '#d8b365'
 slow = '#5ab4ac'
-colorsList = [fast, slow]
+if peIn > peOut:
+    colorsList = [fast, slow]
+else:
+    colorsList = [slow, fast]
 my_cmap = colors.ListedColormap(colorsList)
 trackList = ['#D3D3D3']
 
-myShrink = 0.65                             # shrink the colorbars
-padCbar = 5
+myShrink = 0.6  # shrink the colorbars
+padCbar = 0.02
+padCbarLabel = 5
+
+# Make a list for orientation arrow colorbar
+xPos = 1.13
+dx = [0., -0.05, -0.05, -0.05, 0, 0.05, 0.05, 0.05, 0]
+dy = [0.05, 0.05, 0, -0.05, -0.05, -0.05, 0, 0.05, 0.05]
+for i in xrange(len(dx)):
+    dx[i] = dx[i] / 2.
+    dy[i] = dy[i] / 2.
+xA = [xPos, xPos, xPos, xPos, xPos, xPos, xPos, xPos, xPos]
+yA = [0., 1./8., 2./8., 3./8., 0.5, 5./8., 6./8., 7./8., 1.0]
 
 # Access and read .gsd data
 with hoomd.open(name=inFile, mode='rb') as t:
@@ -156,7 +171,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
     # Get 5 random particles to track
     track = []
     for j in xrange(5):
-        track.append(random.randint(0, partNum - 1))
+#        track.append(random.randint(0, partNum - 1))
+        track.append(int(j * (partNum / 5.)))
         col = plt.cm.jet(track[-1]/float(partNum))
         rgb = col[:3]
         trackList.append(colors.rgb2hex(rgb))
@@ -168,14 +184,18 @@ with hoomd.open(name=inFile, mode='rb') as t:
     # Check to see the size of the bin in use
     print("Length of box: {}").format(x_box)
     print("{} bins of size {}").format(nBins, sizeBin)
+    # Larger mesh for active force bin
+    actBins = (getNBins(x_box, 5.))
+    sizeActBin = roundUp((x_box / actBins), 6)
+    print("{} active bins of size {}").format(actBins, sizeActBin)
 
     for j in range(start, end):
         # Set the system snapshot
         snap = t[j]
         # Instantiate empty system mesh
         binParts = [[[] for b in range(nBins)] for a in range(nBins)]
-        binForce = np.zeros((nBins, nBins, 2), dtype=np.float64)
-        binFMag = np.zeros((nBins, nBins), dtype=np.float64)
+        binForce = np.zeros((actBins, actBins, 2), dtype=np.float64)
+        binFMag = np.zeros((actBins, actBins), dtype=np.float64)
 
         # Easier accessors
         pos = snap.particles.position               # position
@@ -202,12 +222,14 @@ with hoomd.open(name=inFile, mode='rb') as t:
             binParts[x_ind][y_ind].append(k)
             # Compute binned active force (INSIDE IS ALWAYS TYPE 0)
             vec = quatToVector(ori[k], typ[k], peIn, peOut)
+            x_ind = int(tmp_posX / sizeActBin)
+            y_ind = int(tmp_posY / sizeActBin)
             binForce[x_ind][y_ind][0] += vec[0]
             binForce[x_ind][y_ind][1] += vec[1]
         
         # Get the magnitude of the directional binned active force
-        for k in range(0, nBins):
-            for l in range(0, nBins):
+        for k in range(0, actBins):
+            for l in range(0, actBins):
                 binFMag[k][l] = getMagnitude(binForce[k][l])
             
 
@@ -265,140 +287,10 @@ with hoomd.open(name=inFile, mode='rb') as t:
                         if 0.1 < r < (r_cut * effSigma[k]):
                             nearNeigh[k] += 1
 
-
-#        fig, ax = plt.subplots(2, 3)
-#        # Plot the original (ax[0, 0])
-#        coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
-#                                                        np.zeros_like(effSigma),
-#                                                        offsets=xy, units='xy',
-#                                                        cmap=my_cmap,
-#                                                        transOffset=ax[0, 0].transData)
-#        coll.set_array(np.ravel(typ))
-#        ax[0, 0].add_collection(coll)
-#        ax[0, 0].set_xlim(-h_box, h_box)
-#        ax[0, 0].set_ylim(-h_box, h_box)
-#        ax[0, 0].set_aspect('equal')
-#        ax[0, 0].tick_params(axis='both', which='both',
-#                             bottom=False, top=False, left=False, right=False,
-#                             labelbottom=False, labeltop=False, labelleft=False,
-#                             labelright=False)
-#
-#        # Plot the orientation (ax[0, 1])
-#        coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
-#                                                        np.zeros_like(effSigma),
-#                                                        offsets=xy, units='xy',
-#                                                        cmap=plt.cm.hsv,
-#                                                        transOffset=ax[0, 1].transData)
-#        coll.set_array(np.ravel(ang))
-#        cMin = min(ang)
-#        cMax = max(ang)
-#        coll.set_clim([cMin, cMax])
-#        ax[0, 1].add_collection(coll)
-#
-##        divider = make_axes_locatable(ax[0, 1])
-##        cax = divider.append_axes("right", "5%", pad="3%")
-##        plt.colorbar(coll, cax=cax)
-#
-#        cbar = fig.colorbar(coll, ax=[ax[0, 1]], shrink=myShrink)
-#        cbar.set_label(r'Orientation', labelpad=padCbar, rotation=270)
-#        ax[0, 1].set_xlim(-h_box, h_box)
-#        ax[0, 1].set_ylim(-h_box, h_box)
-#        ax[0, 1].set_aspect('equal')
-#        ax[0, 1].tick_params(axis='both', which='both',
-#                             bottom=False, top=False, left=False, right=False,
-#                             labelbottom=False, labeltop=False, labelleft=False,
-#                             labelright=False)
-#
-#        # Plot the imshow magnitude of the binned active force (ax[0, 2])
-#        coll = ax[0, 2].imshow(binFMag.T,
-#                               extent=(0,nBins,0,nBins),
-#                               origin='lower')
-##        coll.set_clim([minCol, 6])
-#        cbar = fig.colorbar(coll, ax=[ax[0, 2]], shrink=myShrink)
-#        cbar.set_label(r'Binned Active Force', labelpad=padCbar, rotation=270)
-#        ax[0, 2].set_xticks(())
-#        ax[0, 2].set_yticks(())
-#        ax[0, 2].set_aspect('equal')
-#
-#        # Plot the individual particle data (ax[1, 0])
-#        coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
-#                                                        np.zeros_like(effSigma),
-#                                                        offsets=xy, units='xy',
-#                                                        cmap=track_cmap,
-#                                                        transOffset=ax[1, 0].transData)
-#        count = 1
-#        trackCols = []
-#        for k in xrange(partNum):
-#            if k in track:
-#                trackCols.append(count)
-#                count += 1
-#            else:
-#                trackCols.append(0)
-#        coll.set_array(np.ravel(trackCols))
-#        ax[1, 0].add_collection(coll)
-#        ax[1, 0].set_xlim(-h_box, h_box)
-#        ax[1, 0].set_ylim(-h_box, h_box)
-#        ax[1, 0].set_aspect('equal')
-#        ax[1, 0].tick_params(axis='both', which='both',
-#                             bottom=False, top=False, left=False, right=False,
-#                             labelbottom=False, labeltop=False, labelleft=False,
-#                             labelright=False)
-#        count = 1
-#        for k in track:
-#            ax[1, 0].scatter(pos[k][0], pos[k][1], c=trackList[count])
-#            count += 1
-#
-#        # Plot the radii heatmap (ax[1, 1])
-#        coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
-#                                                        np.zeros_like(effSigma),
-#                                                        offsets=xy, units='xy',
-#                                                        cmap=myCols,
-#                                                        transOffset=ax[1, 1].transData)
-#        coll.set_array(np.ravel(effSigma))
-#        minCol = min(effSigma)
-#        coll.set_clim([minCol, 1.])
-#        ax[1, 1].add_collection(coll)
-#        cbar = fig.colorbar(coll, ax=[ax[1, 1]], shrink=myShrink, pad=1.)
-#        cbar.set_label(r'Effective Diameter', labelpad=padCbar, rotation=270)
-#        ax[1, 1].set_xlim(-h_box, h_box)
-#        ax[1, 1].set_ylim(-h_box, h_box)
-#        ax[1, 1].set_aspect('equal')
-#        ax[1, 1].tick_params(axis='both', which='both',
-#                             bottom=False, top=False, left=False, right=False,
-#                             labelbottom=False, labeltop=False, labelleft=False,
-#                             labelright=False)
-#
-#        # Plot the nearest neighbor heatmap (ax[1, 2])
-#        coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
-#                                                        np.zeros_like(effSigma),
-#                                                        offsets=xy, units='xy',
-#                                                        cmap=myCols,
-#                                                        transOffset=ax[1, 2].transData)
-#        coll.set_array(np.ravel(nearNeigh))
-#        minCol = min(nearNeigh)
-#        coll.set_clim([minCol, 6])
-#        ax[1, 2].add_collection(coll)
-#        cbar = fig.colorbar(coll, ax=[ax[1, 2]], shrink=myShrink, pad=1.)
-#        cbar.set_label(r'Nearest neighbors', labelpad=padCbar, rotation=270)
-#        ax[1, 2].set_xlim(-h_box, h_box)
-#        ax[1, 2].set_ylim(-h_box, h_box)
-#        ax[1, 2].set_aspect('equal')
-#        ax[1, 2].tick_params(axis='both', which='both',
-#                             bottom=False, top=False, left=False, right=False,
-#                             labelbottom=False, labeltop=False, labelleft=False,
-#                             labelright=False)
-#
-#        # Save the file
-#        pad = str(j).zfill(4)
-#        fig.tight_layout()
-##        plt.subplots_adjust(wspace=0.1, hspace=0.1)
-#        plt.savefig('my_test_frame' + str(pad) + '.jpg', dpi=1000)
-
-
-
         # Try to plot with gridspec
         fig = plt.figure()
-        gs = gridspec.Gridspec(2, 5)
+        widths = [1, 1.205, 1.205]
+        gs = gridspec.GridSpec(2, 3, figure=fig, width_ratios=widths, wspace=0.1, hspace=-0.35)
         
 
         # Plot the original (ax[0, 0])
@@ -417,6 +309,13 @@ with hoomd.open(name=inFile, mode='rb') as t:
                              bottom=False, top=False, left=False, right=False,
                              labelbottom=False, labeltop=False, labelleft=False,
                              labelright=False)
+        # Plot a legend for particle type
+        ax0.add_patch(patches.Rectangle(xy=(1.02, 0.94), width=0.05, height=0.05, transform=ax0.transAxes, color=fast, clip_on=False))
+        ax0.add_patch(patches.Rectangle(xy=(1.02, 0.7), width=0.05, height=0.05, transform=ax0.transAxes, color=slow, clip_on=False))
+        # Add text for these squares
+        ax0.text(1.02, 0.89, "= fast", transform=ax0.transAxes, rotation=270, fontsize=4)
+        ax0.text(1.02, 0.65, "= slow", transform=ax0.transAxes, rotation=270, fontsize=4)
+        
         
         # Plot the orientation (ax[0, 1])
         ax1 = fig.add_subplot(gs[0, 1])
@@ -431,9 +330,9 @@ with hoomd.open(name=inFile, mode='rb') as t:
         coll.set_clim([cMin, cMax])
         ax1.add_collection(coll)
         # Set up the colorbar axis for orientation
-        c1 = fig.add_subplot(gs[0, 2])
-        cbar = plt.colorbar(coll, ax=c1, shrink=myShrink)
-        cbar.set_label(r'Orientation', labelpad=padCbar, rotation=270)
+        cbar = fig.colorbar(coll, ax=ax1, shrink=myShrink, pad=padCbar)
+#        cbar.set_label(r'Orientation', labelpad=padCbarLabel, rotation=270)
+        cbar.set_ticks([])
         ax1.set_xlim(-h_box, h_box)
         ax1.set_ylim(-h_box, h_box)
         ax1.set_aspect('equal')
@@ -441,24 +340,30 @@ with hoomd.open(name=inFile, mode='rb') as t:
                              bottom=False, top=False, left=False, right=False,
                              labelbottom=False, labeltop=False, labelleft=False,
                              labelright=False)
+        # Add arrows for colorbar
+        for k in xrange(len(dx)):
+            ax1.arrow(x=xA[k] - (dx[k]), y=yA[k] - (dy[k]/2.), dx=dx[k], dy=dy[k], head_length=0.025,
+                      width=0.01, transform=ax1.transAxes, clip_on=False, color=plt.cm.hsv(float(k)/8.))
         
         # Plot the imshow magnitude of the binned active force (ax[0, 2])
-        coll = ax[0, 2].imshow(binFMag.T,
-                               extent=(0,nBins,0,nBins),
-                               origin='lower')
+        ax2 = fig.add_subplot(gs[0, 2])
+        coll = ax2.imshow(binFMag.T,
+                          extent=(0,nBins,0,nBins),
+                          origin='lower')
 #        coll.set_clim([minCol, 6])
-        cbar = fig.colorbar(coll, ax=[ax[0, 2]], shrink=myShrink)
-        cbar.set_label(r'Binned Active Force', labelpad=padCbar, rotation=270)
-        ax[0, 2].set_xticks(())
-        ax[0, 2].set_yticks(())
-        ax[0, 2].set_aspect('equal')
+        cbar = fig.colorbar(coll, ax=ax2, shrink=myShrink, pad=padCbar)
+        cbar.set_label(r'Binned Active Force', labelpad=padCbarLabel, rotation=270)
+        ax2.set_xticks(())
+        ax2.set_yticks(())
+        ax2.set_aspect('equal')
 
         # Plot the individual particle data (ax[1, 0])
+        ax3 = fig.add_subplot(gs[1, 0])
         coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
                                                         np.zeros_like(effSigma),
                                                         offsets=xy, units='xy',
                                                         cmap=track_cmap,
-                                                        transOffset=ax[1, 0].transData)
+                                                        transOffset=ax3.transData)
         count = 1
         trackCols = []
         for k in xrange(partNum):
@@ -468,61 +373,62 @@ with hoomd.open(name=inFile, mode='rb') as t:
             else:
                 trackCols.append(0)
         coll.set_array(np.ravel(trackCols))
-        ax[1, 0].add_collection(coll)
-        ax[1, 0].set_xlim(-h_box, h_box)
-        ax[1, 0].set_ylim(-h_box, h_box)
-        ax[1, 0].set_aspect('equal')
-        ax[1, 0].tick_params(axis='both', which='both',
+        ax3.add_collection(coll)
+        ax3.set_xlim(-h_box, h_box)
+        ax3.set_ylim(-h_box, h_box)
+        ax3.set_aspect('equal')
+        ax3.tick_params(axis='both', which='both',
                              bottom=False, top=False, left=False, right=False,
                              labelbottom=False, labeltop=False, labelleft=False,
                              labelright=False)
         count = 1
         for k in track:
-            ax[1, 0].scatter(pos[k][0], pos[k][1], c=trackList[count])
+            ax3.scatter(pos[k][0], pos[k][1], c=trackList[count])
             count += 1
         
         # Plot the radii heatmap (ax[1, 1])
+        ax4 = fig.add_subplot(gs[1, 1])
         coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
                                                         np.zeros_like(effSigma),
                                                         offsets=xy, units='xy',
                                                         cmap=myCols,
-                                                        transOffset=ax[1, 1].transData)
+                                                        transOffset=ax4.transData)
         coll.set_array(np.ravel(effSigma))
         minCol = min(effSigma)
         coll.set_clim([minCol, 1.])
-        ax[1, 1].add_collection(coll)
-        cbar = fig.colorbar(coll, ax=[ax[1, 1]], shrink=myShrink, pad=1.)
-        cbar.set_label(r'Effective Diameter', labelpad=padCbar, rotation=270)
-        ax[1, 1].set_xlim(-h_box, h_box)
-        ax[1, 1].set_ylim(-h_box, h_box)
-        ax[1, 1].set_aspect('equal')
-        ax[1, 1].tick_params(axis='both', which='both',
+        ax4.add_collection(coll)
+        cbar = fig.colorbar(coll, ax=ax4, shrink=myShrink, pad=padCbar)
+        cbar.set_label(r'Effective Diameter', labelpad=padCbarLabel, rotation=270)
+        ax4.set_xlim(-h_box, h_box)
+        ax4.set_ylim(-h_box, h_box)
+        ax4.set_aspect('equal')
+        ax4.tick_params(axis='both', which='both',
                              bottom=False, top=False, left=False, right=False,
                              labelbottom=False, labeltop=False, labelleft=False,
                              labelright=False)
 
         # Plot the nearest neighbor heatmap (ax[1, 2])
+        ax5 = fig.add_subplot(gs[1, 2])
         coll = matplotlib.collections.EllipseCollection(effSigma, effSigma,
                                                         np.zeros_like(effSigma),
                                                         offsets=xy, units='xy',
                                                         cmap=myCols,
-                                                        transOffset=ax[1, 2].transData)
+                                                        transOffset=ax5.transData)
         coll.set_array(np.ravel(nearNeigh))
         minCol = min(nearNeigh)
         coll.set_clim([minCol, 6])
-        ax[1, 2].add_collection(coll)
-        cbar = fig.colorbar(coll, ax=[ax[1, 2]], shrink=myShrink, pad=1.)
-        cbar.set_label(r'Nearest neighbors', labelpad=padCbar, rotation=270)
-        ax[1, 2].set_xlim(-h_box, h_box)
-        ax[1, 2].set_ylim(-h_box, h_box)
-        ax[1, 2].set_aspect('equal')
-        ax[1, 2].tick_params(axis='both', which='both',
+        ax5.add_collection(coll)
+        cbar = fig.colorbar(coll, ax=ax5, shrink=myShrink, pad=padCbar)
+        cbar.set_label(r'Nearest neighbors', labelpad=padCbarLabel, rotation=270)
+        ax5.set_xlim(-h_box, h_box)
+        ax5.set_ylim(-h_box, h_box)
+        ax5.set_aspect('equal')
+        ax5.tick_params(axis='both', which='both',
                              bottom=False, top=False, left=False, right=False,
                              labelbottom=False, labeltop=False, labelleft=False,
                              labelright=False)
         
         # Save the file
         pad = str(j).zfill(4)
-        fig.tight_layout()
-#        plt.subplots_adjust(wspace=0.1, hspace=0.1)
-        plt.savefig('my_test_frame' + str(pad) + '.jpg', dpi=1000)
+        plt.savefig('my_test_frame' + str(pad) + '.jpg', dpi=1000,
+                    bbox_inches='tight', pad_inches=0.05)
