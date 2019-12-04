@@ -121,7 +121,6 @@ peOut = 500.
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-start = dumps - 2
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -430,5 +429,5 @@ with hoomd.open(name=inFile, mode='rb') as t:
         
         # Save the file
         pad = str(j).zfill(4)
-        plt.savefig('my_test_frame' + str(pad) + '.jpg', dpi=1000,
+        plt.savefig('peIn' + str(peIn) + '_peOut' + str(peOut) + '_fm' + str(pad) + '.jpg', dpi=1000,
                     bbox_inches='tight', pad_inches=0.05)
