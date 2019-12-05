@@ -1,0 +1,2 @@
+    Activity        Lattice        Instant_v      half_taur_v        taur_v          taub_v    
+     220.0            0.97         1875.5404         1.3944          0.8704          0.3482    
