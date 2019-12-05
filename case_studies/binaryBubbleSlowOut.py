@@ -72,6 +72,7 @@ def computeLat(activity):
         lattice = (activity**m) * (np.exp(b))
     else:
         lattice = 1.
+    lattice = 1.
     return lattice
     
 lats = computeLat(pes)
