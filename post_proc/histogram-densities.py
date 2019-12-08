@@ -39,7 +39,7 @@ import random
 from scipy import stats
 
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.collections
 from matplotlib import colors
@@ -94,6 +94,32 @@ def findBins(lookN, currentInd, maxInds):
             ind -= maxInds
         binsList.append(ind)
     return binsList
+    
+def findMinBins(lookDistance, xInd, yInd, maxInds, binSize):
+    '''Try to pass fewer indicies to speed this process up'''
+    lookN = int( lookDistance / sizeBin ) + 1
+    # Entire square of indices
+    left = xInd - lookN
+    right = xInd + lookN
+    bottom = yInd - lookN
+    top = yInd + lookN
+    # List to hold bins to check [ [x_inds], [y_inds] ]
+    binsList = [ [], [] ]
+    for i in range(left, right):
+        horiz = (np.abs(x_ind - i) * binSize)
+        for j in range(bottom, top):
+            vert = (np.abs(y_ind - j) * binSize)
+            binDist = np.sqrt(horiz**2 + vert**2)
+            if binDist <= lookDistance:
+                indX = i
+                indY = j
+                if i >= maxInds:
+                    indX -= maxInds
+                if j >= maxInds:
+                    indY -= maxInds
+                binsList[0].append(indX)
+                binsList[1].append(indY)
+    return binsList
 
 # Get infile and open
 inFile = str(sys.argv[1])
@@ -102,6 +128,7 @@ f = hoomd.open(name=inFile, mode='rb')
 # Inside and outside activity from command line
 peSlow = int(sys.argv[2])
 peFast = int(sys.argv[3])
+parFrac = int(sys.argv[4])
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
@@ -112,7 +139,25 @@ box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
 tauPerDT = computeTauPerTstep(epsilon=1.)   # brownian time per timestep
 
-lookDist = [1., 1.5]
+# Area of a particle (pi * r^2)
+a_particle = np.pi * 0.25
+# Search distance for local number density
+lookDist = [1., 2., 3.]
+# Area of each search distance
+lookArea = []
+# This gives the number of bins to plot
+plotBins = []
+# This gives the limits of the x-axis
+minDense = []
+maxDense = []
+for z in xrange(len(lookDist)):
+    area = np.pi * (lookDist[z]**2)
+    lookArea.append(area)
+    maxParts = int(area / a_particle) + 1
+    plotBins.append(maxParts)
+#    minDense.append(a_particle / area)
+    minDense.append(0.)
+    maxDense.append(1.2)
 
 # Set the colormap
 myCols = plt.cm.viridis
@@ -157,8 +202,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
         # Number of neighbors depends on search distance
         nearNeigh = []
         for k in xrange(len(lookDist)):
-            # Defaults to zero neighbors
-            nearNeigh.append([0] * partNum)
+            # Defaults to one neighbor (itself)
+            nearNeigh.append([1] * partNum)
 
         # Easier accessors
         pos = snap.particles.position               # position
@@ -185,44 +230,82 @@ with hoomd.open(name=inFile, mode='rb') as t:
             tmp_posY = pos[k][1] + h_box
             x_ind = int(tmp_posX / sizeBin)
             y_ind = int(tmp_posY / sizeBin)
-            # Number of bins to search in each direction
-            lookBinsX = findBins(lookNBins, x_ind, NBins)
-            lookBinsY = findBins(lookNBins, y_ind, NBins)
-            
-            # Loop through horizontal bins
-            for h in xrange(len(lookBinsX)):
-                wrapX = 0.
-                # Finding negative indices
-                if lookBinsX[h] < 0:
+            # Get bins to search
+            lookBins = findMinBins(max(lookDist), x_ind, y_ind, NBins, sizeBin)
+            # Loop through all bins to search
+            for w in xrange(len(lookBins[0])):
+                wrapX = 0
+                wrapY = 0
+                # Finding negative horizontal indices
+                if lookBins[0][w] < 0:
                     wrapX = l_box
                 # Searching bins to the right, finding smaller index value
-                if h > lookNBins and lookBinsX[h] < x_ind:
+                if 0 <= lookBins[0][w] < (x_ind - lookNBins):
                     wrapX = -l_box
+
+                # Finding negative vertical indices
+                if lookBins[1][w] < 0:
+                    wrapY = l_box
+                # Searching above bins, finding smaller index value
+                if 0 <= lookBins[1][w] < (y_ind - lookNBins):
+                    wrapY = -l_box
                 
-                # Loop through vertical bins
-                for v in xrange(len(lookBinsY)):
-                    wrapY = 0.
-                    # Finding negative indices
-                    if lookBinsY[v] < 0:
-                        wrapY = l_box
-                    # Searching above bins, finding smaller index value
-                    if v > lookNBins and lookBinsY[v] < y_ind:
-                        wrapY = -l_box
-        
-                    # Compute distance between particles: effective radius
-                    for b in range(0, len(binParts[lookBinsX[h]][lookBinsY[v]])):
-                        # Reference index of particle we are comparing to
-                        ref = binParts[lookBinsX[h]][lookBinsY[v]][b]
-                        r = getDistance(pos[k],
-                                        pos[ref][0] + wrapX,
-                                        pos[ref][1] + wrapY)
-                        r = round(r, 4)  # round value to 4 decimal places
-                        for z in xrange(len(lookDist)):
-                            if 0.1 < r < lookDist[z]:
-                                nearNeigh[z][k] += 1
+                # Compute distance between particles: effective radius
+                for b in range(0, len(binParts[lookBins[0][w]][lookBins[1][w]])):
+                    # Reference index of particle we are comparing to
+                    ref = binParts[lookBins[0][w]][lookBins[1][w]][b]
+                    r = getDistance(pos[k],
+                                    pos[ref][0] + wrapX,
+                                    pos[ref][1] + wrapY)
+                    r = round(r, 4)  # round value to 4 decimal places
+                    for z in xrange(len(lookDist)):
+                        if 0.1 < r < lookDist[z]:
+                            nearNeigh[z][k] += 1
                         
-        print(nearNeigh[0])
-        
+        # Now plot a histogram of the number density 0 -> HS
+        pad = str(j).zfill(4)
+        for z in xrange(len(lookDist)):
+            # Number of particles * area of a particle / area of bin
+            nearNeigh[z] = [ (y * a_particle / lookArea[z]) for y in nearNeigh[z] ]
+            # Weight each particle equally
+            weight = np.ones_like(nearNeigh[z]) / float(len(nearNeigh[z]))
+            # Plot histogram
+#            plt.hist(nearNeigh[z], weights=weight,
+#                     bins=plotBins[z], range=(minDense[z], maxDense[z]),
+#                     edgecolor='k',
+#                     alpha=1.0,
+#                     zorder=0)
+                     
+            # N is the count in each bin, bins is the lower-limit of the bin
+            N, bins, patches = plt.hist(nearNeigh[z],
+                                        bins=int(maxDense[z] / 0.005),
+                                        range=(minDense[z], maxDense[z]),
+                                        density=True)
+            
+            diluteNMax = 0.
+            dilutePhi = 0.
+            denseNMax = 0.
+            densePhi = 0.
+            for g in xrange(len(bins) - 1):
+                if N[g] > diluteNMax and bins[g] < 0.6:
+                    diluteNMax = N[g]
+                    dilutePhi = bins[g]
+                if N[g] > denseNMax and bins[g] > 0.6:
+                    denseNMax = N[g]
+                    densePhi = bins[g]
+            
+            plt.axvline(dilutePhi, c='r')
+            plt.axvline(densePhi, c='g')
+                     
+            plt.xlim(minDense[z], maxDense[z])
+            plt.xlabel(r'Local Area Fraction $(\phi_{local})$')
+            plt.ylabel(r'Population')
+            plt.savefig('look_distance' + str(lookDist[z]) +\
+                        '_pa' + str(peSlow) + '_pb' + str(peFast) + '_xa' + str(parFrac) +\
+                        '_fm' + str(pad) +'.jpg',
+                        dpi=1000, bbox_inches='tight', pad_inches=0.05)
+            plt.close()
+
 # This is VERY sensitive to the search distance
 # r=1 -> 30s
 # r=2 -> 1m53s
