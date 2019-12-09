@@ -125,7 +125,7 @@ eps = float(sys.argv[5])
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-start = dumps - 2
+start = dumps - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -134,7 +134,8 @@ tauPerDT = computeTauPerTstep(epsilon=eps)  # brownian time per timestep
 # Area of a particle (pi * r^2)
 a_particle = np.pi * 0.25
 # Search distance for local number density
-lookDist = [1., 2., 3., 3.5, 4.0, 4.5, 5.0]
+lookDist = np.arange(1., 5.5, 0.5)
+#lookDist = [1., 2., 3., 3.5, 4.0, 4.5, 5.0]
 # Area of each search distance
 lookArea = []
 # This gives the number of bins to plot
@@ -304,6 +305,14 @@ with hoomd.open(name=inFile, mode='rb') as t:
                 if N[g] > denseNMax and bins[g] > 0.6:
                     denseNMax = N[g]
                     densePhi = bins[g]
+                    
+            # If there is a large population in the dense phase, we know there is a dilute phase
+            if denseNMax > 10.:
+                diluteNMax = 0
+                for g in xrange(len(bins) - 1):
+                    if N[g] > diluteNMax and bins[g] < 0.4:
+                        diluteNMax = N[g]
+                        dilutePhi = bins[g]
             
             plt.axvline(dilutePhi, c='r')
             plt.axvline(densePhi, c='g')
