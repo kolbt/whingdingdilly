@@ -39,22 +39,12 @@ import random
 from scipy import stats
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.collections
 from matplotlib import colors
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
-#plt.rcParams.update({'font.size': 4})
-#plt.rcParams['axes.linewidth'] = 0.5
-#plt.rcParams["xtick.major.size"] = 1
-#plt.rcParams["xtick.major.width"] = 0.5
-#plt.rcParams["xtick.minor.size"] = 1
-#plt.rcParams["xtick.minor.width"] = 0.5
-#plt.rcParams["ytick.major.size"] = 1
-#plt.rcParams["ytick.major.width"] = 0.5
-#plt.rcParams["ytick.minor.size"] = 1
-#plt.rcParams["ytick.minor.width"] = 0.5
 
 def getDistance(point1, point2x, point2y):
     """Find the distance between two points"""
@@ -63,6 +53,8 @@ def getDistance(point1, point2x, point2y):
     
 def computeTauPerTstep(epsilon, mindt=0.000001):
     '''Read in epsilon, output tauBrownian per timestep'''
+    if epsilon != 1.:
+        mindt=0.00001
     kBT = 1.0
     tstepPerTau = float(epsilon / (kBT * mindt))
     return 1. / tstepPerTau
@@ -124,11 +116,11 @@ def findMinBins(lookDistance, xInd, yInd, maxInds, binSize):
 # Get infile and open
 inFile = str(sys.argv[1])
 f = hoomd.open(name=inFile, mode='rb')
-
 # Inside and outside activity from command line
-peSlow = int(sys.argv[2])
-peFast = int(sys.argv[3])
+peA = int(sys.argv[2])
+peB = int(sys.argv[3])
 parFrac = int(sys.argv[4])
+eps = float(sys.argv[5])
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
@@ -137,12 +129,12 @@ start = dumps - 2
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
-tauPerDT = computeTauPerTstep(epsilon=1.)   # brownian time per timestep
+tauPerDT = computeTauPerTstep(epsilon=eps)  # brownian time per timestep
 
 # Area of a particle (pi * r^2)
 a_particle = np.pi * 0.25
 # Search distance for local number density
-lookDist = [1., 2., 3.]
+lookDist = [1., 2., 3., 3.5, 4.0, 4.5, 5.0]
 # Area of each search distance
 lookArea = []
 # This gives the number of bins to plot
@@ -159,12 +151,26 @@ for z in xrange(len(lookDist)):
     minDense.append(0.)
     maxDense.append(1.2)
 
-# Set the colormap
-myCols = plt.cm.viridis
-fast = '#d8b365'
-slow = '#5ab4ac'
-colorsList = [slow, fast]
-my_cmap = colors.ListedColormap(colorsList)
+# Set the width of each bin in the histogram (in units of sigma)
+histWidth = 0.005
+
+# Write the low density and high density peaks to a text file
+txtFile = 'phase_density_pa' + str(peA) +\
+          '_pb' + str(peB) +\
+          '_xa' + str(parFrac) +\
+          '.txt'
+f = open(txtFile, 'w') # write file headings
+f.write('Timestep'.center(10) + ' ')
+for z in xrange(len(lookDist)):
+    myString = 'Gas-r=' + str(lookDist[z])
+    f.write(myString.center(10) + ' ')
+    myString = 'Liq-r=' + str(lookDist[z])
+    f.write(myString.center(10))
+    if z < (len(lookDist) - 1):
+        f.write(' ')
+    else:
+        f.write('\n')
+f.close()
 
 # Access and read .gsd data
 with hoomd.open(name=inFile, mode='rb') as t:
@@ -212,6 +218,11 @@ with hoomd.open(name=inFile, mode='rb') as t:
         tst = snap.configuration.step               # timestep
         tst -= first_tstep                          # normalize by first timestep
         tst *= tauPerDT                             # convert to Brownian time
+        
+        # Write the timestep to the text output
+        f = open(txtFile, 'a')
+        f.write('{0:.1f}'.format(tst).center(10) + ' ')
+        f.close()
 
         # Put particles in their respective bins
         for k in range(0, partNum):
@@ -278,7 +289,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
                      
             # N is the count in each bin, bins is the lower-limit of the bin
             N, bins, patches = plt.hist(nearNeigh[z],
-                                        bins=int(maxDense[z] / 0.005),
+                                        bins=int(maxDense[z] / histWidth),
                                         range=(minDense[z], maxDense[z]),
                                         density=True)
             
@@ -301,12 +312,17 @@ with hoomd.open(name=inFile, mode='rb') as t:
             plt.xlabel(r'Local Area Fraction $(\phi_{local})$')
             plt.ylabel(r'Population')
             plt.savefig('look_distance' + str(lookDist[z]) +\
-                        '_pa' + str(peSlow) + '_pb' + str(peFast) + '_xa' + str(parFrac) +\
+                        '_pa' + str(peA) + '_pb' + str(peB) + '_xa' + str(parFrac) +\
                         '_fm' + str(pad) +'.jpg',
                         dpi=1000, bbox_inches='tight', pad_inches=0.05)
             plt.close()
-
-# This is VERY sensitive to the search distance
-# r=1 -> 30s
-# r=2 -> 1m53s
-# r=3 -> 4m13s
+            
+            # Write the data to the textfile
+            f = open(txtFile, 'a')
+            f.write('{0:.4f}'.format(dilutePhi).center(10) + ' ')
+            f.write('{0:.4f}'.format(densePhi).center(10))
+            if z < (len(lookDist) - 1):
+                f.write(' ')
+            else:
+                f.write('\n')
+            f.close()

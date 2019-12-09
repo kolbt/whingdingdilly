@@ -63,7 +63,7 @@ if [ $isMono == 'n' ]; then
     #        num=$(echo $filename | $sedtype 's/^.*N\([0-9]*\)..*/\1/')
 
     #        $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep $num
-            $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep
+            $submit $script_path/analyze.sh $pa $pb $xa $hoomd_path $gsd_path $script_path $ep $filename
 
         done
     fi
