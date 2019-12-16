@@ -244,20 +244,20 @@ with hoomd.open(name=inFile, mode='rb') as t:
         z = [ (j / div) + (0.5 - np.random.rand()) for j in nearNeigh ]
         triang = mtri.Triangulation(pos[:, 0], pos[:, 1])
         
-        # Plot a surface of Delauney Triangles
+#        # Plot a surface of Delauney Triangles
+#        for m in cmaps:
+#            fig = plt.figure(frameon=False)
+#            ax = fig.add_subplot(111, projection='3d')
+#            ax.plot_trisurf(triang, z, cmap=m)
+#            ax.view_init(90, -90)
+#            ax.axis('off')
+#            ax.set_aspect('equal')
+#            plt.savefig('point_surface_'+ m +'.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
+#            plt.close()
         for m in cmaps:
             fig = plt.figure(frameon=False)
             ax = fig.add_subplot(111, projection='3d')
-            ax.plot_trisurf(triang, z, cmap=m)
-            ax.view_init(90, -90)
-            ax.axis('off')
-            ax.set_aspect('equal')
-            plt.savefig('point_surface_'+ m +'.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
-            plt.close()
-        for m in cmaps:
-            fig = plt.figure(frameon=False)
-            ax = fig.add_subplot(111, projection='3d')
-            ax.plot_trisurf(triang, z, cmap=m+'r')
+            ax.plot_trisurf(triang, z, cmap=m+'_r')
             ax.view_init(90, -90)
             ax.axis('off')
             ax.set_aspect('equal')
