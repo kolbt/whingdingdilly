@@ -67,6 +67,8 @@ cmaps_i_like = ['Blues', 'magma', 'ocean', 'viridis_r', 'winter', 'YlGnBu', 'pla
 
 # Set the colormap (neighbors = [1, 2, 3, 4, 5, 6])
 colorsList = ['#36413E', '#BEB2C8', '#757083', '#D7D6D6', '#70ABAF', '#66A182']
+colorsList = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33']
+colorsList = ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93', '#E56399']
 custom_cmap = colors.ListedColormap(colorsList)
 
 def getDistance(point1, point2x, point2y):
@@ -144,7 +146,7 @@ def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis'):
     plt.close()
 
 inFile = str(sys.argv[1])
-snapList = [100]
+snapList = [2]
 r_cut = 2**(1./6.)
 factor = r_cut
 with hoomd.open(name=inFile, mode='rb') as t:

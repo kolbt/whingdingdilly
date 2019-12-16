@@ -42,6 +42,7 @@ import matplotlib.collections
 from matplotlib import colors
 import matplotlib.tri as mtri
 from mpl_toolkits.mplot3d import axes3d
+from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial import Voronoi, voronoi_plot_2d
 
 cmaps = ['viridis', 'plasma', 'inferno', 'magma',
@@ -146,7 +147,7 @@ def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis'):
     plt.close()
 
 inFile = str(sys.argv[1])
-snapList = [100]
+snapList = [2]
 r_cut = 2**(1./6.)
 factor = r_cut
 with hoomd.open(name=inFile, mode='rb') as t:
@@ -237,27 +238,33 @@ with hoomd.open(name=inFile, mode='rb') as t:
                     if 0.1 < r < (factor * effSigma[k]):
                         nearNeigh[k] += 1
      
-        # Plot a surface of points
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
+        
         # The height (color) is set according to the number of nearest neighbors
         div = 0.5
         z = [ (j / div) + (0.5 - np.random.rand()) for j in nearNeigh ]
         triang = mtri.Triangulation(pos[:, 0], pos[:, 1])
-        ax.plot_trisurf(triang, z, cmap='viridis')
-#        ax.plot_trisurf(triang, z, cmap='viridis', edgecolors='w', lw=0.01)
-        ax.set_zlim(-5., 6.)
-#        ax.view_init(50, 45)
-        ax.view_init(90, -90)
-        ax.axis('off')
-        ax.set_aspect('equal')
-        plt.tight_layout()
-        plt.savefig('point_surface.png', dpi=1000, bbox_inches='tight', pad_inches=-1.)
-        plt.close()
         
-#        voro.compute(box=f_box, positions=pos, buff=h_box)
-#        draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=custom_cmap)
-#        # This loops through all available colormaps
-#        for k in cmaps:
-#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k)
-#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k+'_r')
+        # Plot a surface of Delauney Triangles
+        for m in cmaps:
+            fig = plt.figure(frameon=False)
+            ax = fig.add_subplot(111, projection='3d')
+            ax.plot_trisurf(triang, z, cmap=m)
+            ax.view_init(90, -90)
+            ax.axis('off')
+            ax.set_aspect('equal')
+            plt.savefig('point_surface_'+ m +'.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
+            plt.close()
+        for m in cmaps:
+            fig = plt.figure(frameon=False)
+            ax = fig.add_subplot(111, projection='3d')
+            ax.plot_trisurf(triang, z, cmap=m+'r')
+            ax.view_init(90, -90)
+            ax.axis('off')
+            ax.set_aspect('equal')
+            plt.savefig('point_surface_'+ m + '_r.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
+            plt.close()
+        
+        
+#        ax.plot_trisurf(triang, z, cmap='viridis_r', edgecolors='k', lw=0.01)
+#        ax.set_zlim(-5., 6.)
+#        ax.view_init(50, 45)
