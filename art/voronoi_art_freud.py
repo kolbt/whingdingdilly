@@ -238,8 +238,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
                         nearNeigh[k] += 1
         
         voro.compute(box=f_box, positions=pos, buff=h_box)
-        draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=custom_cmap)
-#        # This loops through all available colormaps
-#        for k in cmaps:
-#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k)
-#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k+'_r')
+#        draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=custom_cmap)
+        # This loops through all available colormaps
+        for k in cmaps:
+            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k)
+            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k+'_r')
