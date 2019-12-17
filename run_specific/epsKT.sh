@@ -34,10 +34,14 @@ fi
 part_num=$(( 100000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 10 ))
+pe_start=$(( 0 ))
 pe_count=$(( 0 ))
 pe_spacer=$(( 10 ))
 pe_max=$(( 500 ))
-phi=$(( 60 ))
+phi_start=$(( 45 ))
+phi_count=$(( 45 ))
+phi_spacer=$(( 5 ))
+phi_max=$(( 75 ))
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
@@ -65,6 +69,7 @@ do
     echo "pe_start is ${pe_count}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
+        pe_start=$input
         pe_count=$input
     fi
 
@@ -80,10 +85,23 @@ do
         pe_spacer=$input
     fi
 
-    echo "phi is ${phi}, input new value or same value."
+    echo "phi_start is ${phi_count}, input new value or same value."
     read input
     if ! [[ -z "$input" ]]; then
-        phi=$input
+        phi_start=$input
+        phi_count=$input
+    fi
+
+    echo "phi_max is ${phi_max}, input new value or same value."
+    read input
+    if ! [[ -z "$input" ]]; then
+        phi_max=$input
+    fi
+
+    echo "phi_spacer is ${phi_spacer}, input new value or same value."
+    read input
+    if ! [[ -z "$input" ]]; then
+        phi_spacer=$input
     fi
 
     # this shows how long the simulation will run
@@ -95,7 +113,9 @@ do
     echo "pe_start is ${pe_count}"
     echo "pe_max is ${pe_max}"
     echo "pe_spacer is ${pe_spacer}"
-    echo "phi is ${phi}"
+    echo "phi_start is ${phi_count}"
+    echo "phi_max is ${phi_max}"
+    echo "phi_spacer is ${phi_spacer}"
     echo "Simulation will run for ${tsteps} timesteps"
 
     echo "Are these values okay (y/n)?"
@@ -117,27 +137,40 @@ read seed4
 mkdir ${current}_parent
 cd ${current}_parent
 
-
-# this segment of code writes the infiles
-while [ $pe_count -le $pe_max ]       # loop through particle fraction
+# Set system density to smallest value
+phi_count=$(( $phi_start ))
+# Loop through system density
+while [ $phi_count -le $phi_max ]
 do
+    # Reset activity
+    pe_count=$(( $pe_start ))
+    
+    # Loop through activity
+    while [ $pe_count -le $pe_max ]
+    do
 
-    infile=pe${pe_count}_phi${phi}.py                                 # set unique infile name
-    #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-    $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
-    $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
-    $sedtype -i 's/\${phi}/'"${phi}"'/g' $infile                            # write particle number
-    $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
-    $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
-    $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $infile                        # write activity to infile
-    $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
-    $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
-    $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
-    $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
-    $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
+        infile=pe${pe_count}_phi${phi_count}.py                                       # set unique infile name
+        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+        $sedtype -e 's@\${hoomd_path}@'"${hoomd_path}"'@g' $template > $infile  # write path to infile (delimit with @)
+        $sedtype -i 's/\${part_num}/'"${part_num}"'/g' $infile                  # write particle number
+        $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $infile                      # write particle number
+        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $infile                      # write time in tau to infile
+        $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $infile                # write dump frequency to infile
+        $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $infile                        # write activity to infile
+        $sedtype -i 's@\${gsd_path}@'"${gsd_path}"'@g' $infile                  # set gsd path variable
+        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $infile                        # set your seeds
+        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $infile
+        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $infile
+        $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $infile
 
-    $submit $script_path $infile
+        $submit $script_path $infile
 
-    pe_count=$(( $pe_count + $pe_spacer ))
+        # Increment activity
+        pe_count=$(( $pe_count + $pe_spacer ))
+        
+    done
+    
+    # Increment system density
+    phi_count=$(( $phi_count + $phi_spacer ))
 
 done
