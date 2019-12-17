@@ -67,6 +67,8 @@ cmaps = ['viridis', 'plasma', 'inferno', 'magma',
 'rainbow', 'jet', 'nipy_spectral', 'gist_ncar']
 
 cmaps_i_like = ['Blues', 'magma', 'ocean', 'viridis_r', 'winter', 'YlGnBu', 'plasma_r']
+cmaps_i_like = ['CMRmap', 'gist_earth_r', 'gist_earth', 'gnuplot2', 'inferno_r', 'inferno',
+                'magma_r', 'magma', 'viridis_r', 'viridis', 'YlGnBu_r', 'YlGnBu']
 
 # Set the colormap (neighbors = [1, 2, 3, 4, 5, 6])
 colorsList = ['#36413E', '#BEB2C8', '#757083', '#D7D6D6', '#70ABAF', '#66A182']
@@ -243,26 +245,52 @@ with hoomd.open(name=inFile, mode='rb') as t:
         div = 0.5
         z = [ (j / div) + (0.5 - np.random.rand()) for j in nearNeigh ]
         triang = mtri.Triangulation(pos[:, 0], pos[:, 1])
+        fig = plt.figure(frameon=False)
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_trisurf(triang, z, cmap='CMRmap_r')
+#       ax.plot_trisurf(triang, z, cmap=m, edgecolors='k', lw=0.01)
+        ax.view_init(90, -90)
+        ax.axis('off')
+        ax.set_aspect('equal')
+        mult = 0.72340425531
+        div = 2.
+        left = -h_box/div
+        right = h_box/div
+        top = (h_box/div) * mult
+        bottom = (-h_box/div) * mult
+        ax.set_xlim(left, right)
+        ax.set_ylim(bottom, top)
+        plt.savefig('point_surface_'+ 'CMRmap_r' +'.png', dpi=2000, bbox_inches='tight', pad_inches=0.)
+        plt.close()
         
 #        # Plot a surface of Delauney Triangles
-#        for m in cmaps:
+#        for m in cmaps_i_like:
 #            fig = plt.figure(frameon=False)
 #            ax = fig.add_subplot(111, projection='3d')
 #            ax.plot_trisurf(triang, z, cmap=m)
+##            ax.plot_trisurf(triang, z, cmap=m, edgecolors='k', lw=0.01)
 #            ax.view_init(90, -90)
 #            ax.axis('off')
 #            ax.set_aspect('equal')
-#            plt.savefig('point_surface_'+ m +'.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
+#            mult = 0.72340425531
+#            div = 2.
+#            left = -h_box/div
+#            right = h_box/div
+#            top = (h_box/div) * mult
+#            bottom = (-h_box/div) * mult
+#            ax.set_xlim(left, right)
+#            ax.set_ylim(bottom, top)
+#            plt.savefig('point_surface_'+ m +'.png', dpi=2000, bbox_inches='tight', pad_inches=0.)
 #            plt.close()
-        for m in cmaps:
-            fig = plt.figure(frameon=False)
-            ax = fig.add_subplot(111, projection='3d')
-            ax.plot_trisurf(triang, z, cmap=m+'_r')
-            ax.view_init(90, -90)
-            ax.axis('off')
-            ax.set_aspect('equal')
-            plt.savefig('point_surface_'+ m + '_r.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
-            plt.close()
+#        for m in cmaps_i_like:
+#            fig = plt.figure(frameon=False)
+#            ax = fig.add_subplot(111, projection='3d')
+#            ax.plot_trisurf(triang, z, cmap=m+'_r')
+#            ax.view_init(90, -90)
+#            ax.axis('off')
+#            ax.set_aspect('equal')
+#            plt.savefig('point_surface_'+ m + '_r.png', dpi=500, bbox_inches='tight', pad_inches=-1.01)
+#            plt.close()
         
         
 #        ax.plot_trisurf(triang, z, cmap='viridis_r', edgecolors='k', lw=0.01)

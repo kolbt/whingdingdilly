@@ -65,11 +65,27 @@ cmaps = ['viridis', 'plasma', 'inferno', 'magma',
 
 cmaps_i_like = ['Blues', 'magma', 'ocean', 'viridis_r', 'winter', 'YlGnBu', 'plasma_r']
 
-# Set the colormap (neighbors = [1, 2, 3, 4, 5, 6])
-colorsList = ['#36413E', '#BEB2C8', '#757083', '#D7D6D6', '#70ABAF', '#66A182']
-colorsList = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33']
-colorsList = ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93', '#E56399']
-custom_cmap = colors.ListedColormap(colorsList)
+## Set the colormap (neighbors = [1, 2, 3, 4, 5, 6])
+#colorsList = ['#36413E', '#BEB2C8', '#757083', '#D7D6D6', '#70ABAF', '#66A182']
+#colorsList = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33']
+#colorsList = ['#FF595E', '#FFCA3A', '#8AC926', '#1982C4', '#6A4C93', '#E56399']
+# Edit gist_ncar_r
+colorsList = []
+getcmap_hex = cm.get_cmap('gist_ncar_r', 6)
+for i in range(getcmap_hex.N):
+    # Get RGB values from cmap
+    rgb = getcmap_hex(i)[:3]
+    colorsList.append(matplotlib.colors.rgb2hex(rgb))
+    
+custom_cmaps = []
+# Blue, light blue, yellow, bright yellow
+newColors = ['#0000CC', '#4D4DFF', '#FFFF4D', '#FFFF00']
+for i in newColors:
+    makeMap = [j for j in colorsList]
+    makeMap[-1] = i
+    custom_cmaps.append(colors.ListedColormap(makeMap))
+
+more_cmaps = ['gist_ncar_r', 'gist_rainbow_r', 'gist_rainbow', 'rainbow_r']
 
 def getDistance(point1, point2x, point2y):
     """Find the distance between two points"""
@@ -114,7 +130,7 @@ def findMinBins(lookDistance, xInd, yInd, maxInds, binSize):
             binsList[1].append(indY)
     return binsList
     
-def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis'):
+def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis', count=0):
     
     # Set up the figure
     fig = plt.figure()
@@ -126,7 +142,7 @@ def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis'):
     # Draw Voronoi cells
     normColor = np.divide(colorArray, max(colorArray))
     patches = [plt.Polygon(cell[:, :2]) for cell in cells]
-    patch_collection = matplotlib.collections.PatchCollection(patches, edgecolors='black', alpha=1.0, lw=0.15)
+    patch_collection = matplotlib.collections.PatchCollection(patches, edgecolors='black', alpha=1.0, lw=0.)
 
     # Set the color array
     patch_collection.set_array(np.ravel(nearNeigh))
@@ -138,10 +154,19 @@ def draw_voronoi(box, points, cells, colorArray, nlist=None, inMap='viridis'):
 #    ax.scatter(points[:,0], points[:,1], c='k', s=0.5, edgecolors='none')
     ax.set_xlim((-box.Lx/2., box.Lx/2.))
     ax.set_ylim((-box.Ly/2., box.Ly/2.))
+    # Factor for Soft Matter back cover
+    factor = 0.72340425531
+    div = 2.5
+    left = -box.Lx/div
+    right = box.Lx/div
+    top = (box.Lx/div) * factor
+    bottom = (-box.Lx/div) * factor
+    ax.set_xlim((left, right))
+    ax.set_ylim((bottom, top))
     ax.xaxis.set_ticks([])
     ax.yaxis.set_ticks([])
     if not isinstance(inMap, str):
-        inMap = 'custom_cmap'
+        inMap = 'custom_cmap_' + str(count)
     plt.savefig('voronoi_art_freud_' + inMap + '.png', dpi=1000, bbox_inches='tight', pad_inches=0)
     plt.close()
 
@@ -238,8 +263,14 @@ with hoomd.open(name=inFile, mode='rb') as t:
                         nearNeigh[k] += 1
         
         voro.compute(box=f_box, positions=pos, buff=h_box)
-#        draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=custom_cmap)
-        # This loops through all available colormaps
-        for k in cmaps:
-            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k)
-            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k+'_r')
+#        # This loops through all available colormaps
+#        for k in more_cmaps:
+#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k)
+#            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k+'_r')
+        # This loops through the custom colormaps
+        count=0
+        draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap='gist_ncar_r', count=count)
+        for k in custom_cmaps:
+            draw_voronoi(f_box, pos, voro.polytopes, nearNeigh, inMap=k, count=count)
+            count+=1
+            
