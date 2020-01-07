@@ -75,7 +75,7 @@ else
         pe=$(echo $filename | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
         ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
         phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
-        $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $phi $filename
+        $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $filename $phi
         
     done
 

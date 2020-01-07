@@ -13,7 +13,7 @@ gsd_path=$5
 script_path=$6
 ep=$7
 fname=$8
-#phi=$8
+phi=$9
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/nearest_neigh.py $pa $pb $xa $hoomd_path $gsd_path
@@ -58,7 +58,7 @@ fname=$8
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/histogram-densities.py $fname $pa $pb $xa $ep
+python $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
 
 
 ## Movie for defects
