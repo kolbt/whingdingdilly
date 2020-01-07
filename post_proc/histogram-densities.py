@@ -121,6 +121,13 @@ peA = int(sys.argv[2])
 peB = int(sys.argv[3])
 parFrac = int(sys.argv[4])
 eps = float(sys.argv[5])
+try:
+    phi = float(sys.argv[6])
+    intPhi = int(phi)
+    phi /= 100.
+except:
+    phi = 0.6
+    intPhi = 60
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
@@ -159,6 +166,7 @@ histWidth = 0.005
 txtFile = 'phase_density_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
+          '_phi' + str(intPhi) +\
           '.txt'
 f = open(txtFile, 'w') # write file headings
 f.write('Timestep'.center(10) + ' ')
@@ -299,10 +307,10 @@ with hoomd.open(name=inFile, mode='rb') as t:
             denseNMax = 0.
             densePhi = 0.
             for g in xrange(len(bins) - 1):
-                if N[g] > diluteNMax and bins[g] < 0.6:
+                if N[g] > diluteNMax and bins[g] < phi:
                     diluteNMax = N[g]
                     dilutePhi = bins[g]
-                if N[g] > denseNMax and bins[g] > 0.6:
+                if N[g] > denseNMax and bins[g] > phi:
                     denseNMax = N[g]
                     densePhi = bins[g]
                     

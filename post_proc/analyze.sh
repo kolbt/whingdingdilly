@@ -52,13 +52,13 @@ fname=$8
 #python $script_path/binnedNetActivity.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/analyze_alpha.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
 #python $script_path/alpha_diameter_histogram.py $pa $pb $xa $hoomd_path $gsd_path $ep $al
-python /Users/kolbt/Desktop/compiled/whingdingdilly/art/voronoi_tessellation.py $pa $pb $xa $hoomd_path $gsd_path $ep
+#python /Users/kolbt/Desktop/compiled/whingdingdilly/art/voronoi_tessellation.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors_periodic.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python $script_path/histogram-densities.py $fname $pa $pb $xa $ep
+python $script_path/histogram-densities.py $fname $pa $pb $xa $ep
 
 
 ## Movie for defects
