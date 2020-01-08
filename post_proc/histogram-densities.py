@@ -157,7 +157,7 @@ for z in xrange(len(lookDist)):
     plotBins.append(maxParts)
 #    minDense.append(a_particle / area)
     minDense.append(0.)
-    maxDense.append(1.2)
+    maxDense.append(2.0)
 
 # Set the width of each bin in the histogram (in units of sigma)
 histWidth = 0.005
@@ -329,7 +329,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
             plt.xlabel(r'Local Area Fraction $(\phi_{local})$')
             plt.ylabel(r'Population')
             plt.savefig('look_distance' + str(lookDist[z]) +\
-                        '_pa' + str(peA) + '_pb' + str(peB) + '_xa' + str(parFrac) +\
+                        '_pa' + str(peA) + '_pb' + str(peB) + '_xa' + str(parFrac) + '_phi' + str(intPhi) +\
                         '_fm' + str(pad) +'.jpg',
                         dpi=1000, bbox_inches='tight', pad_inches=0.05)
             plt.close()
