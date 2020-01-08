@@ -206,7 +206,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
     space = tot_tstep / 10
     outFrames = np.arange(first_tstep, tot_tstep, space)
     # Make sure these timesteps exist
-    for j in xrange(len(outFrames):
+    for j in xrange(len(outFrames)):
         while (outFrames[j] - first_tstep) % dt != 0:
             outFrames[j] += 1
 
