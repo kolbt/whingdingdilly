@@ -197,6 +197,18 @@ with hoomd.open(name=inFile, mode='rb') as t:
     # Get the number particles
     pos = snap.particles.position
     partNum = len(pos)
+    # Let's get the simulation length
+    snap = t[1]
+    dt = snap.configuration.step - first_tstep
+    snap = t[-1]
+    last_tstep = snap.configuration.step
+    tot_tstep = last_tstep - first_tstep
+    space = tot_tstep / 10
+    outFrames = np.arange(first_tstep, tot_tstep, space)
+    # Make sure these timesteps exist
+    for j in xrange(len(outFrames):
+        while (outFrames[j] - first_tstep) % dt != 0:
+            outFrames[j] += 1
 
     # Compute each mesh
     NBins = getNBins(x_box, r_cut)
