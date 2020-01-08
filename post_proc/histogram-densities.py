@@ -221,7 +221,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
 #    for j in range(start, end):
 #        # Set the system snapshot
 #        snap = t[j]
-    for j in xrange(outFrames):
+    for j in xrange(len(outFrames)):
         # Set the system snapshot
         snap = t[outFrames[j]]
         # Empyt mesh to store particle IDs
