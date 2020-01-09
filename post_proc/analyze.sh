@@ -58,7 +58,8 @@ phi=$9
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
+#python $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
+python3 $script_path/computeMCS.py $fname $pa $pb $xa $ep $phi
 
 
 ## Movie for defects
@@ -128,3 +129,4 @@ python $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
 #
 #rm nBins100_pa${pa}_pb${pb}_xa${xa}*.png
 
+exit 0
