@@ -62,7 +62,9 @@ g.write('Timestep'.center(10) + ' ' +\
         'N_clusts'.center(10) + ' ' +\
         'all_parts'.center(10) + ' ' +\
         'thr_clusts'.center(10) + ' ' +\
-        'thr_parts'.center(10) + '\n')
+        'thr_parts'.center(10) + ' ' +\
+        'thr_c1000'.center(10) + ' ' +\
+        'thr_p1000'.center(10) + '\n')
 g.close()
 
 start = 0                   # first frame to process
@@ -73,6 +75,7 @@ box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
 tauPerDT = computeTauPerTstep(epsilon=eps)  # brownian time per timestep
 min_size = 20
+thresh_large = 1000
 
 with hoomd.open(name=inFile, mode='rb') as t:
     snap = t[0]
@@ -108,17 +111,24 @@ with hoomd.open(name=inFile, mode='rb') as t:
         nClusts = len(clust_size)
         nClustThr = 0
         tot_clust = 0
+        nC1000 = 0
+        nP1000 = 0
         for k in range(0, nClusts):
             if clust_size[k] > min_size:
                 nClustThr += 1
                 tot_clust += clust_size[k]
+                if clust_size[k] > thresh_large:
+                    nC1000 += 1
+                    nP1000 += clust_size[k]
         
         g = open(txtFile, 'a')
         g.write('{0:.1f}'.format(tst).center(10) + ' ' +\
                 str(nClusts).center(10) + ' ' +\
                 str(partNum).center(10) + ' ' +\
                 str(nClustThr).center(10) + ' ' +\
-                str(tot_clust).center(10) + '\n')
+                str(tot_clust).center(10) + ' ' +\
+                str(nC1000).center(10) + ' ' +\
+                str(nP1000).center(10) + '\n')
         g.close()
         
         
