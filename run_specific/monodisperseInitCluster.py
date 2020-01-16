@@ -4,6 +4,15 @@
 Initialize a monodisperse simulation which has appropriate analytical
 expression for the local area fraction of dense and dilute phases
 
+Reads in:
+    -pe
+    -phi
+    -runtime
+    -output frequency
+    -particle number
+    -three random seeds
+Creats an hcp cluster with lattice spacing computed from liquid phase area
+fraction and gas phase density from analytical expression.
 '''
 # Initial imports
 import sys
@@ -62,7 +71,7 @@ dumpFreq = int(dumpFreq)                # ensure this is an integer
 
 # Analytical expressions for number and density of phases
 # Data is from: whingdingdilly/ipython/softReentrance/soft_bindoal_densities.ipynb
-def analyticalPhiLiquid(activity):
+def analyticalPhiLiq(activity):
     '''Expression for dense phase density, power-law'''
     m = 0.209451660823
     b = 0.398756870369
@@ -76,7 +85,7 @@ def analyticalPhiGas(activity):
 
 def computeNDense(phiGas, phiLiq, phiTot, NTot):
     '''From analytical density, give number in each phase'''
-    NLiq = int((Ntot * (phiTot - phiGas)) / (phiLiq - phiGas))
+    NLiq = int((NTot * (phiTot - phiGas)) / (phiLiq - phiGas))
     return NLiq
 
 def computeLat(phiIn):
@@ -93,9 +102,9 @@ phiGas = analyticalPhiGas(pe)
 phiLiq = analyticalPhiLiq(pe)
 NLiq = computeNDense(phiGas, phiLiq, phi, partNum)
 NGas = partNum - NLiq
-lat = computeLat(pe)
+lat = computeLat(phiLiq)
 areaLiq = areaType(NLiq, lat)
-rLiq = np.sqrt(areatot / np.pi)
+rLiq = np.sqrt(areaLiq / np.pi)
     
 def computeDistance(x, y):
     return np.sqrt((x**2) + (y**2))
@@ -125,17 +134,22 @@ rOrient = []
 # z-value for simulation initialization
 z = 0.5
 
+# Place particle at (0,0)
+rOrient.append(0)
+pos.append((0., 0., z))
+typ.append(0)
+
 for i in xrange(len(peList)):
     rMin = rList[i]             # starting distance for particle placement
     rMax = rList[i + 1]         # maximum distance for particle placement
-    lat = computeLat(peList[i]) # activity-dependent lattice spacing
+#    lat = computeLat(peList[i]) # activity-dependent lattice spacing
     ver = np.sqrt(0.75) * lat   # vertical shift between lattice rows
     hor = lat / 2.0             # horizontal shift between lattice rows
     
     x = 0
     y = 0
     shift = 0
-    while y < rMax:
+    while y <= rMax:
         r = computeDistance(x, y)
         # Check if x-position is large enough
         if r < (rMin + (lat / 2.)):
@@ -143,7 +157,7 @@ for i in xrange(len(peList)):
             continue
             
         # Check if x-position is too large
-        if r >= (rMax - (lat/2.)):
+        if r > (rMax + (lat/2.)):
             y += ver
             shift += 1
             if shift % 2:
@@ -188,6 +202,10 @@ for i in xrange(len(peList)):
         # Increment counter
         x += lat
 
+# Update number of particles in gas and dense phase
+NLiq = len(pos)
+NGas = partNum - NLiq
+
 # Set this according to phiTotal
 areaParts = partNum * np.pi * (0.25)
 abox = (areaParts / phi)
@@ -227,7 +245,7 @@ while count < NGas:
     r = computeDistance(gasx, gasy)
     
     # Is this an HCP bin?
-    if r <= (rList[-1] + (tooClose / 2.)):
+    if r <= (rList[-1] + (lat/2.) + (tooClose / 2.)):
         continue
     
     # Are any gas particles too close?
@@ -288,17 +306,23 @@ while count < NGas:
         typ.append(0)           # final particle type, same as outer ring
         count += 1              # increment count
 
-# Get each coordinate in a list
+## Get each coordinate in a list
+#print("N_liq: {}").format(len(pos))
+#print("Intended N_liq: {}").format(NLiq)
+#print("N_gas: {}").format(len(gaspos))
+#print("Intended N_gas: {}").format(NGas)
+#print("N_liq + N_gas: {}").format(len(pos) + len(gaspos))
+#print("Intended N: {}").format(partNum)
 pos = pos + gaspos
 x, y, z = zip(*pos)
 
-# Plot as scatter
-cs = np.divide(typ, float(len(peList)))
+## Plot as scatter
+#cs = np.divide(typ, float(len(peList)))
 #cs = rOrient
-plt.scatter(x, y, s=1., c=cs, cmap='jet', edgecolors='none')
-ax = plt.gca()
-ax.set_aspect('equal')
-plt.show()
+#plt.scatter(x, y, s=1., c=cs, cmap='jet', edgecolors='none')
+#ax = plt.gca()
+#ax.set_aspect('equal')
+#plt.show()
 
 partNum = len(pos)
 # Get the number of types
@@ -359,7 +383,7 @@ for i in xrange(len(unique_char_types)):
 # Brownian integration
 brownEquil = 10000
 hoomd.md.integrate.mode_standard(dt=dt)
-bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed)
+bd = hoomd.md.integrate.brownian(group=all, kT=kT, seed=seed1)
 hoomd.run(brownEquil)
 
 # Set activity of each group
@@ -384,15 +408,19 @@ hoomd.md.force.active(group=all,
                       orientation_reverse_link=True)
 
 # Name the file from parameters
-out = "outside_fast_pe"
-for i in peList:
-    out += str(int(i))
-    out += "_"
-out += "r"
-for i in range(1, len(rList)):
-    out += str(int(rList[i]))
-    out += "_"
-out += "rAlign_" + str(rAlign) + ".gsd"
+#out = "cluster_pe"
+#for i in peList:
+#    out += str(int(i))
+#    out += "_"
+#out += "r"
+#for i in range(1, len(rList)):
+#    out += str(int(rList[i]))
+#    out += "_"
+#out += "rAlign_" + str(rAlign) + ".gsd"
+out = "cluster_pe" + str(int(peList[0]))
+out += "_phi" + str(intPhi)
+out += "_align" + str(int(rAlign))
+out += ".gsd"
 
 # Write dump
 hoomd.dump.gsd(out,
