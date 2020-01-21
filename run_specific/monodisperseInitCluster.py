@@ -62,7 +62,7 @@ seed3 = ${seed3}                # activity seed
 
 eps = kT                                # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
-dt = 0.000001 * tauLJ                   # timestep
+dt = 0.0000005 * tauLJ                  # timestep
 simLength = float(runFor) * tauBrown    # how long to run (in tauBrown)
 totTsteps = int(simLength / dt)         # how many tsteps to run
 numDumps = simLength * dumpPerBrownian  # total number of frames dumped

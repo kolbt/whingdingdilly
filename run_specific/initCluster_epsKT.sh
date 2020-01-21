@@ -31,7 +31,7 @@ if [ $gpu == "y" ]; then
 fi
 
 # Default values for simulations
-part_num=$(( 100000 ))
+part_num=$(( 1000000 ))
 runfor=$(( 10 ))
 dump_freq=$(( 12 ))
 pe_start=$(( 100 ))
