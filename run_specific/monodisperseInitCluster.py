@@ -211,7 +211,7 @@ areaParts = partNum * np.pi * (0.25)
 abox = (areaParts / phi)
 lbox = np.sqrt(abox)
 hbox = lbox / 2.
-tooClose = 0.8
+tooClose = 0.9
 
 # Make a mesh for random particle placement
 def getNBins(length, minSz=(2**(1./6.))):
