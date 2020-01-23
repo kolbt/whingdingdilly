@@ -60,7 +60,7 @@ seed1 = ${seed1}                # integrator seed
 seed2 = ${seed2}                # orientation seed
 seed3 = ${seed3}                # activity seed
 
-eps = kT                                # repulsive depth
+eps = 0.5 * kT                          # repulsive depth
 tauLJ = computeTauLJ(eps)               # LJ time unit
 dt = 0.0000005 * tauLJ                  # timestep
 simLength = float(runFor) * tauBrown    # how long to run (in tauBrown)
