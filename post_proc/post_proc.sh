@@ -31,6 +31,9 @@ read isEps
 echo "Monodisperse simulation?"
 read isMono
 
+echo "Is epsilon a float?"
+read isFloat
+
 if [ $isMono == 'n' ]; then
     if [ $isEps == 'n' ]; then
         ep=$(( 1 ))
@@ -69,15 +72,27 @@ if [ $isMono == 'n' ]; then
     fi
     
 else
-    for filename in $( ls pe*.gsd )
-    do
-    
-        pe=$(echo $filename | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
-        ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
-        phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
-        $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $filename $phi
+    if [ $isFloat == 'n' ]; then
+        for filename in $( ls pe*.gsd )
+        do
         
-    done
+            pe=$(echo $filename | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
+            ep=$(echo $filename | $sedtype 's/^.*ep\([0-9]*\)_.*/\1/')
+            phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
+            $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $filename $phi
+            
+        done
+        
+    else
+        # If epsilon is a float, you need to use this sed script
+        for filename in $( ls pe*.gsd )
+        do
+            pe=$(echo $filename | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
+            ep=$(echo $filename | $sedtype 's/^.*[^0-9]\([0-9]*\.[0-9]*\)_phi.*$/\1/')
+            phi=$(echo $filename | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
+            $submit $script_path/analyze.sh $pe 0 0 $hoomd_path $gsd_path $script_path $ep $filename $phi
+        done
+    fi
 
 fi
 
