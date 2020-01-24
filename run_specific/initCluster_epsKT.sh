@@ -32,11 +32,11 @@ fi
 
 # Default values for simulations
 part_num=$(( 1000000 ))
-runfor=$(( 10 ))
+runfor=$(( 100 ))
 dump_freq=$(( 12 ))
-pe_start=$(( 100 ))
-pe_count=$(( 100 ))
-pe_spacer=$(( 50 ))
+pe_start=$(( 500 ))
+pe_count=$(( 500 ))
+pe_spacer=$(( 100 ))
 pe_max=$(( 1000 ))
 phi_start=$(( 45 ))
 phi_count=$(( 45 ))

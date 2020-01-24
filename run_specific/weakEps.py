@@ -59,12 +59,12 @@ def computeTauLJ(epsilon):
 if pe != 0:                        # A particles are NOT Brownian
     v = computeVel(pe)
     Fp = computeActiveForce(v)
-    eps = kT * 0.5
+    eps = kT * 0.1
     effSig = 1.
 else:                               # A particles are Brownian
     v = 0.0
     Fp = 0.0
-    eps = kT * 0.5
+    eps = kT * 0.1
     effSig = 1.
 
 tauLJ = computeTauLJ(eps)                       # get LJ time unit

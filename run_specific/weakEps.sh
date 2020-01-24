@@ -10,14 +10,14 @@ if [ $answer == "y" ]; then
     hoomd_path='/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
-    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/epsKT.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/weakEps.py'
     sedtype='sed'
     submit='sbatch'
 else
     hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/epsKT.py'
+    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/weakEps.py'
     sedtype='gsed'
     submit='sh'
 fi
@@ -34,10 +34,10 @@ fi
 part_num=$(( 100000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 12 ))
-pe_start=$(( 0 ))
-pe_count=$(( 0 ))
-pe_spacer=$(( 50 ))
-pe_max=$(( 1000 ))
+pe_start=$(( 100 ))
+pe_count=$(( 100 ))
+pe_spacer=$(( 100 ))
+pe_max=$(( 500 ))
 phi_start=$(( 45 ))
 phi_count=$(( 45 ))
 phi_spacer=$(( 5 ))
