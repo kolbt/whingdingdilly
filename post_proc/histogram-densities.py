@@ -146,7 +146,7 @@ plotBins = []
 # This gives the limits of the x-axis
 minDense = []
 maxDense = []
-for z in xrange(len(lookDist)):
+for z in range(len(lookDist)):
     area = np.pi * (lookDist[z]**2)
     lookArea.append(area)
     maxParts = int(area / a_particle) + 1
@@ -166,7 +166,7 @@ txtFile = 'phase_density_pa' + str(peA) +\
           '.txt'
 f = open(txtFile, 'w') # write file headings
 f.write('Timestep'.center(10) + ' ')
-for z in xrange(len(lookDist)):
+for z in range(len(lookDist)):
     myString = 'Gas-r=' + str(lookDist[z])
     f.write(myString.center(10) + ' ')
     myString = 'Liq-r=' + str(lookDist[z])
@@ -209,7 +209,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
 #    for j in range(start, end):
 #        # Set the system snapshot
 #        snap = t[j]
-    for j in xrange(len(outFrames)):
+    for j in range(len(outFrames)):
         # Set the system snapshot
         snap = t[outFrames[j]]
         # Empyt mesh to store particle IDs
@@ -219,7 +219,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
         effSigma = [1.] * partNum
         # Number of neighbors depends on search distance
         nearNeigh = []
-        for k in xrange(len(lookDist)):
+        for k in range(len(lookDist)):
             # Defaults to one neighbor (itself)
             nearNeigh.append([1] * partNum)
 
@@ -247,7 +247,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
             binParts[x_ind][y_ind].append(k)
         
         # Get the number density
-        for k in xrange(partNum):
+        for k in range(partNum):
             # Get mesh indices
             tmp_posX = pos[k][0] + h_box
             tmp_posY = pos[k][1] + h_box
@@ -256,7 +256,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
             # Get bins to search
             lookBins = findMinBins(max(lookDist), x_ind, y_ind, NBins, sizeBin)
             # Loop through all bins to search
-            for w in xrange(len(lookBins[0])):
+            for w in range(len(lookBins[0])):
                 wrapX = 0
                 wrapY = 0
                 # Finding negative horizontal indices
@@ -281,13 +281,13 @@ with hoomd.open(name=inFile, mode='rb') as t:
                                     pos[ref][0] + wrapX,
                                     pos[ref][1] + wrapY)
                     r = round(r, 4)  # round value to 4 decimal places
-                    for z in xrange(len(lookDist)):
+                    for z in range(len(lookDist)):
                         if 0.1 < r < lookDist[z]:
                             nearNeigh[z][k] += 1
                         
         # Now plot a histogram of the number density 0 -> HS
         pad = str(j).zfill(4)
-        for z in xrange(len(lookDist)):
+        for z in range(len(lookDist)):
             # Number of particles * area of a particle / area of bin
             nearNeigh[z] = [ (y * a_particle / lookArea[z]) for y in nearNeigh[z] ]
             # Weight each particle equally
@@ -309,7 +309,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
             dilutePhi = 0.
             denseNMax = 0.
             densePhi = 0.
-            for g in xrange(len(bins) - 1):
+            for g in range(len(bins) - 1):
                 if N[g] > diluteNMax and bins[g] < phi:
                     diluteNMax = N[g]
                     dilutePhi = bins[g]
@@ -320,7 +320,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
             # If there is a large population in the dense phase, we know there is a dilute phase
             if denseNMax > 10.:
                 diluteNMax = 0
-                for g in xrange(len(bins) - 1):
+                for g in range(len(bins) - 1):
                     if N[g] > diluteNMax and bins[g] < 0.4:
                         diluteNMax = N[g]
                         dilutePhi = bins[g]
