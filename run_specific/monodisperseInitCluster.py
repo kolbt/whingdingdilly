@@ -419,6 +419,7 @@ hoomd.md.force.active(group=all,
 #out += "rAlign_" + str(rAlign) + ".gsd"
 out = "cluster_pe" + str(int(peList[0]))
 out += "_phi" + str(intPhi)
+out += "_eps" + str(eps)
 out += "_align" + str(int(rAlign))
 out += ".gsd"
 
