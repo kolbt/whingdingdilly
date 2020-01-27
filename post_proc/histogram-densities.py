@@ -194,7 +194,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
     pos = snap.particles.position
     partNum = len(pos)
     # Let's get the frames to look at
-    outFrames = np.arange(dumps/10, dumps, dumps/10)
+    outFrames = np.arange(dumps/10, dumps, dumps/10, dtype=np.int)
     outFrames = outFrames.tolist()
     outFrames.append(-1)
     print(outFrames)
@@ -202,8 +202,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
     # Compute each mesh
     NBins = getNBins(x_box, r_cut)
     sizeBin = roundUp((x_box / NBins), 6)
-    print("Number of bins: {}").format(NBins)
-    print("Size of bins: {}").format(sizeBin)
+    print("Number of bins:", NBins)
+    print("Size of bins:", sizeBin)
     # Number of bins to search in each direction
     lookNBins = int( max(lookDist) / sizeBin ) + 1
 
