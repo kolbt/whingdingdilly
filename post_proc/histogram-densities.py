@@ -194,7 +194,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
     pos = snap.particles.position
     partNum = len(pos)
     # Let's get the frames to look at
-    outFrames = range(dumps/10, dumps, dumps/10)
+    outFrames = np.arange(dumps/10, dumps, dumps/10)
+    outFrames = outFrames.tolist()
     outFrames.append(-1)
     print(outFrames)
     
