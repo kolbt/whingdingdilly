@@ -34,7 +34,7 @@ do
     pe=$(echo $i | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
     phi=$(echo $i | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
     # Submit for analysis
-    for j in $(ls cluster*pe${}_phi${phi}*)
+    for j in $(ls cluster*pe${pe}_phi${phi}*)
     do
         echo $j
     done
