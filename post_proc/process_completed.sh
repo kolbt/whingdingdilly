@@ -36,7 +36,8 @@ do
     # Submit for analysis
     for j in $(ls cluster*pe${pe}_phi${phi}*)
     do
-        echo $j
+        ep=$(echo $j | $sedtype 's/^.*[^0-9]\([0-9]*\.[0-9]*\)_phi.*$/\1/')
+        $submit $script_path/analyze.sh $pe 0 0 0 0 $script_path $ep $j $phi
     done
     
 done
