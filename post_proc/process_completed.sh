@@ -13,14 +13,30 @@ do
     fi
 done
 
+echo "Are you running on Longleaf (y/n)?"
+read answer
+
+if [ $answer == "y" ]; then
+    script_path='/nas/longleaf/home/kolbt/whingdingdilly/post_proc'
+    sedtype='sed'
+    submit='sbatch'
+    module add python/3.6.6
+else
+    script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/post_proc'
+    sedtype='gsed'
+    submit='sh'
+fi
+
 # Loop through the completed python files
 for i in ${pyFiles[@]}
 do
     # Grab parameters
-    inFile=$i
-    echo "$i"
-    echo $inFile
+    pe=$(echo $i | $sedtype 's/^.*pe\([0-9]*\)_.*/\1/')
+    phi=$(echo $i | $sedtype 's/^.*phi\([0-9]*\)..*/\1/')
     # Submit for analysis
+    for j in $(ls cluster*pe${}_phi${phi}*)
+    do
+        echo $j
+    done
     
-
 done
