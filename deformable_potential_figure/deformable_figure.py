@@ -9,7 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import mpl_toolkits.mplot3d.axes3d as axes3d
 
-eps = 0.1
+eps = 0.01
 sigma = 1.
 def ljPotential(r, eps=0.1, sigma=1.):
     div = (sigma/r)
@@ -44,15 +44,20 @@ peStrong = 500.
 # Assume that the left particle always points toward the right
 fWeak = collisionForce(peWeak, angle)
 fStrong = collisionForce(peStrong, angle)
+
 # Compute the distance that corresponds to the force
-#rWeak = forceToDist(fWeak)
+#rWeak = forceToDist(fWeak, eps=eps)
 #print("Weak force: r={}").format(rWeak)
 #rWeak = 0.776736185849486 # pe = 50
-rWeak = 0.825094041592472 # pe = 20
-#rStrong = forceToDist(fStrong)
+#rWeak = 0.825094041592472 # pe = 20
+rWeak = 0.704511014939217
+
+#rStrong = forceToDist(fStrong, eps=eps)
 #print("Strong force: r={}").format(rStrong)
 #rStrong = 0.719245773085951 # pe = 150
-rStrong = 0.658845113101655 # pe = 500
+#rStrong = 0.658845113101655 # pe = 500
+rStrong = 0.554278202533698
+
 
 fig = plt.figure()
 ax = []
