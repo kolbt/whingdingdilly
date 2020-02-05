@@ -10,14 +10,16 @@ if [ $answer == "y" ]; then
     hoomd_path='/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build'
     gsd_path='/nas/longleaf/home/kolbt/programs/gsd/build'
     script_path='/nas/longleaf/home/kolbt/whingdingdilly/run.sh'
-    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/monodisperseInitCluster.py'
+#    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/monodisperseInitCluster.py'
+    template='/nas/longleaf/home/kolbt/whingdingdilly/run_specific/eps0.1Cluster.py'
     sedtype='sed'
     submit='sbatch'
 else
     hoomd_path='/Users/kolbt/Desktop/compiled/hoomd-blue/build'
     gsd_path='/Users/kolbt/Desktop/compiled/gsd/build'
     script_path='/Users/kolbt/Desktop/compiled/whingdingdilly/run.sh'
-    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/monodisperseInitCluster.py'
+#    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/monodisperseInitCluster.py'
+    template='/Users/kolbt/Desktop/compiled/whingdingdilly/run_specific/eps0.1Cluster.py'
     sedtype='gsed'
     submit='sh'
 fi
@@ -31,7 +33,7 @@ if [ $gpu == "y" ]; then
 fi
 
 # Default values for simulations
-part_num=$(( 1000000 ))
+part_num=$(( 100000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 12 ))
 pe_start=$(( 500 ))
