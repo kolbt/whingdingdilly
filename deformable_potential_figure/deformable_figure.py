@@ -126,4 +126,5 @@ ax[3].set_ylim(-1.5, 1.5)
 ax[3].set_zlim(-1.5, 1.5)
 ax[3].dist = 5.
 
-plt.show()
+plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=1000, bbox_inches='tight', pad_inches=0)
+plt.close()
