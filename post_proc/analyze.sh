@@ -15,7 +15,7 @@ ep=$7
 fname=$8
 phi=$9
 
-vars="$(${script_path}/get_parameters.py ${fname})"
+vars="$(/nas/longleaf/home/kolbt/whingdingdilly/post_proc/get_parameters.py ${fname})"
 echo $vars
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
