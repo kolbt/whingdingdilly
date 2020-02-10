@@ -61,7 +61,8 @@ txtFile = 'MCS_pa' + str(peA) +\
 thresh = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000]
 # Write file headings
 g = open(txtFile, 'w')
-g.write('Timestep'.center(10) + ' ')
+g.write('Timestep'.center(10) + ' ' +\
+        'LgClust'.center(10) + ' ')
 for i in range(len(thresh)):
     nStr = 'c' + str(thresh[i])
     pStr = 'p' + str(thresh[i])
@@ -112,6 +113,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
         c_props.compute(system, ids)            # find cluster properties
         clust_size = c_props.sizes              # find cluster sizes
         
+        lClust = max(clust_size)
         nClusts = [0 for z in range(len(thresh))]
         pClusts = [0 for z in range(len(thresh))]
         for k in range(0, len(clust_size)):
@@ -123,7 +125,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
                     break
         
         g = open(txtFile, 'a')
-        g.write('{0:.1f}'.format(tst).center(10) + ' ')
+        g.write('{0:.1f}'.format(tst).center(10) + ' ' +\
+                str(lClust).center(10) + ' ')
         for k in range(len(thresh)):
             if k != len(thresh) - 1:
                 g.write(str(nClusts[k]).center(10) + ' ' +\
