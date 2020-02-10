@@ -111,6 +111,11 @@ def findMinBins(lookDistance, xInd, yInd, maxInds, binSize):
 
 # Get infile and open
 inFile = str(sys.argv[1])
+in inFile[0:7] == "cluster":
+    add = 'cluster_'
+else:
+    add = ''
+    
 f = hoomd.open(name=inFile, mode='rb')
 # Inside and outside activity from command line
 peA = int(sys.argv[2])
@@ -159,7 +164,7 @@ for z in range(len(lookDist)):
 histWidth = 0.005
 
 # Write the low density and high density peaks to a text file
-txtFile = 'phase_density_pa' + str(peA) +\
+txtFile = add + 'phase_density_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\

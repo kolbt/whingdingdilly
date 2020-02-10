@@ -36,6 +36,11 @@ def computeTauPerTstep(epsilon, mindt=0.000001):
     
 # Get infile and open
 inFile = str(sys.argv[1])
+in inFile[0:7] == "cluster":
+    add = 'cluster_'
+else:
+    add = ''
+    
 f = hoomd.open(name=inFile, mode='rb')
 # Inside and outside activity from command line
 peA = int(sys.argv[2])
@@ -51,7 +56,7 @@ except:
     intPhi = 60
 
 # Outfile to write data to
-txtFile = 'MCS_pa' + str(peA) +\
+txtFile = add + 'MCS_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\
