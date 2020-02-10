@@ -55,6 +55,7 @@ txtFile = 'MCS_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\
+          '_ep' + '{0:.3f}'.format(eps) +\
           '.txt'
 # Different cluster thresholds to use
 thresh = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000, 50000]

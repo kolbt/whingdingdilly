@@ -163,6 +163,7 @@ txtFile = 'phase_density_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\
+          '_ep' + '{0:.3f}'.format(eps) +\
           '.txt'
 f = open(txtFile, 'w') # write file headings
 f.write('Timestep'.center(10) + ' ')
