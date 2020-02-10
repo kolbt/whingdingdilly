@@ -135,7 +135,3 @@ with hoomd.open(name=inFile, mode='rb') as t:
                 g.write(str(nClusts[k]).center(10) + ' ' +\
                         str(pClusts[k]).center(10) + '\n')
         g.close()
-        
-        
-        
-    
