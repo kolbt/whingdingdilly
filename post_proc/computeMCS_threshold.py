@@ -36,7 +36,7 @@ def computeTauPerTstep(epsilon, mindt=0.000001):
     
 # Get infile and open
 inFile = str(sys.argv[1])
-in inFile[0:7] == "cluster":
+if inFile[0:7] == "cluster":
     add = 'cluster_'
 else:
     add = ''

@@ -111,7 +111,7 @@ def findMinBins(lookDistance, xInd, yInd, maxInds, binSize):
 
 # Get infile and open
 inFile = str(sys.argv[1])
-in inFile[0:7] == "cluster":
+if inFile[0:7] == "cluster":
     add = 'cluster_'
 else:
     add = ''
