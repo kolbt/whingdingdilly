@@ -5,18 +5,35 @@
 
 # Command to increase memory allocated --mem=100g
 
-pa=$1
-pb=$2
-xa=$3
-hoomd_path=$4
-gsd_path=$5
-script_path=$6
-ep=$7
-fname=$8
-phi=$9
 
-vars="$(/nas/longleaf/home/kolbt/whingdingdilly/post_proc/get_parameters.py ${fname})"
-echo $vars
+hoomd_path=$1
+gsd_path=$2
+script_path=$3
+fname=$4
+
+vars="$(python ${script_path}/get_parameters.py ${fname})"
+
+pass=()
+for i in $vars
+do
+    # Put in array to unpack
+    pass+=($i)
+done
+
+# This is activity (monodisperse)
+pe=${pass[0]}
+# This is A-type activity
+pa=${pass[1]}
+# This is B-type activity
+pb=${pass[2]}
+# This is fraction of A particles
+xa=${pass[3]}
+# This is epsilon
+ep=${pass[4]}
+# This is system density (phi)
+phi=${pass[5]}
+# This is if the system is initially a cluster (binary)
+clust=${pass[6]}
 
 #python $script_path/nearest_neigh_small_array.py $pa $pb $xa $hoomd_path $gsd_path
 #python $script_path/nearest_neigh.py $pa $pb $xa $hoomd_path $gsd_path
@@ -61,8 +78,8 @@ echo $vars
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python3 $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
-#python3 $script_path/computeMCS_threshold.py $fname $pa $pb $xa $ep $phi
+python3 $script_path/histogram-densities.py $fname $pa $pb $xa $ep $phi
+python3 $script_path/computeMCS_threshold.py $fname $pa $pb $xa $ep $phi
 
 
 ## Movie for defects

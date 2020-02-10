@@ -61,33 +61,40 @@ if checkFile(file, "pe"):
     pe = txtValue(file, "pe")
 else:
     pe = 0
+print(pe)
 
 if checkFile(file, "pa"):
     paList = txtValue(file, "pa")
 else:
     pa = 0
-    
+print(pa)
+
 if checkFile(file, "pb"):
     pbList = txtValue(file, "pb")
 else:
     pb = 0
+print(pb)
     
 if checkFile(file, "xa"):
     xa = txtValue(file, "xa")
 else:
     xa = 100.
+print(xa)
     
 if checkFile(file, "ep"):
     ep = txtValue(file, "ep")
 else:
     ep = 1.
+print(ep)
     
 if checkFile(file, "phi"):
     phi = txtValue(file, "phi")
 else:
     phi = 60.
+print(phi)
 
 if checkFile(file, "cluster"):
     cluster = 1
 else:
     cluster = 0
+print(cluster)
