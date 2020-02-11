@@ -118,8 +118,8 @@ else:
     
 f = hoomd.open(name=inFile, mode='rb')
 # Inside and outside activity from command line
-peA = int(sys.argv[2])
-peB = int(sys.argv[3])
+peA = float(sys.argv[2])
+peB = float(sys.argv[3])
 parFrac = float(sys.argv[4])
 eps = float(sys.argv[5])
 try:
