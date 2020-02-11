@@ -45,7 +45,7 @@ f = hoomd.open(name=inFile, mode='rb')
 # Inside and outside activity from command line
 peA = int(sys.argv[2])
 peB = int(sys.argv[3])
-parFrac = int(sys.argv[4])
+parFrac = float(sys.argv[4])
 eps = float(sys.argv[5])
 try:
     phi = float(sys.argv[6])
