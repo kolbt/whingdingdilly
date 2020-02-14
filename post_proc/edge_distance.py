@@ -19,10 +19,11 @@ from freud import box
 from freud import density
 from freud import cluster
 
-from shapely.ops import cascaded_union, polygonize
+from shapely.ops import cascaded_union, polygonize, unary_union
 from scipy.spatial import Delaunay
 from descartes import PolygonPatch
 import shapely.geometry as geometry
+from shapely.strtree import STRtree
 from matplotlib.collections import LineCollection
 
 import numpy as np
@@ -39,17 +40,6 @@ def computeTauPerTstep(epsilon, mindt=0.000001):
     kBT = 1.0
     tstepPerTau = float(epsilon / (kBT * mindt))
     return 1. / tstepPerTau
-
-def plot_polygon(polygon):
-    fig = plt.figure(figsize=(10,10))
-    ax = fig.add_subplot(111)
-#    ax.set_xlim([-h_box, h_box])
-#    ax.set_ylim([-h_box, h_box])
-    patch = PolygonPatch(polygon, fc='#999999',
-                         ec='#000000', fill=True,
-                         zorder=-1)
-    ax.add_patch(patch)
-    return fig
 
 def alpha_shape(points, alpha):
     """
@@ -169,19 +159,6 @@ with hoomd.open(name=inFile, mode='rb') as t:
         
         # Compute clusters for this timestep
         system = freud.AABBQuery(f_box, f_box.wrap(pos))
-#        # Compute neighbor list for entire system
-#        lc = freud.locality.AABBQuery(box=f_box, points=pos)
-#        nlist = lc.query(pos, dict(num_neighbors=6, exclude_ii=True)).toNeighborList()
-#        nlist.filter_r(r_max=1.0, r_min=0.2)
-#        neigh = nlist.neighbor_counts
-#        print(min(neigh))
-#        print(max(neigh))
-#        x = pos[:, 0]
-#        y = pos[:, 1]
-#        plt.scatter(x, y, c=list(neigh), s=0.5, edgecolor='none')
-#        ax = plt.gca()
-#        ax.axis('equal')
-#        plt.show()
         
         # Compute neighbor list for only largest cluster
         my_clust.compute(system, neighbors={'r_max': 1.0})
@@ -201,6 +178,21 @@ with hoomd.open(name=inFile, mode='rb') as t:
         for k in range(0, len(ids)):
             if ids[k] == lcID:
                 lcPos.append(pos[k])
+               
+#        # Save figure of LC
+#        x = list(list(zip(*lcPos))[0])
+#        y = list(list(zip(*lcPos))[1])
+#        fig, ax = plt.subplots()
+#        ax.scatter(x, y, s=0.01, edgecolors='none')
+#        ax.set_xlim(-l_box/2., l_box/2.)
+#        ax.set_ylim(-l_box/2., l_box/2.)
+#        ax.axes.set_xticklabels([])
+#        ax.axes.set_yticklabels([])
+#        ax.set_xticks([])
+#        ax.set_yticks([])
+#        ax.set_aspect('equal')
+#        plt.savefig('edge_detection_out.png', dpi=3000)
+#        plt.close()
                 
         # Feed LC into neighbor computation, extract low-neighbor points
         lc = freud.locality.AABBQuery(box=f_box, points=f_box.wrap(lcPos))
@@ -208,27 +200,78 @@ with hoomd.open(name=inFile, mode='rb') as t:
         nlist.filter_r(r_max=1.0, r_min=0.2)
         neigh = nlist.neighbor_counts
         
-        # YOU SHOULD BE ABLE TO USE SHAPELY ON YOUR INITIAL NEIGHBORLIST
+        # Let's view the edge set of these points
+        lcEd = set()
+        lcEdPos = []
+        print("Creating connected edge list... ")
+        for (i, j) in nlist:
+            # Don't repeat any edges
+            if (i, j) in lcEd or (j, i) in lcEd:
+                continue
+            # If the edge hasn't been added, add it
+            lcEd.add( (i, j) )
+            lcEdPos.append([(lcPos[i][0], lcPos[i][1]), (lcPos[j][0], lcPos[j][1])])
         
-        # Let's throw out any point that has >3 neighbors
-        edPos = []
-        for k in range(0, len(neigh)):
-            if neigh[k] <= 4:
-                edPos.append(lcPos[k])
+        # Visualize the line collection of the LC
+        lcLineCol = LineCollection(lcEdPos, lw=0.5)
+        
+        # Use shapely to get my enclosing polygon
+        print("Creating connected line geometry... ")
+        m = geometry.MultiLineString(lcEdPos)
+        print("Forming polygons from connected lines... ")
+        indivPoly = list(polygonize(m))
+#        s = STRtree(indivPoly)
+        print("Merging polygons... ")
+#        edgeDetect = cascaded_union(indivPoly)
+        edgeDetect = unary_union(indivPoly)
+        
+        # Plot the polygon
+        print("Plotting merged polygon... ")
+        fig, ax = plt.subplots()
+        patch = PolygonPatch(edgeDetect, fc='g', ec='k', alpha=0.5, lw=0.1, zorder=2)
+        ax.add_patch(patch)
+        x = list(list(zip(*lcPos))[0])
+        y = list(list(zip(*lcPos))[1])
+        ax.scatter(x, y, s=0.01, edgecolors='none', zorder=1)
+        ax.set_xlim(-l_box/2., l_box/2.)
+        ax.set_ylim(-l_box/2., l_box/2.)
+        ax.axes.set_xticklabels([])
+        ax.axes.set_yticklabels([])
+        ax.set_xticks([])
+        ax.set_yticks([])
+        ax.set_aspect('equal')
+        plt.savefig('edge_detection_out.png', dpi=3000)
+        plt.close()
+        
+        print(edgeDetect.length)
+        
+#        # Let's throw out any point that has >3 neighbors
+#        edPos = []
+#        for k in range(0, len(neigh)):
+#            if neigh[k] <= 4:
+#                edPos.append(lcPos[k])
+#
+#        # Remove z-component of edPos
+#        x = list(list(zip(*edPos))[0])
+#        y = list(list(zip(*edPos))[1])
+#        edgePos = list(zip(x, y))
+#        plt.scatter(x, y, s=0.5, edgecolors='none')
+#        ax = plt.gca()
+#        ax.axis('equal')
+#        plt.show()
+        
+#        ed = freud.locality.AABBQuery(box=f_box, points=f_box.wrap(edPos))
+        
                 
-        # Remove z-component of edPos
-        x = list(list(zip(*edPos))[0])
-        y = list(list(zip(*edPos))[1])
-        edgePos = list(zip(x, y))
-                
-        # Let's use shapely and convex hulls
-        concave_hull, edge_points = alpha_shape(edgePos, alpha=0.15)
-        plot_polygon(concave_hull)
-#        plot_polygon(concave_hull.buffer(1.5))
-        plt.scatter(x, y, s=0.5, c='#FF6103', edgecolors='none')
-        ax = plt.gca()
-        ax.axis('equal')
-        plt.show()
+#        # THIS WORKS (but not for periodic boundaries...)
+#        # Let's use shapely and convex hulls
+#        concave_hull, edge_points = alpha_shape(edgePos, alpha=0.15)
+#        print(edge_points)
+#        plot_polygon(concave_hull)
+#        plt.scatter(x, y, s=0.5, c='#FF6103', edgecolors='none')
+#        ax = plt.gca()
+#        ax.axis('equal')
+#        plt.show()
         
 #        # THIS WORKS VERY WELL, BUT I CANNOT ACCESS EDGE LENGTH
 #        # Let's try outsourcing this to a module
