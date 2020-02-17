@@ -80,9 +80,12 @@ if checkFile(file, "xa"):
 else:
     xa = 100.
 print(xa)
-    
+
 if checkFile(file, "ep"):
-    ep = txtValue(file, "ep")
+    if checkFile(file, "eps"):
+        ep = txtValue(file, "eps")
+    else:
+        ep = txtValue(file, "ep")
 else:
     ep = 1.
 print(ep)
