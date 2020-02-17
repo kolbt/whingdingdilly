@@ -192,26 +192,50 @@ with hoomd.open(name=inFile, mode='rb') as t:
                 binParts[x_ind][y_ind].append(k)
                 occParts[x_ind][y_ind] = 1
         
-        # Loop through indices, figure out which are empty
+        # If sufficient neighbor bins are empty, we have an edge
         thresh = 1.5
+        # Loop through x index of mesh
         for ix in range(0, len(occParts)):
-            lookx = [ix-1, ix, ix+1]
+        
+            # If at right edge, wrap to left
+            if (ix + 1) != NBins:
+                lookx = [ix-1, ix, ix+1]
+            else:
+                lookx = [ix-1, ix, 0]
+                
+            # Loop through y index of mesh
             for iy in range(0, len(occParts[ix])):
+            
+                # Reset neighbor counter
                 count = 0
+                # If the bin is not occupied, skip it
                 if occParts[ix][iy] == 0:
                     continue
-                looky = [iy-1, iy, iy+1]
+                # If at top edge, wrap to bottom
+                if (iy + 1) != NBins:
+                    looky = [iy-1, iy, iy+1]
+                else:
+                    looky = [iy-1, iy, 0]
+                
+                # Loop through surrounding x-index
                 for indx in lookx:
+                    # Loop through surrounding y-index
                     for indy in looky:
+                    
+                        # If neighbor bin is NOT occupied
                         if occParts[indx][indy] == 0:
+                            # If neighbor bin shares a vertex
                             if indx != ix and indy != iy:
                                 count += 0.5
+                            # If neighbor bin shares a side
                             else:
                                 count += 1
+                                
+                # If sufficient neighbors are empty, we found an edge
                 if count >= thresh:
                     edgeBin[indx][indy] = 1
         
-        # Sum the resultant mesh
+        # Sum the resultant edge mesh
         Nedges = 0
         for ix in range(0, len(occParts)):
             for iy in range(0, len(occParts[ix])):
