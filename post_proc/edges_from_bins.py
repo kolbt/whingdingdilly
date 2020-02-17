@@ -45,8 +45,8 @@ import matplotlib.patches as patches
 
 def computeTauPerTstep(epsilon, mindt=0.000001):
     '''Read in epsilon, output tauBrownian per timestep'''
-    if epsilon != 1.:
-        mindt=0.00001
+#    if epsilon != 1.:
+#        mindt=0.00001
     kBT = 1.0
     tstepPerTau = float(epsilon / (kBT * mindt))
     return 1. / tstepPerTau
@@ -106,12 +106,17 @@ outFile = add + 'edge_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\
-          '_ep' + '{0:.3f}'.format(eps)
+          '_ep' + '{0:.3f}'.format(eps) +\
+          '.txt'
+          
+g = open(outFile, 'w') # write file headings
+g.write('Timestep'.center(10) + ' ' + 'Length'.center(10) + '\n')
+g.close()
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-end = start + 1
+start = end - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -154,12 +159,20 @@ with hoomd.open(name=inFile, mode='rb') as t:
         c_props.compute(system, ids)            # find cluster properties
         clust_size = c_props.sizes              # find cluster sizes
 
-        # Try and grab edge of largest cluster
-        lClust = max(clust_size)
-        # Get the id of the largest cluster
+        # We can also grab all clusters over a set size
+        suffIDs = []
         for k in range(0, len(clust_size)):
-            if clust_size[k] == lClust:
-                lcID = ids[k]
+            # Cluster must be >= 5% of all particles
+            if clust_size[k] >= (partNum * 0.05):
+                # Grab sufficiently large cluster IDs
+                suffIDs.append(k)
+        
+#        # Try and grab edge of largest cluster
+#        lClust = max(clust_size)
+#        # Get the id of the largest cluster
+#        for k in range(0, len(clust_size)):
+#            if clust_size[k] == lClust:
+#                lcID = ids[k]
 
         # Get the positions of all particles in LC
         binParts = [[[] for b in range(NBins)] for a in range(NBins)]
@@ -167,7 +180,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
         edgeBin = [[0 for b in range(NBins)] for a in range(NBins)]
         lcPos = []
         for k in range(0, len(ids)):
-            if ids[k] == lcID:
+            if ids[k] in suffIDs:
+#            if ids[k] == lcID:
                 lcPos.append(pos[k])
                 # Convert position to be > 0 to place in list mesh
                 tmp_posX = pos[k][0] + h_box
@@ -202,19 +216,30 @@ with hoomd.open(name=inFile, mode='rb') as t:
         for ix in range(0, len(occParts)):
             for iy in range(0, len(occParts[ix])):
                 Nedges += edgeBin[ix][iy]
-        print(Nedges)
-        print(Nedges * sizeBin)
-        x = list(list(zip(*lcPos))[0])
-        y = list(list(zip(*lcPos))[1])
-        diam = max(x) - min(x)
-        circ = diam * np.pi
-        print(circ)
-        print(Nedges * sizeBin / circ)
         
-        # Let's plot imshow to make sure we're good thus far
-        fig, ax = plt.subplots()
-        ax.imshow(edgeBin, extent=[0, l_box, 0, l_box], aspect='auto', origin='lower')
-        ax.set_aspect('equal')
-        plt.show()
+        # The edge length of sufficiently large clusters
+        lEdge = Nedges * sizeBin
+        
+        # Write this to a textfile with the timestep
+        g = open(outFile, 'a')
+        g.write('{0:.3f}'.format(tst).center(10) + ' ')
+        g.write('{0:.1f}'.format(lEdge).center(10) + '\n')
+        g.close()
+        
+#        # A sanity check on a perfect hcp circle
+#        print(Nedges)
+#        print(Nedges * sizeBin)
+#        x = list(list(zip(*lcPos))[0])
+#        y = list(list(zip(*lcPos))[1])
+#        diam = max(x) - min(x)
+#        circ = diam * np.pi
+#        print(circ)
+#        print(Nedges * sizeBin / circ)
+#
+#        # Let's plot imshow to make sure we're good thus far
+#        fig, ax = plt.subplots()
+#        ax.imshow(edgeBin, extent=[0, l_box, 0, l_box], aspect='auto', origin='lower')
+#        ax.set_aspect('equal')
+#        plt.show()
                 
         
