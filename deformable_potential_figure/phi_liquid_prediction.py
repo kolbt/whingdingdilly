@@ -63,19 +63,21 @@ def convergeR(pe, eps, angle):
 def convergeConstEps(pe, eps, angle):
     out = []
     for i in pe:
-        r = 1.
+        r = 1.112
         while ljForce(r, eps) < collisionForce(i, angle):
             r -= 0.0001
         out.append(latToPhi(r))
     return out
 
-epsRange = np.arange(0.1, 1.1, 0.1)
+#epsRange = np.arange(0.1, 1.1, 0.1)
+#epsRange = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+epsRange =  [0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 peRange = np.arange(0., 500., 1.)
 
 # Get phi vs pe at constant epsilon
 for i in epsRange:
-    plt.plot(peRange, convergeConstEps(peRange, i, angle), c=plt.cm.jet(i/max(epsRange)), label="{0:.1f}".format(i))
-plt.legend(title=r'$\epsilon$')
+    plt.plot(peRange, convergeConstEps(peRange, i, angle), c=plt.cm.jet(i/max(epsRange)), label="{0:.2f}".format(i))
+plt.legend(title=r'$\epsilon$', loc=2, bbox_to_anchor=(1.0, 1.02))
 plt.xlim(0, 500)
 plt.xlabel(r'Activity $(Pe)$')
 plt.ylabel(r'Liquid phase area fraction $(\phi_{l})$')
