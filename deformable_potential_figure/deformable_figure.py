@@ -24,6 +24,18 @@ def ljForce(r, eps=0.1, sigma=1.):
 def collisionForce(pe, angle):
     return pe - (pe * np.cos(angle))
     
+def latToPhi(latIn):
+    '''Read in lattice spacing, output phi'''
+    phiCP = np.pi / (2. * np.sqrt(3.))
+    latCP = 1.
+    return phiCP / (latIn**2)
+    
+def convergeConstPeEps(pe, eps, angle):
+    r = 1.112
+    while ljForce(r, eps) < collisionForce(pe, angle):
+        r -= 0.0001
+    return r
+    
 from sympy.solvers import solve
 from sympy import solveset, S
 from sympy.abc import x
@@ -58,6 +70,10 @@ rWeak = 0.704511014939217
 #rStrong = 0.658845113101655 # pe = 500
 rStrong = 0.554278202533698
 
+rWeak = convergeConstPeEps(peWeak, eps, angle)
+rStrong = convergeConstPeEps(peStrong, eps, angle)
+print(rWeak)
+print(rStrong)
 
 fig = plt.figure()
 ax = []
@@ -89,19 +105,27 @@ ax[2].legend()
 
 # Plot the overlap of spheres
 # For wire mesh
-u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-x = np.cos(u)*np.sin(v)
-y = np.sin(u)*np.sin(v)
-z = np.cos(v)
+backu, backv = np.mgrid[1*np.pi:2*np.pi:10j, 0:np.pi:10j]
+backx = np.cos(backu)*np.sin(backv)
+backy = np.sin(backu)*np.sin(backv)
+backz = np.cos(backv)
+frontu, frontv = np.mgrid[0*np.pi:1*np.pi:10j, 0:np.pi:10j]
+frontx = np.cos(frontu)*np.sin(frontv)
+fronty = np.sin(frontu)*np.sin(frontv)
+frontz = np.cos(frontv)
 # For solid sphere
 uS, vS = np.mgrid[0:2*np.pi:1000j, 0:np.pi:500j]
-xS = np.cos(u)*np.sin(v)
-yS = np.sin(u)*np.sin(v)
-zS = np.cos(v)
-ax[1].plot_wireframe(x - rWeak, y, z, color="#808080")
-ax[1].plot_wireframe(x + rWeak, y, z, color="#808080")
+xS = np.cos(uS)*np.sin(vS)
+yS = np.sin(uS)*np.sin(vS)
+zS = np.cos(vS)
+backAlph = 0.3
+frontAlph = 0.5
+ax[1].plot_wireframe(backx - rWeak, backy, backz, color="#808080", alpha=backAlph)
+ax[1].plot_wireframe(backx + rWeak, backy, backz, color="#808080", alpha=backAlph)
 ax[1].plot_surface((xS*rWeak) - rWeak, yS*rWeak, zS*rWeak, color="b")
 ax[1].plot_surface((xS*rWeak) + rWeak, yS*rWeak, zS*rWeak, color="b")
+ax[1].plot_wireframe(frontx - rWeak, fronty, frontz, color="#808080", alpha=frontAlph)
+ax[1].plot_wireframe(frontx + rWeak, fronty, frontz, color="#808080", alpha=frontAlph)
 ax[1].set_axis_off()
 ax[1].view_init(0, 90)
 #ax[1].set_xlim(-2.*rWeak, 2.*rWeak)
@@ -112,10 +136,12 @@ ax[1].set_ylim(-1.5, 1.5)
 ax[1].set_zlim(-1.5, 1.5)
 ax[1].dist = 5.
 
-ax[3].plot_wireframe(x - rStrong, y, z, color="#808080")
-ax[3].plot_wireframe(x + rStrong, y, z, color="#808080")
+ax[3].plot_wireframe(backx - rStrong, backy, backz, color="#808080", alpha=backAlph)
+ax[3].plot_wireframe(backx + rStrong, backy, backz, color="#808080", alpha=backAlph)
 ax[3].plot_surface((xS*rStrong) - rStrong, yS*rStrong, zS*rStrong, color="g")
 ax[3].plot_surface((xS*rStrong) + rStrong, yS*rStrong, zS*rStrong, color="g")
+ax[3].plot_wireframe(frontx - rStrong, fronty, frontz, color="#808080", alpha=frontAlph)
+ax[3].plot_wireframe(frontx + rStrong, fronty, frontz, color="#808080", alpha=frontAlph)
 ax[3].set_axis_off()
 ax[3].view_init(0, 90)
 #ax[3].set_xlim(-2.*rStrong, 2.*rStrong)
