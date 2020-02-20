@@ -1,13 +1,12 @@
 '''
 #                           This is an 80 character line                       #
-Compute the pressure that corresponds to the LJ potential:
-    -identify liquid bulk particles
-    -identify gas bulk particles
-    -compute area of dense bulk
-    -compute area of all dense phase particles
-    -compute area of gas bulk (exclude edge)
-    -sum stress tensor for liquid
-    -sum stress tensor for gas
+Compute the length of the cluster edge:
+-Use Freud to find the complete system neighborlist
+-Grab the largest cluster
+-Mesh the system
+-Compute which bins have largest cluster particles
+-If adjacent bins are empty, the reference bin is an edge
+-Multiply by bin size to get length
 '''
 
 import sys
@@ -43,6 +42,17 @@ import matplotlib.collections
 from matplotlib import colors
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
+
+def computeDist(x1, y1, x2, y2):
+    '''Compute distance between two points'''
+    return np.sqrt( ((x2-x1)**2) + ((y2 - y1)**2) )
+    
+def computeFLJ(r, x1, y1, x2, y2, eps):
+    sig = 1.
+    f = (24. * eps / r) * ( (2*((sig/r)**12)) - ((sig/r)**6) )
+    fx = f * (x2 - x1) / r
+    fy = f * (y2 - y1) / r
+    return fx, fy
 
 def computeTauPerTstep(epsilon, mindt=0.000001):
     '''Read in epsilon, output tauBrownian per timestep'''
@@ -109,21 +119,24 @@ outFile = add + 'pressure_pa' + str(peA) +\
           '_phi' + str(intPhi) +\
           '_ep' + '{0:.3f}'.format(eps) +\
           '.txt'
-          
+
 g = open(outFile, 'w') # write file headings
 g.write('Timestep'.center(10) + ' ' +\
-        'Liquid'.center(10) + ' ' +\
-        'liqN'.center(10) + ' ' +\
-        'liqArea'.center(10) + ' ' +\
-        'Gas'.center(10) + ' ' +\
-        'gasN'.center(10) + ' ' +\
-        'gasArea'.center(10) + '\n')
+        'gasArea'.center(20) + ' ' +\
+        'gasTrace'.center(20) + ' ' +\
+        'gasPress'.center(20) + ' ' +\
+        'bulkArea'.center(20) + ' ' +\
+        'bulkTrace'.center(20) + ' ' +\
+        'bulkPress'.center(20) + ' ' +\
+        'SurfaceTense'.center(20) + ' ' +\
+        'Length'.center(20) + '\n')
 g.close()
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-start = end - 1
+#start = end - 1
+end = start + 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -165,49 +178,32 @@ with hoomd.open(name=inFile, mode='rb') as t:
         ids = my_clust.cluster_idx              # get id of each cluster
         c_props.compute(system, ids)            # find cluster properties
         clust_size = c_props.sizes              # find cluster sizes
-        
-        # Grab all clusters less than a set size (gas phase)
-        gasIDs = []
-        # We can also grab all clusters over a set size
-        liqIDs = []
-        # Minimum size to be considered the dense phase
-        minSize = 5000
-        
-        for k in range(0, len(clust_size)):
-            # Cluster must be >= 5000
-            if clust_size[k] >= minSize:
-                # Grab sufficiently large cluster IDs
-                liqIDs.append(k)
-            # Cluster is small enough to be in gas phase
-            elif clust_size[k] <= 100:
-                gasIDs.append(k)
-                
-        # Refine our choice of the dense phase, only particles with six neighbors
-        liqPos = []
-        for k in range(0, len(ids)):
-            if ids[k] in liqIDs:
-                liqPos.append(pos[k])
-                
-        # Cluster these data and refine
-        subSys = freud.AABBQuery(f_box, f_box.wrap(liqPos))
-        nlist = subSys.query(liqPos, dict(num_neighbors=6, exclude_ii=True, r_max=1.0, r_min=0.2)).toNeighborList()
 
+        # We can also grab all clusters over a set size
+        min_size = 5000
+        
         # Get the positions of all particles in LC
         binParts = [[[] for b in range(NBins)] for a in range(NBins)]
+        occParts = [[0 for b in range(NBins)] for a in range(NBins)]
+        edgeBin = [[0 for b in range(NBins)] for a in range(NBins)]
         liqPos = []
+        gasPos = []
         for k in range(0, len(ids)):
-            if ids[k] in liqIDs:
+            # Convert position to be > 0 to place in list mesh
+            tmp_posX = pos[k][0] + h_box
+            tmp_posY = pos[k][1] + h_box
+            x_ind = int(tmp_posX / sizeBin)
+            y_ind = int(tmp_posY / sizeBin)
+            # Append all particles to appropriate bin
+            binParts[x_ind][y_ind].append(k)
+            
+            # Get sufficient cluster mesh as well
+            if clust_size[ids[k]] >= min_size:
                 liqPos.append(pos[k])
-                # Convert position to be > 0 to place in list mesh
-                tmp_posX = pos[k][0] + h_box
-                tmp_posY = pos[k][1] + h_box
-                x_ind = int(tmp_posX / sizeBin)
-                y_ind = int(tmp_posY / sizeBin)
-                # Append particle id to appropriate bin
-                binParts[x_ind][y_ind].append(k)
-                
-            elif ids[k] in gasIDs:
-        
+                occParts[x_ind][y_ind] = 1
+            # Get a gas particle list as well
+            elif clust_size[ids[k]] <= 100:
+                gasPos.append(pos[k])
         
         # If sufficient neighbor bins are empty, we have an edge
         thresh = 1.5
@@ -252,35 +248,148 @@ with hoomd.open(name=inFile, mode='rb') as t:
                 if count >= thresh:
                     edgeBin[indx][indy] = 1
         
-        # Sum the resultant edge mesh
+        blurBin = [[0 for b in range(NBins)] for a in range(NBins)]
         Nedges = 0
+        # Blur the edge bins a bit
         for ix in range(0, len(occParts)):
-            for iy in range(0, len(occParts[ix])):
+            for iy in range(0, len(occParts)):
                 Nedges += edgeBin[ix][iy]
+                if edgeBin[ix][iy] == 1:
+                    # If at right edge, wrap to left
+                    if (ix + 1) != NBins:
+                        lookx = [ix-1, ix, ix+1]
+                    else:
+                        lookx = [ix-1, ix, 0]
+                    # If at top edge, wrap to bottom
+                    if (iy + 1) != NBins:
+                        looky = [iy-1, iy, iy+1]
+                    else:
+                        looky = [iy-1, iy, 0]
+                    # Loop through surrounding x-index
+                    for indx in lookx:
+                        # Loop through surrounding y-index
+                        for indy in looky:
+                            # Make all surrounding bins 'edge' bins
+                            blurBin[indx][indy] = 1
         
+        # Now let's compute the pressure
+        bulkSigXX = 0
+        bulkSigYY = 0
+        gasSigXX = 0
+        gasSigYY = 0
+        print("Computing the pressure")
+        for k in range(0, len(ids)):
+            # Convert position to be > 0 to place in list mesh
+            tmp_posX = pos[k][0] + h_box
+            tmp_posY = pos[k][1] + h_box
+            x_ind = int(tmp_posX / sizeBin)
+            y_ind = int(tmp_posY / sizeBin)
+            # Only compute pressure for non-edge bins
+            if blurBin[x_ind][y_ind] != 1:
+                # If at right edge, wrap to left
+                if (x_ind + 1) != NBins:
+                    lookx = [x_ind-1, x_ind, x_ind+1]
+                else:
+                    lookx = [x_ind-1, x_ind, 0]
+                # If at top edge, wrap to bottom
+                if (y_ind + 1) != NBins:
+                    looky = [y_ind-1, y_ind, y_ind+1]
+                else:
+                    looky = [y_ind-1, y_ind, 0]
+                # Reference particle position
+                refx = pos[k][0]
+                refy = pos[k][1]
+                # Loop through surrounding x-index
+                for indx in lookx:
+                    # Loop through surrounding y-index
+                    for indy in looky:
+                        # Loop through all particles in that bin
+                        for comp in binParts[indx][indy]:
+                            # Compute the distance
+                            dist = computeDist(refx, refy, pos[comp][0], pos[comp][1])
+                            # If potential is on ...
+                            if 0.1 < dist <= r_cut:
+                                # Compute the x and y components of force
+                                fx, fy = computeFLJ(dist, refx, refy, pos[comp][0], pos[comp][1], eps)
+                                # This will go into the bulk pressure
+                                if clust_size[ids[k]] >= min_size:
+                                    bulkSigXX += (fx * (pos[comp][0] - refx))
+                                    bulkSigYY += (fy * (pos[comp][1] - refy))
+                                # This goes into the gas pressure
+                                else:
+                                    gasSigXX += (fx * (pos[comp][0] - refx))
+                                    gasSigYY += (fy * (pos[comp][1] - refy))
+        
+        # Now let's get the area of each phase (by summing bin areas)
+        gasBins = 0
+        bulkBins = 0
+        testIDs = [[0 for b in range(NBins)] for a in range(NBins)]
+        for ix in range(0, len(occParts)):
+            for iy in range(0, len(occParts)):
+                # Is the bin an edge?
+                if blurBin[ix][iy] == 1:
+                    testIDs[ix][iy] = 0
+                    continue
+                # Does the bin belong to the dense phase?
+                if len(binParts[ix][iy]) != 0:
+                    if clust_size[ids[binParts[ix][iy][0]]] > min_size:
+                        bulkBins += 1
+                        testIDs[ix][iy] = 1
+                        continue
+                gasBins += 1
+                testIDs[ix][iy] = 2
+                 
         # The edge length of sufficiently large clusters
         lEdge = Nedges * sizeBin
+        # Divide by two because each pair is counted twice
+        bulkTrace = (bulkSigXX + bulkSigYY)/2.
+        gasTrace = (gasSigXX + gasSigYY)/2.
+        # Area of a bin
+        binArea = sizeBin * sizeBin
+        # Area of each phase
+        gasArea = binArea * gasBins
+        bulkArea = binArea * bulkBins
+        # Pressure of each phase
+        gasPress = gasTrace / gasArea
+        bulkPress = bulkTrace / bulkArea
+        # Surface tension
+        surfaceTense = (bulkPress - gasPress) * lEdge
         
-        # Write this to a textfile with the timestep
-        g = open(outFile, 'a')
-        g.write('{0:.3f}'.format(tst).center(10) + ' ')
-        g.write('{0:.1f}'.format(lEdge).center(10) + '\n')
-        g.close()
+        print("Number of gas bins: ", gasBins)
+        print("Gas phase area: ", gasArea)
+        print("Number of bulk bins: ", bulkBins)
+        print("Bulk phase area: ", bulkArea)
+        print("Trace of gas stress tensor: ", gasTrace)
+        print("Trace of bulk stress tensor: ", bulkTrace)
+        print("Gas phase pressure: ", gasPress)
+        print("Bulk phase pressure: ", bulkPress)
+        print("Surface tension: ", surfaceTense)
         
 #        # A sanity check on a perfect hcp circle
 #        print(Nedges)
 #        print(Nedges * sizeBin)
-#        x = list(list(zip(*lcPos))[0])
-#        y = list(list(zip(*lcPos))[1])
+#        x = list(list(zip(*liqPos))[0])
+#        y = list(list(zip(*liqPos))[1])
 #        diam = max(x) - min(x)
 #        circ = diam * np.pi
 #        print(circ)
 #        print(Nedges * sizeBin / circ)
-#
+
 #        # Let's plot imshow to make sure we're good thus far
 #        fig, ax = plt.subplots()
-#        ax.imshow(edgeBin, extent=[0, l_box, 0, l_box], aspect='auto', origin='lower')
+#        ax.imshow(testIDs, extent=[0, l_box, 0, l_box], aspect='auto', origin='lower')
 #        ax.set_aspect('equal')
 #        plt.show()
                 
-        
+        # Write this to a textfile with the timestep
+        g = open(outFile, 'a')
+        g.write('{0:.3f}'.format(tst).center(10) + ' ')
+        g.write('{0:.3f}'.format(gasArea).center(20) + ' ')
+        g.write('{0:.3f}'.format(gasTrace).center(20) + ' ')
+        g.write('{0:.3f}'.format(gasPress).center(20) + ' ')
+        g.write('{0:.3f}'.format(bulkArea).center(20) + ' ')
+        g.write('{0:.3f}'.format(bulkTrace).center(20) + ' ')
+        g.write('{0:.3f}'.format(bulkPress).center(20) + ' ')
+        g.write('{0:.3f}'.format(surfaceTense).center(20) + ' ')
+        g.write('{0:.1f}'.format(lEdge).center(20) + '\n')
+        g.close()
