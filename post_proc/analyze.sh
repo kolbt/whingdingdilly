@@ -82,7 +82,8 @@ clust=${pass[6]}
 #python3 $script_path/computeMCS_threshold.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edge_distance.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edges_from_bins.py $fname $pe $pb $xa $ep $phi
-python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi
+#python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi
+python3 $script_path/indiv_cluster_pressure.py $fname $pe $pb $xa $ep $phi
 
 
 ## Movie for defects
