@@ -36,7 +36,7 @@ import random
 from scipy import stats
 
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.collections
 from matplotlib import colors
