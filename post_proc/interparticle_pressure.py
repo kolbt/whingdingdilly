@@ -113,12 +113,13 @@ except:
     intPhi = 60
 
 # Outfile to write data to
-outFile = add + 'pressure_pa' + str(peA) +\
-          '_pb' + str(peB) +\
-          '_xa' + str(parFrac) +\
-          '_phi' + str(intPhi) +\
-          '_ep' + '{0:.3f}'.format(eps) +\
-          '.txt'
+base = add + 'pressure_pa' + str(peA) +\
+       '_pb' + str(peB) +\
+       '_xa' + str(parFrac) +\
+       '_phi' + str(intPhi) +\
+       '_ep' + '{0:.3f}'.format(eps)
+outFile = base + '.txt'
+imgFile = base + '.png'
 
 g = open(outFile, 'w') # write file headings
 g.write('Timestep'.center(10) + ' ' +\
@@ -135,8 +136,7 @@ g.close()
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-#start = end - 1
-end = start + 1
+start = end - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -375,12 +375,6 @@ with hoomd.open(name=inFile, mode='rb') as t:
 #        print(circ)
 #        print(Nedges * sizeBin / circ)
 
-#        # Let's plot imshow to make sure we're good thus far
-#        fig, ax = plt.subplots()
-#        ax.imshow(testIDs, extent=[0, l_box, 0, l_box], aspect='auto', origin='lower')
-#        ax.set_aspect('equal')
-#        plt.show()
-                
         # Write this to a textfile with the timestep
         g = open(outFile, 'a')
         g.write('{0:.3f}'.format(tst).center(10) + ' ')
@@ -393,3 +387,26 @@ with hoomd.open(name=inFile, mode='rb') as t:
         g.write('{0:.3f}'.format(surfaceTense).center(20) + ' ')
         g.write('{0:.1f}'.format(lEdge).center(20) + '\n')
         g.close()
+
+# Output an image of the frame we're computing
+fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+ax[0].imshow([*zip(*testIDs)], extent=[0, l_box, 0, l_box], origin='lower', aspect='auto')
+ax[0].set_aspect('equal')
+ax[0].axes.set_xticks([])
+ax[0].axes.set_yticks([])
+# Plot gas particles
+x = list(list(zip(*gasPos))[0])
+y = list(list(zip(*gasPos))[1])
+ax[1].scatter(x, y, edgecolor='none', s=0.05, c='b')
+# Plot liquid particles
+x = list(list(zip(*liqPos))[0])
+y = list(list(zip(*liqPos))[1])
+ax[1].scatter(x, y, edgecolor='none', s=0.05, c='g')
+ax[1].set_xlim(-h_box, h_box)
+ax[1].set_ylim(-h_box, h_box)
+ax[1].axes.set_xticks([])
+ax[1].axes.set_yticks([])
+ax[1].set_aspect('equal')
+plt.tight_layout(w_pad=0.1)
+plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=250)
+plt.close()
