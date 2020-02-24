@@ -179,12 +179,14 @@ with hoomd.open(name=inFile, mode='rb') as t:
         clust_size = c_props.sizes              # find cluster sizes
 
         # We can also grab all clusters over a set size
-        min_size = 5000
+        min_size = 1000
         
         # Get the positions of all particles in LC
         binParts = [[[] for b in range(NBins)] for a in range(NBins)]
         occParts = [[0 for b in range(NBins)] for a in range(NBins)]
         edgeBin = [[0 for b in range(NBins)] for a in range(NBins)]
+        memberBin = [[[] for b in range(NBins)] for a in range(NBins)]
+        clustIDs = []
         liqPos = []
         gasPos = []
         for k in range(0, len(ids)):
@@ -195,14 +197,22 @@ with hoomd.open(name=inFile, mode='rb') as t:
             y_ind = int(tmp_posY / sizeBin)
             # Append all particles to appropriate bin
             binParts[x_ind][y_ind].append(k)
-            
             # Get sufficient cluster mesh as well
             if clust_size[ids[k]] >= min_size:
                 liqPos.append(pos[k])
                 occParts[x_ind][y_ind] = 1
+                # Mesh that shows where each cluster is
+                if ids[k] not in memberBin[x_ind][y_ind]:
+                    memberBin[x_ind][y_ind].append(ids[k])
+                # Get all sufficiently large cluster ids
+                if ids[k] not in clustIDs:
+                    clustIDs.append(ids[k])
             # Get a gas particle list as well
-            elif clust_size[ids[k]] <= 100:
+            elif clust_size[ids[k]] <= 200:
                 gasPos.append(pos[k])
+        
+        
+        
         
         # If sufficient neighbor bins are empty, we have an edge
         thresh = 1.5
@@ -272,8 +282,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
                             blurBin[indx][indy] = 1
         
         # Now let's compute the pressure
-        bulkSigXX = 0
-        bulkSigYY = 0
+        bulkSigXX = [0 for i in clustIDs]
+        bulkSigYY = [0 for i in clustIDs]
         gasSigXX = 0
         gasSigYY = 0
         print("Computing the pressure")
@@ -312,8 +322,9 @@ with hoomd.open(name=inFile, mode='rb') as t:
                                 fx, fy = computeFLJ(dist, refx, refy, pos[comp][0], pos[comp][1], eps)
                                 # This will go into the bulk pressure
                                 if clust_size[ids[k]] >= min_size:
-                                    bulkSigXX += (fx * (pos[comp][0] - refx))
-                                    bulkSigYY += (fy * (pos[comp][1] - refy))
+                                    ind = clustIDs.index(ids[k])
+                                    bulkSigXX[ind] += (fx * (pos[comp][0] - refx))
+                                    bulkSigYY[ind] += (fy * (pos[comp][1] - refy))
                                 # This goes into the gas pressure
                                 else:
                                     gasSigXX += (fx * (pos[comp][0] - refx))

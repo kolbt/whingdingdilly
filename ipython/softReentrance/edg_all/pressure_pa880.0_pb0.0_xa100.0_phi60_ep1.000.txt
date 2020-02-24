@@ -1,0 +1,2 @@
+ Timestep        gasArea              gasTrace             gasPress             bulkArea            bulkTrace            bulkPress           SurfaceTense            Length       
+  0.900         126159.183          37016999.547           293.415              3403.668           64381238.783          18915.251           5921375.492             318.0        

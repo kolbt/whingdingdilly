@@ -102,6 +102,9 @@ def phiToLat(phiIn):
     
 def phiLiquid(pe, eps, angle=np.pi, sigma=1.):
     '''Compute the (average) liquid phase density'''
+#    if pe >= 50:
+#        # Shift observed in analysis
+#        pe -= 50
     r = 1.112
     while ljForce(r, eps, sigma) < collisionForce(pe, angle):
         r -= 0.0001
@@ -435,6 +438,7 @@ out = "cluster_pe" + str(int(peList[0]))
 out += "_phi" + str(intPhi)
 out += "_eps" + str(eps)
 out += "_align" + str(int(rAlign))
+out += "_dtau" + str(dTauBrown)
 out += ".gsd"
 
 # Write dump
