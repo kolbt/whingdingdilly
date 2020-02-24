@@ -3,7 +3,8 @@
 #SBATCH --gres=gpu:1                        # I want one gpus
 #SBATCH --partition=gpu                     # partition to run on
 #SBATCH --time=11-00:00                     # time (D-HH:MM)
-#SBATCH --exclude=g0605
+
+# Don't run this for now SBATCH --exclude=g0605
 
 filename=$1
 
