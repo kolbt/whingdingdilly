@@ -49,19 +49,19 @@ seed3 = 183                             # activity seed
 # Some parameters:
 
 # Number of particles
-N = 2.
+N = 3.
 # Particle positions
-pos = [[-0.5, 0., 0.5], [0.5, 0., 0.5]]
+pos = [[-1., 0., 0.5], [0., 0., 0.5], [1., 0., 0.5]]
 # Types
-typ = [0, 0]
+typ = [0, 0, 0]
 
 
 # Now we make the system in hoomd
 hoomd.context.initialize()
 # A small shift to help with the periodic box
-snap = hoomd.data.make_snapshot(N = 2,
-                                box = hoomd.data.boxdim(Lx=10.,
-                                                        Ly=10.,
+snap = hoomd.data.make_snapshot(N = 3,
+                                box = hoomd.data.boxdim(Lx=100.,
+                                                        Ly=100.,
                                                         dimensions=2),
                                 particle_types = ['A'])
 
@@ -84,14 +84,27 @@ hoomd.md.integrate.mode_standard(dt=dt)
 bd = hoomd.md.integrate.brownian(group=all, kT=0., seed=seed)
 
 # Set body force of each particle explicity
-F_act = 500.
-aForce = (F_act, 0., 0.)
-bForce = (-F_act, 0., 0.)
+pe = 100.
+Fa_act = pe
+Fb_act = 0
+Fc_act = pe
+aForce = (Fa_act, 0., 0.)
+bForce = (-Fb_act, 0., 0.)
+cForce = (-Fc_act, 0., 0.)
 # Implement the activities in hoomd
 agroup = hoomd.group.tag_list(name="a", tags=[0])
 bgroup = hoomd.group.tag_list(name="b", tags=[1])
+cgroup = hoomd.group.tag_list(name="c", tags=[2])
 hoomd.md.force.constant(fvec=aForce, group=agroup)
 hoomd.md.force.constant(fvec=bForce, group=bgroup)
+hoomd.md.force.constant(fvec=cForce, group=cgroup)
+
+# We need to put a hard wall on the left
+leftWall = hoomd.md.wall.group(hoomd.md.wall.plane(origin=(-10, 0, 0),
+                                                   normal=(1,0,0),
+                                                   inside=True))
+leftLJWall = hoomd.md.wall.slj(leftWall, r_cut=1.112)
+leftLJWall.force_coeff.set('A', epsilon=10.0, sigma=1.0)
 
 # Write dump
 hoomd.dump.gsd('head_on_collision.gsd',

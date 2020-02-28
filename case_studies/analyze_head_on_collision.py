@@ -51,8 +51,10 @@ with hoomd.open(name=inFile, mode='rb') as t:
     
     # Get the positions
     pos = snap.particles.position[:]
-    delta = pos[1][0] - pos[0][0]
-    print(delta)
+    delta = []
+    for i in range(1, len(pos)):
+        delta.append(pos[i][0] - pos[i-1][0])
+    print("Separation distances: ", delta)
 
 # Now let's see what force this corresponds to
 def ljForce(r, eps=1., sigma=1.):
@@ -60,5 +62,7 @@ def ljForce(r, eps=1., sigma=1.):
     dU = (24. * eps / r) * (2*(div**12) - (div**6))
     return dU
     
-ljF = ljForce(delta)
-print("The Lennard-Jones force at equilibrium separation: ", ljF)
+ljF = []
+for i in range(0, len(delta)):
+    ljF.append(ljForce(delta[i]))
+print("The Lennard-Jones forces: ", ljF)
