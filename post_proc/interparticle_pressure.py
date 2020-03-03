@@ -111,6 +111,10 @@ try:
 except:
     phi = 0.6
     intPhi = 60
+try:
+    dtau = float(sys.argv[7])
+except:
+    dtau = 0.000001
 
 # Outfile to write data to
 base = add + 'pressure_pa' + str(peA) +\

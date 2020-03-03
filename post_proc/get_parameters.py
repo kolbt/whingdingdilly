@@ -53,6 +53,30 @@ def txtValue(fname, string):
         else:
             mybool = False
     return float(out)
+    
+def getdtau(fname):
+    string = 'dtau'
+    out = ""
+    index = 0
+    for i in range(0, len(fname)):
+        if fname[i] == string[0]:
+            for j in range(1, len(string)):
+                if fname[i + j] == string[j]:
+                    if j == (len(string) - 1):
+                        # Last index of search string
+                        index = i + j
+                else:
+                    break
+                        
+    # First index of value
+    index += 1
+    mybool = True
+    while mybool:
+        # We are at . before the file extension
+        if fname[index + 1] == 'g':
+            return float(out)
+        out = out + fname[index]
+        index += 1
 
 # Read in the file name
 file = str(sys.argv[1])
@@ -101,3 +125,9 @@ if checkFile(file, "cluster"):
 else:
     cluster = 0
 print(cluster)
+
+if checkFile(file, "dtau"):
+    dtau = getdtau(file)
+else:
+    dtau = 0.000001
+print(dtau)

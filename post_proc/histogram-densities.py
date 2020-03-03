@@ -130,6 +130,11 @@ except:
     phi = 0.6
     intPhi = 60
 
+try:
+    dtau = float(sys.argv[7])
+except:
+    dtau = 0.000001
+
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
