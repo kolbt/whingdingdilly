@@ -154,7 +154,7 @@ hoomd.md.force.active(group=all,
 name = "pe" + str(pe) +\
 "_ep" + str(eps) +\
 "_phi" + str(intPhi) +\
-"_dtau" + str(dTauBrown)
+"_dtau" + "{:.1e}".format(dTauBrown)
 
 gsdName = name + ".gsd"
 

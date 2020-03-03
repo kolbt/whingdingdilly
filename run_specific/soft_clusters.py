@@ -438,7 +438,7 @@ out = "cluster_pe" + str(int(peList[0]))
 out += "_phi" + str(intPhi)
 out += "_eps" + str(eps)
 out += "_align" + str(int(rAlign))
-out += "_dtau" + str(dTauBrown)
+out += "_dtau" + "{:.1e}".format(dTauBrown)
 out += ".gsd"
 
 # Write dump
