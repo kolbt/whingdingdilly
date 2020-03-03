@@ -86,9 +86,9 @@ bd = hoomd.md.integrate.brownian(group=all, kT=0., seed=seed)
 # Set body force of each particle explicity
 pe = 100.
 Fa_act = pe
-Fb_act = 0
+Fb_act = 0.
 Fc_act = pe
-aForce = (Fa_act, 0., 0.)
+aForce = (-Fa_act, 0., 0.)
 bForce = (-Fb_act, 0., 0.)
 cForce = (-Fc_act, 0., 0.)
 # Implement the activities in hoomd
