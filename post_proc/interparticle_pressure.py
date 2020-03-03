@@ -172,7 +172,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
         typ = snap.particles.typeid                 # type
         tst = snap.configuration.step               # timestep
         tst -= first_tstep                          # normalize by first timestep
-        tst *= tauPerDT                             # convert to Brownian time
+        tst *= dtau                                 # convert to Brownian time
         
         # Compute clusters for this timestep
         system = freud.AABBQuery(f_box, f_box.wrap(pos))

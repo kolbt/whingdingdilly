@@ -30,7 +30,9 @@ def txtValue(fname, string):
     for i in range(0, len(fname)):
         if fname[i] == string[0]:
             for j in range(1, len(string)):
-                if fname[i + j] == string[j]:
+                if (i + j) > (len(fname) - 1):
+                    break
+                elif fname[i + j] == string[j]:
                     if j == (len(string) - 1):
                         # Last index of search string
                         index = i + j
@@ -54,14 +56,15 @@ def txtValue(fname, string):
             mybool = False
     return float(out)
     
-def getdtau(fname):
-    string = 'dtau'
+def getdtau(fname, string="dtau"):
     out = ""
     index = 0
     for i in range(0, len(fname)):
         if fname[i] == string[0]:
             for j in range(1, len(string)):
-                if fname[i + j] == string[j]:
+                if (i + j) > (len(fname) - 1):
+                    break
+                elif fname[i + j] == string[j]:
                     if j == (len(string) - 1):
                         # Last index of search string
                         index = i + j
