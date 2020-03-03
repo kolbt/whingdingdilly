@@ -159,21 +159,21 @@ do
     while [ $pe_count -le $pe_max ]
     do
 
-        # Submit randomly initialized simulations
-        random=pe${pe_count}_phi${phi_count}_eps${eps}.py                       # set unique infile name
-        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-        $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempOne > $random       # write particle number
-        $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $random                      # write particle number
-        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $random                      # write time in tau to infile
-        $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $random                # write dump frequency to infile
-        $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $random                        # write activity to infile
-        $sedtype -i 's/\${eps}/'"${eps}"'/g' $random                            # write epsilon to infile
-        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $random                        # set your seeds
-        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $random
-        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $random
-        $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $random
-
-        $submit $script_path $random
+#        # Submit randomly initialized simulations
+#        random=pe${pe_count}_phi${phi_count}_eps${eps}.py                       # set unique infile name
+#        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+#        $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempOne > $random       # write particle number
+#        $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $random                      # write particle number
+#        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $random                      # write time in tau to infile
+#        $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $random                # write dump frequency to infile
+#        $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $random                        # write activity to infile
+#        $sedtype -i 's/\${eps}/'"${eps}"'/g' $random                            # write epsilon to infile
+#        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $random                        # set your seeds
+#        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $random
+#        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $random
+#        $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $random
+#
+#        $submit $script_path $random
         
         # Now submit cluster simulation with same parameters
         clust=clust_pe${pe_count}_phi${phi_count}.py                            # set unique infile name
