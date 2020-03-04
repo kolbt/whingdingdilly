@@ -163,7 +163,7 @@ for z in range(len(lookDist)):
     plotBins.append(maxParts)
 #    minDense.append(a_particle / area)
     minDense.append(0.)
-    maxDense.append(2.0)
+    maxDense.append(20.0)
 
 # Set the width of each bin in the histogram (in units of sigma)
 histWidth = 0.005
@@ -329,13 +329,13 @@ with hoomd.open(name=inFile, mode='rb') as t:
                     denseNMax = N[g]
                     densePhi = bins[g]
                     
-            # If there is a large population in the dense phase, we know there is a dilute phase
-            if denseNMax > 10.:
-                diluteNMax = 0
-                for g in range(len(bins) - 1):
-                    if N[g] > diluteNMax and bins[g] < 0.4:
-                        diluteNMax = N[g]
-                        dilutePhi = bins[g]
+#            # If there is a large population in the dense phase, we know there is a dilute phase
+#            if denseNMax > 10.:
+#                diluteNMax = 0
+#                for g in range(len(bins) - 1):
+#                    if N[g] > diluteNMax and bins[g] < (phi - 0.1):
+#                        diluteNMax = N[g]
+#                        dilutePhi = bins[g]
             
             plt.axvline(dilutePhi, c='r')
             plt.axvline(densePhi, c='g')
