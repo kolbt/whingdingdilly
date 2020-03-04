@@ -80,12 +80,13 @@ dtau=${pass[7]}
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
-python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/computeMCS_threshold.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edge_distance.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edges_from_bins.py $fname $pe $pb $xa $ep $phi
-python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/indiv_cluster_pressure.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 
 
 ## Movie for defects

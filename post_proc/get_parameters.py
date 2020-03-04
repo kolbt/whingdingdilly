@@ -15,7 +15,9 @@ def checkFile(fname, string):
         if fname[i] == string[0]:
 #             print"{} matches {}".format(fname[i], string[0])
             for j in range(1, len(string)):
-                if fname[i + j] == string[j]:
+                if (i + j) > (len(fname) - 1):
+                    break
+                elif fname[i + j] == string[j]:
 #                     print"{} matches {}".format(fname[i+j], string[j])
                     if j == (len(string) - 1):
 #                         print"Final match!"
