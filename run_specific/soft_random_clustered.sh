@@ -36,15 +36,15 @@ fi
 part_num=$(( 100000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 6 ))
-pe_start=$(( 100 ))
-pe_count=$(( 100 ))
-pe_spacer=$(( 100 ))
+pe_start=$(( 50 ))
+pe_count=$(( 50 ))
+pe_spacer=$(( 50 ))
 pe_max=$(( 500 ))
 phi_start=$(( 45 ))
 phi_count=$(( 45 ))
 phi_spacer=$(( 10 ))
 phi_max=$(( 65 ))
-eps=0.0001
+eps=0.1
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
