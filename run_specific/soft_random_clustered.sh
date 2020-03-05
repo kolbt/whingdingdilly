@@ -44,7 +44,7 @@ phi_start=$(( 45 ))
 phi_count=$(( 45 ))
 phi_spacer=$(( 10 ))
 phi_max=$(( 65 ))
-eps=0.1
+eps=1.0
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
