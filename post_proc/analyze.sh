@@ -84,10 +84,15 @@ dtau=${pass[7]}
 #python3 $script_path/edge_distance.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edges_from_bins.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/indiv_cluster_pressure.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
 
+# Movie for single particle motion
+ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
+ -vcodec libx264 -s 3200x2400 -pix_fmt yuv420p -threads 1\
+ single_particle_motion.mp4
 
 ## Movie for defects
 #ffmpeg -start_number 0 -framerate 6 -i defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%04d.png\
