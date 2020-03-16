@@ -88,11 +88,19 @@ dtau=${pass[7]}
 #python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 
-# Movie for single particle motion
-ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
- -vcodec libx264 -s 3200x2400 -pix_fmt yuv420p -threads 1\
- single_particle_motion.mp4
+# Videos for seminar
+ffmpeg -start_number 0 -framerate 40 -i test_fm%04d.png\
+ -vcodec libx264 -s 640x480 -pix_fmt yuv420p -threads 1\
+ sim_orientation.mp4
+
+## Movie for single particle motion
+#ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
+# -vcodec libx264 -s 3200x2400 -pix_fmt yuv420p -threads 1\
+# single_particle_motion.mp4
 
 ## Movie for defects
 #ffmpeg -start_number 0 -framerate 6 -i defects_pa${pa}_pb${pb}_xa${xa}_ep${ep}_frame%04d.png\
