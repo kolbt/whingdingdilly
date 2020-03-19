@@ -41,10 +41,10 @@ pe_count=$(( 50 ))
 pe_spacer=$(( 100 ))
 pe_max=$(( 500 ))
 phi_start=$(( 45 ))
-phi_count=$(( 65 ))
+phi_count=$(( 45 ))
 phi_spacer=$(( 10 ))
 phi_max=$(( 65 ))
-eps=0.01
+eps=0.001
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
