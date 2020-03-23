@@ -163,7 +163,7 @@ rOrient = []
 # z-value for simulation initialization
 z = 0.5
 
-for i in xrange(len(peList)):
+for i in range(0, len(peList)):
     rMin = rList[i]             # starting distance for particle placement
     rMax = rList[i + 1]         # maximum distance for particle placement
     ver = np.sqrt(0.75) * lat   # vertical shift between lattice rows
@@ -349,8 +349,8 @@ for i in typ:
     if i not in uniqueTyp:
         uniqueTyp.append(i)
 # Get the number of each type
-particles = [ 0 for x in xrange(len(uniqueTyp)) ]
-for i in xrange(len(uniqueTyp)):
+particles = [ 0 for x in range(0, len(uniqueTyp)) ]
+for i in range(0, len(uniqueTyp)):
     for j in typ:
         if uniqueTyp[i] == j:
             particles[i] += 1
@@ -392,7 +392,7 @@ for i in unique_char_types:
 nl = hoomd.md.nlist.cell()
 lj = hoomd.md.pair.lj(r_cut=2**(1/6), nlist=nl)
 lj.set_params(mode='shift')
-for i in xrange(len(unique_char_types)):
+for i in range(0, len(unique_char_types)):
     for j in range(i, len(unique_char_types)):
         lj.pair_coeff.set(unique_char_types[i],
                           unique_char_types[j],
@@ -408,7 +408,7 @@ hoomd.run(brownEquil)
 np.random.seed(seed2)                           # seed for random orientations
 angle = np.random.rand(partNum) * 2 * np.pi     # random particle orientation
 activity = []
-for i in xrange(partNum):
+for i in range(0, partNum):
     if rOrient[i] == 0:
         x = (np.cos(angle[i])) * pe[i]
         y = (np.sin(angle[i])) * pe[i]
