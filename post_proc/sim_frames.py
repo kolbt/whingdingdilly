@@ -84,6 +84,11 @@ try:
 except:
     dtau = 0.000001
     
+out = "final_pe" + "{:.0f}".format(peA) +\
+      "_phi" + "{:.0f}".format(intPhi) +\
+      "_eps" + "{:.5f}".format(eps) +\
+      "_fm"
+    
 # Create outfile name from infile name
 file_name = os.path.basename(infile)
 outfile, file_extension = os.path.splitext(file_name)   # get base name
@@ -93,7 +98,7 @@ out = outfile + "_frame_"
 f = hoomd.open(name=infile, mode='rb')  # open gsd file with hoomd
 dumps = int(f.__len__())                # get number of timesteps dumped
 start = 0
-#start = dumps - 1                       # gives first frame to read
+start = dumps - 1                       # gives first frame to read
 end = dumps                             # gives last frame to read
 #end = 20
 
@@ -132,7 +137,7 @@ with hoomd.open(name=infile, mode='rb') as t:
     partNum = len(snap.particles.typeid)
 
     # Loop through snapshots
-    for j in range(start, 3001):
+    for j in range(start, end):
     
         # Get the current snapshot
         snap = t[j]
@@ -150,7 +155,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         
         # Plot the figure
         fig, ax = plt.subplots(1, 1)
-        ax.scatter(pos[:,0], pos[:,1], c=slowCol, edgecolor='none', s=15.)
+        ax.scatter(pos[:,0], pos[:,1], c=slowCol, edgecolor='none', s=1.)
         ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
                 horizontalalignment='right', verticalalignment='bottom',
                 transform=ax.transAxes,
@@ -164,5 +169,5 @@ with hoomd.open(name=infile, mode='rb') as t:
         ax.axes.set_yticks([])
         ax.set_aspect('equal')
         plt.subplots_adjust(0,0,1,1)
-        plt.savefig("test_fm" + pad + ".png", dpi=150)
+        plt.savefig(out + pad + ".png", dpi=150)
         plt.close()

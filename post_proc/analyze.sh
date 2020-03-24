@@ -84,11 +84,11 @@ dtau=${pass[7]}
 #python3 $script_path/edge_distance.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edges_from_bins.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/indiv_cluster_pressure.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
-#python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 
