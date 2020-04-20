@@ -125,17 +125,17 @@ base = add + 'pressure_pa' + str(peA) +\
 outFile = base + '.txt'
 imgFile = base + '.png'
 
-g = open(outFile, 'w') # write file headings
-g.write('Timestep'.center(10) + ' ' +\
-        'gasArea'.center(20) + ' ' +\
-        'gasTrace'.center(20) + ' ' +\
-        'gasPress'.center(20) + ' ' +\
-        'bulkArea'.center(20) + ' ' +\
-        'bulkTrace'.center(20) + ' ' +\
-        'bulkPress'.center(20) + ' ' +\
-        'SurfaceTense'.center(20) + ' ' +\
-        'Length'.center(20) + '\n')
-g.close()
+#g = open(outFile, 'w') # write file headings
+#g.write('Timestep'.center(10) + ' ' +\
+#        'gasArea'.center(20) + ' ' +\
+#        'gasTrace'.center(20) + ' ' +\
+#        'gasPress'.center(20) + ' ' +\
+#        'bulkArea'.center(20) + ' ' +\
+#        'bulkTrace'.center(20) + ' ' +\
+#        'bulkPress'.center(20) + ' ' +\
+#        'SurfaceTense'.center(20) + ' ' +\
+#        'Length'.center(20) + '\n')
+#g.close()
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
@@ -379,41 +379,41 @@ with hoomd.open(name=inFile, mode='rb') as t:
 #        print(circ)
 #        print(Nedges * sizeBin / circ)
 
-        # Write this to a textfile with the timestep
-        g = open(outFile, 'a')
-        g.write('{0:.3f}'.format(tst).center(10) + ' ')
-        g.write('{0:.3f}'.format(gasArea).center(20) + ' ')
-        g.write('{0:.3f}'.format(gasTrace).center(20) + ' ')
-        g.write('{0:.3f}'.format(gasPress).center(20) + ' ')
-        g.write('{0:.3f}'.format(bulkArea).center(20) + ' ')
-        g.write('{0:.3f}'.format(bulkTrace).center(20) + ' ')
-        g.write('{0:.3f}'.format(bulkPress).center(20) + ' ')
-        g.write('{0:.3f}'.format(surfaceTense).center(20) + ' ')
-        g.write('{0:.1f}'.format(lEdge).center(20) + '\n')
-        g.close()
+#        # Write this to a textfile with the timestep
+#        g = open(outFile, 'a')
+#        g.write('{0:.3f}'.format(tst).center(10) + ' ')
+#        g.write('{0:.3f}'.format(gasArea).center(20) + ' ')
+#        g.write('{0:.3f}'.format(gasTrace).center(20) + ' ')
+#        g.write('{0:.3f}'.format(gasPress).center(20) + ' ')
+#        g.write('{0:.3f}'.format(bulkArea).center(20) + ' ')
+#        g.write('{0:.3f}'.format(bulkTrace).center(20) + ' ')
+#        g.write('{0:.3f}'.format(bulkPress).center(20) + ' ')
+#        g.write('{0:.3f}'.format(surfaceTense).center(20) + ' ')
+#        g.write('{0:.1f}'.format(lEdge).center(20) + '\n')
+#        g.close()
 
-# Output an image of the frame we're computing
-fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-ax[0].imshow([*zip(*testIDs)], extent=[0, l_box, 0, l_box], origin='lower', aspect='auto')
-ax[0].set_aspect('equal')
-ax[0].axes.set_xticks([])
-ax[0].axes.set_yticks([])
-# Plot gas particles
-x = list(list(zip(*gasPos))[0])
-y = list(list(zip(*gasPos))[1])
-ax[1].scatter(x, y, edgecolor='none', s=0.05, c='b')
-# Plot liquid particles
-x = list(list(zip(*liqPos))[0])
-y = list(list(zip(*liqPos))[1])
-ax[1].scatter(x, y, edgecolor='none', s=0.05, c='g')
-ax[1].set_xlim(-h_box, h_box)
-ax[1].set_ylim(-h_box, h_box)
-ax[1].axes.set_xticks([])
-ax[1].axes.set_yticks([])
-ax[1].set_aspect('equal')
-plt.tight_layout(w_pad=0.1)
-plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=250)
-plt.close()
+## Output an image of the frame we're computing
+#fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+#ax[0].imshow([*zip(*testIDs)], extent=[0, l_box, 0, l_box], origin='lower', aspect='auto')
+#ax[0].set_aspect('equal')
+#ax[0].axes.set_xticks([])
+#ax[0].axes.set_yticks([])
+## Plot gas particles
+#x = list(list(zip(*gasPos))[0])
+#y = list(list(zip(*gasPos))[1])
+#ax[1].scatter(x, y, edgecolor='none', s=0.05, c='b')
+## Plot liquid particles
+#x = list(list(zip(*liqPos))[0])
+#y = list(list(zip(*liqPos))[1])
+#ax[1].scatter(x, y, edgecolor='none', s=0.05, c='g')
+#ax[1].set_xlim(-h_box, h_box)
+#ax[1].set_ylim(-h_box, h_box)
+#ax[1].axes.set_xticks([])
+#ax[1].axes.set_yticks([])
+#ax[1].set_aspect('equal')
+#plt.tight_layout(w_pad=0.1)
+#plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=250)
+#plt.close()
 
 # Gather all edge particle positions
 edge_parts = []

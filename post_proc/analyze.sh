@@ -88,9 +88,10 @@ dtau=${pass[7]}
 #python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 
 ## Videos for seminar
 #ffmpeg -start_number 0 -framerate 40 -i test_fm%04d.png\
