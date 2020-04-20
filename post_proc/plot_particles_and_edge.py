@@ -418,8 +418,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
 # Gather all edge particle positions
 edge_parts = []
 for i in range(0, partNum):
-    tmp_posX = pos[k][0] + h_box
-    tmp_posY = pos[k][1] + h_box
+    tmp_posX = pos[i][0] + h_box
+    tmp_posY = pos[i][1] + h_box
     x_ind = int(tmp_posX / sizeBin)
     y_ind = int(tmp_posY / sizeBin)
     # Particle is considered to be at the edge
