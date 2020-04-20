@@ -429,15 +429,19 @@ for i in range(0, partNum):
 # First plot the gas particles
 x = list(list(zip(*gasPos))[0])
 y = list(list(zip(*gasPos))[1])
-plt.scatter(x, y, edgecolor='none', s=0.05, c='b')
+plt.scatter(x, y, edgecolor='none', s=0.5, c='b')
 # Now liquid particles
 x = list(list(zip(*liqPos))[0])
 y = list(list(zip(*liqPos))[1])
-plt.scatter(x, y, edgecolor='none', s=0.05, c='g')
+plt.scatter(x, y, edgecolor='none', s=0.5, c='g')
 # Finally overlay edge particles
 x = list(list(zip(*edge_parts))[0])
 y = list(list(zip(*edge_parts))[1])
-plt.scatter(x, y, edgecolor='none', s=0.05, c='r')
+plt.scatter(x, y, edgecolor='none', s=0.5, c='r')
+ax = plt.gca()
+ax.axes.set_xticks([])
+ax.axes.set_yticks([])
+ax.set_aspect('equal')
 plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=250)
 plt.close()
 
