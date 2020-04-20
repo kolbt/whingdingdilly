@@ -444,7 +444,7 @@ ax.axes.set_yticks([])
 ax.set_xlim(-h_box, h_box)
 ax.set_ylim(-h_box, h_box)
 ax.set_aspect('equal')
-plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=250)
+plt.savefig(imgFile, bbox_inches='tight', pad_inches=0., dpi=1000)
 plt.close()
 
 
