@@ -22,8 +22,14 @@ part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
 
-sys.path.append(hoomd_path)     # ensure hoomd is in your python path
-sys.path.append(gsd_path)       # ensure gsd is in your python path
+# Run locally
+sys.path.append('/Users/kolbt/Desktop/compiled/hoomd-blue/build')
+sys.path.append('/Users/kolbt/Desktop/compiled/gsd/build')
+# Run on the cpu
+sys.path.append('/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build')
+# Run on the gpu
+sys.path.append('/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build')
+sys.path.append('/nas/longleaf/home/kolbt/programs/gsd/build')
 
 import hoomd
 from hoomd import md
