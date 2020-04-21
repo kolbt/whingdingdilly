@@ -91,7 +91,7 @@ dtau=${pass[7]}
 #python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python3 $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep $fname
 
 ## Videos for seminar
 #ffmpeg -start_number 0 -framerate 40 -i test_fm%04d.png\

@@ -21,6 +21,7 @@ part_perc_a = float(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
+fname = str(sys.argv[6])
 
 # Run locally
 sys.path.append('/Users/kolbt/Desktop/compiled/hoomd-blue/build')
@@ -107,7 +108,7 @@ try:
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_frame"
-    f = hoomd.open(name=gsd_file, mode='rb') # open gsd file with hoomd
+#    f = hoomd.open(name=gsd_file, mode='rb') # open gsd file with hoomd
 except:
     try:
         eps = str(sys.argv[6])
@@ -125,8 +126,9 @@ except:
                "_xa" + str(part_perc_a) + \
                "_ep" + str(eps) + \
                "_frame"
-    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
+#    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
 
+f = hoomd.open(name=fname, mode='rb')
 dumps = int(f.__len__())                # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
@@ -138,7 +140,7 @@ box_data = np.zeros((1), dtype=np.ndarray)          # box dimensions
 timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 
 # Get relevant data from long.gsd file
-with hoomd.open(name=gsd_file, mode='rb') as t:
+with hoomd.open(name=fname, mode='rb') as t:
     snap = t[0]
     box_data = snap.configuration.box
     for iii in range(start, end):
