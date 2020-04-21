@@ -17,7 +17,7 @@ import sys
 
 pe_a = int(sys.argv[1])                     # activity A
 pe_b = int(sys.argv[2])                     # activity B
-part_perc_a = int(sys.argv[3])              # percentage A particles
+part_perc_a = float(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
