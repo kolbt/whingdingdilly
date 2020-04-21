@@ -31,10 +31,6 @@ sys.path.append('/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build')
 sys.path.append('/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build')
 sys.path.append('/nas/longleaf/home/kolbt/programs/gsd/build')
 
-import hoomd
-from hoomd import md
-from hoomd import deprecated
-
 import gsd
 from gsd import hoomd
 from gsd import pygsd
