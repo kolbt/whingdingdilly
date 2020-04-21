@@ -65,8 +65,8 @@ def slowSort(array):
     """Sort an array the slow (but certain) way"""
     cpy = np.copy(array)
     ind = np.arange(0, len(array))
-    for i in xrange(len(cpy)):
-        for j in xrange(len(cpy)):
+    for i in range(0, len(cpy)):
+        for j in range(0, len(cpy)):
             if cpy[i] > cpy[j] and i < j:
                 # Swap the copy array values
                 tmp = cpy[i]
@@ -83,12 +83,12 @@ def indSort(arr1, arr2):
     # arr1 is array to sort
     # arr2 is index array
     cpy = np.copy(arr1)
-    for i in xrange(len(arr1)):
+    for i in range(0, len(arr1)):
         arr1[i] = cpy[arr2[i]]
 
 def chkSort(array):
     """Make sure sort actually did its job"""
-    for i in xrange(len(array)-2):
+    for i in range(0, len(array)-2):
         if array[i] > array[i+1]:
             print("{} is not greater than {} for indices=({},{})").format(array[i+1], array[i], i, i+1)
             return False
@@ -307,7 +307,7 @@ for j in range(end - 2, end):
 
     if drawBins:
         # Add the bins as vertical and horizontal lines:
-        for binInd in xrange(nBins):
+        for binInd in range(0, nBins):
             coord = (sizeBin * binInd) - h_box
             plt.axvline(x=coord, c='k', lw=1.0, zorder=0)
             plt.axhline(y=coord, c='k', lw=1.0, zorder=0)

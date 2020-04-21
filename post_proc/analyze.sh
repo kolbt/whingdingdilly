@@ -78,7 +78,7 @@ dtau=${pass[7]}
 #python $script_path/mesh_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/mesh_nearest_neighbors_periodic.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/delta_spatial.py $pa $pb $xa $hoomd_path $gsd_path $ep
-#python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
+python $script_path/soft_nearest_neighbors.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python $script_path/compute_phase_area.py $pa $pb $xa $hoomd_path $gsd_path $ep
 #python3 $script_path/computeMCS_threshold.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/edge_distance.py $fname $pe $pb $xa $ep $phi
@@ -91,7 +91,7 @@ dtau=${pass[7]}
 #python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 
 ## Videos for seminar
 #ffmpeg -start_number 0 -framerate 40 -i test_fm%04d.png\
