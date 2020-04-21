@@ -17,17 +17,21 @@ import sys
 
 pe_a = int(sys.argv[1])                     # activity A
 pe_b = int(sys.argv[2])                     # activity B
-part_perc_a = int(sys.argv[3])              # percentage A particles
+part_perc_a = float(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
+ep = float(sys.argv[6])
+fname = str(sys.argv[7])
 
-sys.path.append(hoomd_path)     # ensure hoomd is in your python path
-sys.path.append(gsd_path)       # ensure gsd is in your python path
-
-import hoomd
-from hoomd import md
-from hoomd import deprecated
+# Run locally
+sys.path.append('/Users/kolbt/Desktop/compiled/hoomd-blue/build')
+sys.path.append('/Users/kolbt/Desktop/compiled/gsd/build')
+# Run on the cpu
+sys.path.append('/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build')
+# Run on the gpu
+sys.path.append('/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build')
+sys.path.append('/nas/longleaf/home/kolbt/programs/gsd/build')
 
 import gsd
 from gsd import hoomd
@@ -65,8 +69,8 @@ def slowSort(array):
     """Sort an array the slow (but certain) way"""
     cpy = np.copy(array)
     ind = np.arange(0, len(array))
-    for i in xrange(len(cpy)):
-        for j in xrange(len(cpy)):
+    for i in range(0, len(cpy)):
+        for j in range(0, len(cpy)):
             if cpy[i] > cpy[j] and i < j:
                 # Swap the copy array values
                 tmp = cpy[i]
@@ -83,12 +87,12 @@ def indSort(arr1, arr2):
     # arr1 is array to sort
     # arr2 is index array
     cpy = np.copy(arr1)
-    for i in xrange(len(arr1)):
+    for i in range(0, len(arr1)):
         arr1[i] = cpy[arr2[i]]
 
 def chkSort(array):
     """Make sure sort actually did its job"""
-    for i in xrange(len(array)-2):
+    for i in range(0, len(array)-2):
         if array[i] > array[i+1]:
             print("{} is not greater than {} for indices=({},{})").format(array[i+1], array[i], i, i+1)
             return False
@@ -105,7 +109,7 @@ try:
                "_pb" + str(pe_b) + \
                "_xa" + str(part_perc_a) + \
                "_frame"
-    f = hoomd.open(name=gsd_file, mode='rb') # open gsd file with hoomd
+#    f = hoomd.open(name=gsd_file, mode='rb') # open gsd file with hoomd
 except:
     try:
         eps = str(sys.argv[6])
@@ -123,8 +127,9 @@ except:
                "_xa" + str(part_perc_a) + \
                "_ep" + str(eps) + \
                "_frame"
-    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
+#    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
 
+f = hoomd.open(name=fname, mode='rb')
 dumps = int(f.__len__())                # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
@@ -136,7 +141,7 @@ box_data = np.zeros((1), dtype=np.ndarray)          # box dimensions
 timesteps = np.zeros((end), dtype=np.float64)       # timesteps
 
 # Get relevant data from long.gsd file
-with hoomd.open(name=gsd_file, mode='rb') as t:
+with hoomd.open(name=fname, mode='rb') as t:
     snap = t[0]
     box_data = snap.configuration.box
     for iii in range(start, end):
@@ -293,7 +298,7 @@ for j in range(end - 2, end):
     
     if drawBins:
         # Add the bins as vertical and horizontal lines:
-        for binInd in xrange(nBins):
+        for binInd in range(0, nBins):
             coord = (sizeBin * binInd) - h_box
             plt.axvline(x=coord, c='k', lw=1.0, zorder=0)
             plt.axhline(y=coord, c='k', lw=1.0, zorder=0)
