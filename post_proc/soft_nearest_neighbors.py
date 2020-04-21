@@ -21,7 +21,8 @@ part_perc_a = float(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
 hoomd_path = str(sys.argv[4])               # local path to hoomd-blue
 gsd_path = str(sys.argv[5])                 # local path to gsd
-fname = str(sys.argv[6])
+ep = float(sys.argv[6])
+fname = str(sys.argv[7])
 
 # Run locally
 sys.path.append('/Users/kolbt/Desktop/compiled/hoomd-blue/build')
