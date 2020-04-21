@@ -15,7 +15,7 @@ What does this file do?
 
 import sys
 
-pe_a = int(sys.argv[1])                     # activity A
+pe_a = float(sys.argv[1])                     # activity A
 pe_b = int(sys.argv[2])                     # activity B
 part_perc_a = float(sys.argv[3])              # percentage A particles
 part_frac_a = float(part_perc_a) / 100.0    # fraction A particles
