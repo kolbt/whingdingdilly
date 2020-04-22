@@ -94,9 +94,10 @@ python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/delta_spatial.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
 
 # Videos for seminar
-ffmpeg -start_number 0 -framerate 20 -i ${fname}_frame_%04d.png\
+outf=${fname::-4}
+ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
  -vcodec libx264 -s 640x480 -pix_fmt yuv420p -threads 1\
- ${fname}.mp4
+ ${outf}.mp4
 
 ## Movie for single particle motion
 #ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
