@@ -280,6 +280,7 @@ for j in range(end - 2, end):
                                                     transOffset=ax.transData)
     coll.set_array(np.ravel(effSigma))
     minCol = min(effSigma)
+    minCol = 0.7
     coll.set_clim([minCol, 1.0])
     ax.add_collection(coll)
     cbar = plt.colorbar(coll, format='%.3f')
