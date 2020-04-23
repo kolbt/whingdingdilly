@@ -134,6 +134,7 @@ dumps = int(f.__len__())                # get number of timesteps dumped
 
 start = 0                       # gives first frame to read
 end = dumps                     # gives last frame to read
+start = dumps - 2
 
 positions = np.zeros((end), dtype=np.ndarray)       # array of positions
 types = np.zeros((end), dtype=np.ndarray)           # particle types
@@ -199,8 +200,8 @@ drawBins = False
 myCols = plt.cm.jet_r
 
 
-#for j in range(start, end):
-for j in range(end - 2, end):
+for j in range(start, end):
+#for j in range(end - 2, end):
 
     # Mesh array
     binParts = [[[] for b in range(nBins)] for a in range(nBins)]
