@@ -98,6 +98,22 @@ def chkSort(array):
             return False
     return True
 
+def roundUp(n, decimals=0):
+    '''Round up size of bins to account for floating point inaccuracy'''
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
+def getNBins(length, minSz=(2**(1./6.))):
+    "Given box size, return number of bins"
+    initGuess = int(length) + 1
+    nBins = initGuess
+    # This loop only exits on function return
+    while True:
+        if length / nBins > minSz:
+            return nBins
+        else:
+            nBins -= 1
+
 try:
     # This is for the long timescale data
     gsd_file = "pa" + str(pe_a) + \
@@ -175,20 +191,9 @@ h_box = l_box / 2.0
 a_box = l_box * l_box
 
 # Make the mesh
-r_cut = 1.122
-# Make size of bin divisible by l_box:
-divBox = round(l_box, 4)    # round l_box
-if divBox - l_box < 0:
-    divBox += 0.0001        # make sure rounded > actual
-
-# Adjust sizeBin so that it divides into divBox:
-convert = 100000.0
-intBinSize = int(r_cut * convert)
-intDivBox = int(divBox * convert)
-while (intDivBox % intBinSize) != 0:
-    intBinSize += 1
-sizeBin = (intBinSize / convert)    # divisible bin size
-nBins = int(divBox / sizeBin)       # must be an integer
+r_cut = 2**(1./6.)
+nBins = getNBins(l_box, r_cut)
+sizeBin = roundUp((l_box / nBins), 6)
 
 # Enlarge the box to include the periodic images
 buff = float(int(r_cut * 2.0) + 1)
