@@ -44,6 +44,7 @@ from freud import density
 from freud import cluster
 
 import numpy as np
+import math
 from scipy import stats
 
 import matplotlib
