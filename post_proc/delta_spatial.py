@@ -14,6 +14,7 @@ What does this file do?
 '''
 
 import sys
+import os
 
 pe_a = float(sys.argv[1])                     # activity A
 pe_b = int(sys.argv[2])                     # activity B
@@ -145,6 +146,8 @@ except:
                "_ep" + str(eps) + \
                "_frame"
 #    f = hoomd.open(name=gsd_file, mode='rb')  # open gsd file with hoomd
+out_file, file_extension = os.path.splitext(fname)   # get base name
+out_file = "spatial_delta_" + out_file + "_frame"
 
 f = hoomd.open(name=fname, mode='rb')
 dumps = int(f.__len__())                # get number of timesteps dumped
