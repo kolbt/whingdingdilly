@@ -120,7 +120,8 @@ def analyticalPhiGas(activity):
 
 def computeNDense(phiGas, phiLiq, phiTot, NTot):
     '''From analytical density, give number in each phase'''
-    NLiq = int((NTot * (phiTot - phiGas)) / (phiLiq - phiGas))
+#    NLiq = int((NTot * (phiTot - phiGas)) / (phiLiq - phiGas))
+    NLiq = int((NTot * (phiGas - phiTot)) * (phiLiq / phiTot) / (phiGas - phiLiq))
     return NLiq
 
 def areaType(Nx, latx):
