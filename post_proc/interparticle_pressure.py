@@ -134,13 +134,14 @@ g.write('Timestep'.center(10) + ' ' +\
         'bulkTrace'.center(20) + ' ' +\
         'bulkPress'.center(20) + ' ' +\
         'SurfaceTense'.center(20) + ' ' +\
-        'Length'.center(20) + '\n')
+        'Length'.center(20) + ' ' +\
+        'NDense'.center(20) + '\n')
 g.close()
 
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-start = end - 1
+#start = end - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -379,6 +380,9 @@ with hoomd.open(name=inFile, mode='rb') as t:
 #        print(circ)
 #        print(Nedges * sizeBin / circ)
 
+        # Number of particles in dense phase
+        ndense = max(clust_size)
+
         # Write this to a textfile with the timestep
         g = open(outFile, 'a')
         g.write('{0:.3f}'.format(tst).center(10) + ' ')
@@ -389,7 +393,8 @@ with hoomd.open(name=inFile, mode='rb') as t:
         g.write('{0:.3f}'.format(bulkTrace).center(20) + ' ')
         g.write('{0:.3f}'.format(bulkPress).center(20) + ' ')
         g.write('{0:.3f}'.format(surfaceTense).center(20) + ' ')
-        g.write('{0:.1f}'.format(lEdge).center(20) + '\n')
+        g.write('{0:.1f}'.format(lEdge).center(20) + ' ')
+        g.write('{0:.0f}'.format(ndense).center(20) + '\n')
         g.close()
 
 # Output an image of the frame we're computing

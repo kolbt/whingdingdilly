@@ -218,13 +218,13 @@ with hoomd.open(name=inFile, mode='rb') as t:
     # Number of bins to search in each direction
     lookNBins = int( max(lookDist) / sizeBin ) + 1
 
-#    for j in range(start, end):
-#        # Set the system snapshot
-#        snap = t[j]
-    for j in range(len(outFrames)):
+    for j in range(start, end):
         # Set the system snapshot
-        snap = t[outFrames[j]]
-        # Empyt mesh to store particle IDs
+        snap = t[j]
+#    for j in range(len(outFrames)):
+#        # Set the system snapshot
+#        snap = t[outFrames[j]]
+        # Empty mesh to store particle IDs
         binParts = [[[] for b in range(NBins)] for a in range(NBins)]
         
         # Defaults to diameter of 1
