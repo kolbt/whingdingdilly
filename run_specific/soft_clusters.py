@@ -23,8 +23,8 @@ sys.path.append('/Users/kolbt/Desktop/compiled/hoomd-blue/build')
 # Run on the cpu
 #sys.path.append('/nas/longleaf/home/kolbt/programs/cpu-hoomd/hoomd-blue/build')
 # Run on the gpu
-#sys.path.append('/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build')
-sys.path.append('/nas/longleaf/home/kolbt/programs/fake/hoomd-blue/build')
+sys.path.append('/nas/longleaf/home/kolbt/programs/hoomd_2.2.1/hoomd-blue/build')
+#sys.path.append('/nas/longleaf/home/kolbt/programs/fake/hoomd-blue/build')
 
 import hoomd
 from hoomd import md
