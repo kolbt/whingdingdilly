@@ -36,15 +36,15 @@ fi
 part_num=$(( 100000 ))
 runfor=$(( 100 ))
 dump_freq=$(( 6 ))
-pe_start=$(( 10 ))
-pe_count=$(( 10 ))
-pe_spacer=$(( 100 ))
-pe_max=$(( 10 ))
-phi_start=$(( 65 ))
-phi_count=$(( 65 ))
+pe_start=$(( 100 ))
+pe_count=$(( 100 ))
+pe_spacer=$(( 50 ))
+pe_max=$(( 500 ))
+phi_start=$(( 55 ))
+phi_count=$(( 55 ))
 phi_spacer=$(( 10 ))
-phi_max=$(( 65 ))
-eps=0.1
+phi_max=$(( 55 ))
+eps=(1.0 0.1 0.01 0.001 0.0001)
 
 # This script is for the specific types of jobs (one row or column of a plane)
 loop="n"
@@ -107,11 +107,11 @@ do
         phi_spacer=$input
     fi
     
-    echo "epsilon is ${eps}, input new value or same value."
-    read input
-    if ! [[ -z "$input" ]]; then
-        eps=$input
-    fi
+#    echo "epsilon is ${eps}, input new value or same value."
+#    read input
+#    if ! [[ -z "$input" ]]; then
+#        eps=$input
+#    fi
 
     # this shows how long the simulation will run
     tsteps=$(bc <<< "scale=2;$runfor/0.000001")
@@ -147,55 +147,67 @@ read seed4
 mkdir ${current}_parent
 cd ${current}_parent
 
-# Set system density to smallest value
-phi_count=$(( $phi_start ))
-# Loop through system density
-while [ $phi_count -le $phi_max ]
+count=$(( 0 ))
+for i in ${eps[@]}
 do
-    # Reset activity
-    pe_count=$(( $pe_start ))
+
+    curEps=${eps[${count}]}
+
+    # Set system density to smallest value
+    phi_count=$(( $phi_start ))
     
-    # Loop through activity
-    while [ $pe_count -le $pe_max ]
+    # Loop through system density
+    while [ $phi_count -le $phi_max ]
     do
-
-        # Submit randomly initialized simulations
-        random=pe${pe_count}_phi${phi_count}_eps${eps}.py                       # set unique infile name
-        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-        $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempOne > $random       # write particle number
-        $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $random                      # write particle number
-        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $random                      # write time in tau to infile
-        $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $random                # write dump frequency to infile
-        $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $random                        # write activity to infile
-        $sedtype -i 's/\${eps}/'"${eps}"'/g' $random                            # write epsilon to infile
-        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $random                        # set your seeds
-        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $random
-        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $random
-        $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $random
-
-        $submit $script_path $random
+        # Reset activity
+        pe_count=$(( $pe_start ))
         
-#        # Now submit cluster simulation with same parameters
-#        clust=clust_pe${pe_count}_phi${phi_count}.py                            # set unique infile name
-#        #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
-#        $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempTwo > $clust        # write particle number
-#        $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $clust                       # write particle number
-#        $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $clust                       # write time in tau to infile
-#        $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $clust                 # write dump frequency to infile
-#        $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $clust                         # write activity to infile
-#        $sedtype -i 's/\${eps}/'"${eps}"'/g' $clust                             # write epsilon to infile
-#        $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $clust                         # set your seeds
-#        $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $clust
-#        $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $clust
+        # Loop through activity
+        while [ $pe_count -le $pe_max ]
+        do
+
+#            # Submit randomly initialized simulations
+#            random=pe${pe_count}_phi${phi_count}_eps${curEps}.py                    # set unique infile name
+#            #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+#            $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempOne > $random       # write particle number
+#            $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $random                      # write particle number
+#            $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $random                      # write time in tau to infile
+#            $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $random                # write dump frequency to infile
+#            $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $random                        # write activity to infile
+#            $sedtype -i 's/\${eps}/'"${curEps}"'/g' $random                         # write epsilon to infile
+#            $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $random                        # set your seeds
+#            $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $random
+#            $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $random
+#            $sedtype -i 's/\${seed4}/'"${seed4}"'/g' $random
 #
-#        $submit $script_path $clust
+#            $submit $script_path $random
+            
+            # Now submit cluster simulation with same parameters
+            clust=clust_pe${pe_count}_phi${phi_count}_eps${curEps}.py               # set unique infile name
+            #'s/\${replace_in_text_File}/'"${variable_to_replace_with}"'/g'
+            $sedtype -e 's/\${part_num}/'"${part_num}"'/g' $tempTwo > $clust        # write particle number
+            $sedtype -i 's/\${phi}/'"${phi_count}"'/g' $clust                       # write particle number
+            $sedtype -i 's/\${runfor}/'"${runfor}"'/g' $clust                       # write time in tau to infile
+            $sedtype -i 's/\${dump_freq}/'"${dump_freq}"'/g' $clust                 # write dump frequency to infile
+            $sedtype -i 's/\${pe}/'"${pe_count}"'/g' $clust                         # write activity to infile
+            $sedtype -i 's/\${eps}/'"${curEps}"'/g' $clust                          # write epsilon to infile
+            $sedtype -i 's/\${seed1}/'"${seed1}"'/g' $clust                         # set your seeds
+            $sedtype -i 's/\${seed2}/'"${seed2}"'/g' $clust
+            $sedtype -i 's/\${seed3}/'"${seed3}"'/g' $clust
 
-        # Increment activity
-        pe_count=$(( $pe_count + $pe_spacer ))
+            $submit $script_path $clust
+
+            # Increment activity
+            pe_count=$(( $pe_count + $pe_spacer ))
+            
+        done
         
-    done
-    
-    # Increment system density
-    phi_count=$(( $phi_count + $phi_spacer ))
+        # Increment system density
+        phi_count=$(( $phi_count + $phi_spacer ))
 
+    done
+
+    # Increment epsilon counter
+    count=$(( $count + 1 ))
+    
 done

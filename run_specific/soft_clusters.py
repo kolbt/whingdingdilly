@@ -101,14 +101,27 @@ def phiToLat(phiIn):
     phiCP = np.pi / (2. * np.sqrt(3.))
     return np.sqrt(phiCP / phiIn)
     
+def avgCollisionForce(pe):
+    '''Given and activity, output the collision force'''
+    # This comes from a vector sum of six neighbors
+    magnitude = np.sqrt(28.)
+    # This comes from integrating theta
+    return (magnitude * pe) / (np.pi)
+    
 def phiLiquid(pe, eps, angle=np.pi, sigma=1.):
     '''Compute the (average) liquid phase density'''
 #    if pe >= 50:
 #        # Shift observed in analysis
 #        pe -= 50
-    r = 1.112
-    while ljForce(r, eps, sigma) < collisionForce(pe, angle):
-        r -= 0.0001
+#    while ljForce(r, eps, sigma) < collisionForce(pe, angle):
+#        r -= 0.0001
+#    phiLiq = latToPhi(r)
+    r = 2.**(1./6.)
+    skip = [0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001]
+    for j in skip:
+        while ljForce(r, eps) < avgCollisionForce(pe):
+            r -= j
+        r += j
     phiLiq = latToPhi(r)
     return r, phiLiq
 
