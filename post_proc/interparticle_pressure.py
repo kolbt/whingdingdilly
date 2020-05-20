@@ -356,9 +356,13 @@ with hoomd.open(name=inFile, mode='rb') as t:
         bulkArea = binArea * bulkBins
         # Pressure of each phase
         gasPress = gasTrace / gasArea
-        bulkPress = bulkTrace / bulkArea
-        # Surface tension
-        surfaceTense = (bulkPress - gasPress) * lEdge
+        if bulkArea >= 0:
+            bulkPress = bulkTrace / bulkArea
+            # Surface tension
+            surfaceTense = (bulkPress - gasPress) * lEdge
+        else:
+            bulkPress = 0.
+            surfaceTense = 0.
         
         print("Number of gas bins: ", gasBins)
         print("Gas phase area: ", gasArea)
