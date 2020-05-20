@@ -138,7 +138,7 @@ except:
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-start = dumps - 1
+#start = dumps - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
