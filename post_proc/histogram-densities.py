@@ -147,7 +147,8 @@ tauPerDT = computeTauPerTstep(epsilon=eps)  # brownian time per timestep
 # Area of a particle (pi * r^2)
 a_particle = np.pi * 0.25
 # Search distance for local number density
-lookDist = np.arange(1., 5.5, 0.5)
+#lookDist = np.arange(1., 5.5, 0.5)
+lookDist = [5.0]
 #lookDist = [1., 2., 3., 3.5, 4.0, 4.5, 5.0]
 # Area of each search distance
 lookArea = []
