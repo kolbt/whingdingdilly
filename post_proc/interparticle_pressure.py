@@ -356,7 +356,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
         bulkArea = binArea * bulkBins
         # Pressure of each phase
         gasPress = gasTrace / gasArea
-        if bulkArea >= 0:
+        if bulkArea > 0:
             bulkPress = bulkTrace / bulkArea
             # Surface tension
             surfaceTense = (bulkPress - gasPress) * lEdge
