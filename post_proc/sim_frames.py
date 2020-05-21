@@ -153,21 +153,48 @@ with hoomd.open(name=infile, mode='rb') as t:
         # Create frame pad for images
         pad = str(j).zfill(4)
         
-        # Plot the figure
+#        # Plot the figure with a scatter
+#        fig, ax = plt.subplots(1, 1)
+#        ax.scatter(pos[:,0], pos[:,1], c=slowCol, edgecolor='none', s=1.)
+#        ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
+#                horizontalalignment='right', verticalalignment='bottom',
+#                transform=ax.transAxes,
+#                fontsize=18,
+#                bbox=dict(facecolor=(1,1,1,0.5), edgecolor=(0,0,0,1), boxstyle='round, pad=0.1'))
+#        ax.set_xlim(-h_box, h_box)
+#        ax.set_ylim(-h_box, h_box)
+#        ax.axes.set_xticks([])
+#        ax.axes.set_yticks([])
+#        ax.axes.set_xticklabels([])
+#        ax.axes.set_yticks([])
+#        ax.set_aspect('equal')
+#        plt.subplots_adjust(0,0,1,1)
+#        plt.savefig(out + pad + ".png", dpi=150)
+#        plt.close()
+        
+        # Let's do this as a patch collections instead (set diameter to 1.)
+        diams = [1. for i in range(partNum)]
+        outDPI = 150.
         fig, ax = plt.subplots(1, 1)
-        ax.scatter(pos[:,0], pos[:,1], c=slowCol, edgecolor='none', s=1.)
+        coll = matplotlib.collections.EllipseCollection(diams, diams,
+                                                        np.zeros_like(diams),
+                                                        offsets=xy, units='xy',
+                                                        facecolors=slowCol,
+                                                        edgecolors='none',
+                                                        transOffset=ax.transData)
+        ax.add_collection(coll)
+        
+        # Add time as well
         ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
                 horizontalalignment='right', verticalalignment='bottom',
                 transform=ax.transAxes,
                 fontsize=18,
                 bbox=dict(facecolor=(1,1,1,0.5), edgecolor=(0,0,0,1), boxstyle='round, pad=0.1'))
+        # Adjust limits and plotting parameters
         ax.set_xlim(-h_box, h_box)
         ax.set_ylim(-h_box, h_box)
         ax.axes.set_xticks([])
         ax.axes.set_yticks([])
-        ax.axes.set_xticklabels([])
-        ax.axes.set_yticks([])
         ax.set_aspect('equal')
-        plt.subplots_adjust(0,0,1,1)
-        plt.savefig(out + pad + ".png", dpi=150)
+        plt.savefig(out + pad + ".png", bbox_inches='tight', pad_inches=0., dpi=outDPI)
         plt.close()

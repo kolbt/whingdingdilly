@@ -83,15 +83,22 @@ dtau=${pass[7]}
 #python3 $script_path/edges_from_bins.py $fname $pe $pb $xa $ep $phi
 #python3 $script_path/indiv_cluster_pressure.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/histogram-densities.py $fname $pe $pb $xa $ep $phi $dtau
-python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $dtau
+#python3 $script_path/interparticle_pressure.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
-#python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/soft_nearest_neighbors.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
 #python3 $script_path/delta_spatial.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
+
+# Video for ellipse collection raw simulation
+#outf=${fname::-4}
+outf=${fname%????}
+ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
+ -vcodec libx264 -s 562x562 -pix_fmt yuv420p -threads 1\
+ ${outf}.mp4
 
 ## Videos for seminar
 #outf=${fname::-4}
