@@ -138,7 +138,7 @@ except:
 start = 0                   # first frame to process
 dumps = int(f.__len__())    # get number of timesteps dumped
 end = dumps                 # final frame to process
-#start = dumps - 1
+start = dumps - 1
 
 box_data = np.zeros((1), dtype=np.ndarray)  # box dimension holder
 r_cut = 2**(1./6.)                          # potential cutoff
@@ -169,13 +169,22 @@ for z in range(len(lookDist)):
 # Set the width of each bin in the histogram (in units of sigma)
 histWidth = 0.005
 
+# Get the number of particles so we can save it in the filename
+with hoomd.open(name=inFile, mode='rb') as t:
+    snap = t[0]
+    # Get the number particles
+    pos = snap.particles.position
+    partNum = len(pos)
+
 # Write the low density and high density peaks to a text file
 txtFile = add + 'phase_density_pa' + str(peA) +\
           '_pb' + str(peB) +\
           '_xa' + str(parFrac) +\
           '_phi' + str(intPhi) +\
-          '_ep' + '{0:.3f}'.format(eps) +\
+          '_ep' + '{0:.4f}'.format(eps) +\
+          '_N' + str(partNum) +\
           '.txt'
+          
 f = open(txtFile, 'w') # write file headings
 f.write('Timestep'.center(10) + ' ')
 for z in range(len(lookDist)):

@@ -115,13 +115,20 @@ try:
     dtau = float(sys.argv[7])
 except:
     dtau = 0.000001
+    
+# Get number of particles for textfile name
+with hoomd.open(name=inFile, mode='rb') as t:
+    snap = t[0]
+    typ = snap.particles.typeid
+    partNum = len(typ)
 
 # Outfile to write data to
 base = add + 'pressure_pa' + str(peA) +\
        '_pb' + str(peB) +\
        '_xa' + str(parFrac) +\
        '_phi' + str(intPhi) +\
-       '_ep' + '{0:.3f}'.format(eps)
+       '_ep' + '{0:.3f}'.format(eps) +\
+       '_N' + str(partNum)
 outFile = base + '.txt'
 imgFile = base + '.png'
 
