@@ -231,7 +231,19 @@ cb1 = fig.colorbar(sm, ax=cax, orientation='vertical')
 cb1.set_label(r'$\delta$', fontsize=fsize)
 cbax.axis('off')
 cax.axis('off')
+
+# Try? To add the schematic figure underneath all of this?
+schmIm = '/Users/kolbt/Desktop/compiled/whingdingdilly/deformable_potential_figure/analytical_schematic.png'
+schm = Image.open(schmIm)
+    
+# Add an axes to the right of the plot for the heatmaps
+left = 0.175
+bottom, width, height = -0.85, 1., 0.9
+sch = fig.add_axes([left, bottom, width, height])
+sch.imshow(schm)
+sch.set_axis_off()
+sch.set_aspect('equal')
     
 #plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=2000, bbox_inches='tight', pad_inches=0)
-plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=2000, bbox_inches="tight")
+plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=500, bbox_inches="tight")
 plt.close()

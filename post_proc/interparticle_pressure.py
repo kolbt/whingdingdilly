@@ -419,9 +419,10 @@ x = list(list(zip(*gasPos))[0])
 y = list(list(zip(*gasPos))[1])
 ax[1].scatter(x, y, edgecolor='none', s=0.05, c='b')
 # Plot liquid particles
-x = list(list(zip(*liqPos))[0])
-y = list(list(zip(*liqPos))[1])
-ax[1].scatter(x, y, edgecolor='none', s=0.05, c='g')
+if len(liqPos) > 0:
+    x = list(list(zip(*liqPos))[0])
+    y = list(list(zip(*liqPos))[1])
+    ax[1].scatter(x, y, edgecolor='none', s=0.05, c='g')
 ax[1].set_xlim(-h_box, h_box)
 ax[1].set_ylim(-h_box, h_box)
 ax[1].axes.set_xticks([])
