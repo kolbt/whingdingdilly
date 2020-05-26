@@ -93,13 +93,13 @@ else:
 print(pe)
 
 if checkFile(file, "pa"):
-    paList = txtValue(file, "pa")
+    pa = txtValue(file, "pa")
 else:
     pa = 0
 print(pa)
 
 if checkFile(file, "pb"):
-    pbList = txtValue(file, "pb")
+    pb = txtValue(file, "pb")
 else:
     pb = 0
 print(pb)
