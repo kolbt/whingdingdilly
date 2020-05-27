@@ -69,29 +69,49 @@ ax[3].patch.set_alpha(0.0)
 
 # Plot LJ potential
 dist = np.arange(0.0001, ((2.**(1./6.))*sigma)*2., 0.001)
-ax[0].plot(dist, ljPotential(dist, eps=eps), c='k', lw=1.5, label='LJ-Potential', zorder=0)
+#ax[0].plot(dist, ljPotential(dist, eps=eps), c='k', lw=1.5, label='LJ-Potential', zorder=0)
+# Plot LJ Force
+ax[0].plot(dist, ljForce(dist, eps=eps), c='k', lw=1.5, label='LJ-Potential', zorder=0)
 
 # Overlay the weak activity range
+# LJ shift:
 shift = 1.
+# LJF shift:
+shift = 20.
 weakRange = np.arange(rWeak, ((2.**(1./6.))*sigma)*2., 0.001)
-ax[0].plot(weakRange, ljPotential(weakRange, eps=eps) + (1.5 * shift), c='r', lw=1.25, label='Weak', zorder=0)
-ax[0].scatter(rWeak, ljPotential(rWeak, eps=eps) + (1.5 * shift), c='r', zorder=1)
+
+# LJ potential:
+#ax[0].plot(weakRange, ljPotential(weakRange, eps=eps) + (1.5 * shift), c='r', lw=1.25, label='Weak', zorder=0)
+#ax[0].scatter(rWeak, ljPotential(rWeak, eps=eps) + (1.5 * shift), c='r', zorder=1)
+# LJ force:
+ax[0].plot(weakRange, ljForce(weakRange, eps=eps) + (1.5 * shift), c='r', lw=1.25, label='Weak', zorder=0)
+ax[0].scatter(rWeak, ljForce(rWeak, eps=eps) + (1.5 * shift), c='r', zorder=1)
 
 # Overlay the middle activity range
 midRange = np.arange(rMid, ((2.**(1./6.))*sigma)*2., 0.001)
-ax[0].plot(midRange, ljPotential(midRange, eps=eps) + (1. * shift), c='b', lw=1.25, label='Mid', zorder=0)
-ax[0].scatter(rMid, ljPotential(rMid, eps=eps) + (1. * shift), c='b', zorder=1)
+# LJ potential:
+#ax[0].plot(midRange, ljPotential(midRange, eps=eps) + (1. * shift), c='b', lw=1.25, label='Mid', zorder=0)
+#ax[0].scatter(rMid, ljPotential(rMid, eps=eps) + (1. * shift), c='b', zorder=1)
+# LJ force:
+ax[0].plot(midRange, ljForce(midRange, eps=eps) + (1. * shift), c='b', lw=1.25, label='Mid', zorder=0)
+ax[0].scatter(rMid, ljForce(rMid, eps=eps) + (1. * shift), c='b', zorder=1)
 
 # Overlay the strong activity range
 strongRange = np.arange(rStrong, ((2.**(1./6.))*sigma)*2., 0.001)
-ax[0].plot(strongRange, ljPotential(strongRange, eps=eps) + (0.5 * shift), c='g', lw=1.25, label='Strong', zorder=0)
-ax[0].scatter(rStrong, ljPotential(rStrong, eps=eps) + (0.5 * shift), c='g', zorder=1)
+# LJ potential:
+#ax[0].plot(strongRange, ljPotential(strongRange, eps=eps) + (0.5 * shift), c='g', lw=1.25, label='Strong', zorder=0)
+#ax[0].scatter(rStrong, ljPotential(rStrong, eps=eps) + (0.5 * shift), c='g', zorder=1)
+# LJ force:
+ax[0].plot(strongRange, ljForce(strongRange, eps=eps) + (0.5 * shift), c='g', lw=1.25, label='Strong', zorder=0)
+ax[0].scatter(rStrong, ljForce(rStrong, eps=eps) + (0.5 * shift), c='g', zorder=1)
+
 
 # Limits
 ax[0].set_xlim(rStrong - 0.05, (2.**(1./6.))*sigma)
-ax[0].set_ylim(0., 10.)
+ax[0].set_ylim(0., 175.)
 ax[0].set_xlabel(r'Interparticle distance $(\delta_{i,j})$', fontsize=fsize)
-ax[0].set_ylabel(r'Lennard-Jones potential $(U_{LJ})$', fontsize=fsize)
+#ax[0].set_ylabel(r'Lennard-Jones potential $(U_{LJ})$', fontsize=fsize)
+ax[0].set_ylabel(r'Lennard-Jones force $(F_{LJ})$', fontsize=fsize)
 #ax[0].legend()
 
 # Plot the overlap of spheres
@@ -155,14 +175,16 @@ ax[3].dist = 6.
 ax[0].text(0.75, 0.75, r'$Pe=$'+"{0:g}".format(peWeak), color='r', transform=ax[0].transAxes, fontsize=fsize)
 ax[0].text(0.75, 0.825, r'$Pe=$'+"{0:g}".format(peMid), color='b', transform=ax[0].transAxes, fontsize=fsize)
 ax[0].text(0.75, 0.9, r'$Pe=$'+"{0:g}".format(peStrong), color='g', transform=ax[0].transAxes, fontsize=fsize)
+# Label for figure letter (a)
+ax[0].text(0.02, 0.925, r'$(a)$', transform=ax[0].transAxes, fontsize=fsize)
 
 # Set tick parameters
 ax[0].tick_params(axis='both', direction='in', labelsize=fsize)
 
 from matplotlib.ticker import (MultipleLocator, FormatStrFormatter,AutoMinorLocator)
 
-ax[0].xaxis.set_minor_locator(MultipleLocator(0.05))
-ax[0].yaxis.set_minor_locator(MultipleLocator(1))
+ax[0].xaxis.set_minor_locator(MultipleLocator(0.025))
+ax[0].yaxis.set_minor_locator(MultipleLocator(5))
 ax[0].tick_params(axis='both', which='minor', length=2, direction='in')
 
 labels = ax[0].get_xticks().tolist()
@@ -220,6 +242,12 @@ hm1.add_patch(patches.Rectangle((0, 0), 1, 1, linewidth=2.5, edgecolor='r', face
 hm2.add_patch(patches.Rectangle((0, 0), 1, 1, linewidth=2.5, edgecolor='b', facecolor='none', transform=hm2.transAxes))
 hm3.add_patch(patches.Rectangle((0, 0), 1, 1, linewidth=2.5, edgecolor='g', facecolor='none', transform=hm3.transAxes))
 
+# Spatial heatmap letters (b.i, b.ii, b.iii)
+letx, lety = 0.55, 0.1
+hm1.text(letx, lety, r'$(b.iii)$', transform=hm1.transAxes, fontsize=fsize)
+hm2.text(letx+.04, lety, r'$(b.ii)$', transform=hm2.transAxes, fontsize=fsize)
+hm3.text(letx+0.08, lety, r'$(b.i)$', transform=hm3.transAxes, fontsize=fsize)
+
 cbax = fig.add_axes([0.55, base, 0.765, 0.765])
 divider = make_axes_locatable(cbax)
 cax = divider.append_axes("left", size="1%", pad=0.0)
@@ -243,6 +271,7 @@ sch = fig.add_axes([left, bottom, width, height])
 sch.imshow(schm)
 sch.set_axis_off()
 sch.set_aspect('equal')
+sch.text(-0.01, 0.9, r'$(c)$', transform=sch.transAxes, fontsize=fsize)
     
 #plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=2000, bbox_inches='tight', pad_inches=0)
 plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=500, bbox_inches="tight")
