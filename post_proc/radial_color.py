@@ -220,5 +220,5 @@ with hoomd.open(name=infile, mode='rb') as t:
         ax.axes.set_yticks([])
         ax.set_aspect('equal')
         plt.tight_layout()
-        plt.savefig(out + pad + ".png", dpi=outDPI)
+        plt.savefig("radial_" + out + pad + ".png", dpi=outDPI)
         plt.close()

@@ -97,9 +97,9 @@ python3 $script_path/radial_color.py $fname $pe $pb $xa $ep $phi $dtau
 # Video for ellipse collection raw simulation
 #outf=${fname::-4}
 outf=${fname%????}
-ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
+ffmpeg -start_number 0 -framerate 20 -i radial_${outf}_frame_%04d.png\
  -vcodec libx264 -s 960x720 -pix_fmt yuv420p -threads 1\
- ${outf}.mp4
+ radial_${outf}.mp4
 
 ## Videos for seminar
 #outf=${fname::-4}
