@@ -92,14 +92,15 @@ dtau=${pass[7]}
 #python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/soft_nearest_neighbors.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
 #python3 $script_path/delta_spatial.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
-python3 $script_path/radial_color.py $fname $pe $pb $xa $ep $phi $dtau
+#python3 $script_path/radial_color.py $fname $pe $pb $xa $ep $phi $dtau
+python3 $script_path/msd_dense.py $fname $pe $pb $xa $ep $phi $dtau
 
 # Video for ellipse collection raw simulation
 #outf=${fname::-4}
-outf=${fname%????}
-ffmpeg -start_number 0 -framerate 20 -i radial_${outf}_frame_%04d.png\
- -vcodec libx264 -s 960x720 -pix_fmt yuv420p -threads 1\
- radial_${outf}.mp4
+#outf=${fname%????}
+#ffmpeg -start_number 0 -framerate 20 -i radial_${outf}_frame_%04d.png\
+# -vcodec libx264 -s 960x720 -pix_fmt yuv420p -threads 1\
+# radial_${outf}.mp4
 
 ## Videos for seminar
 #outf=${fname::-4}
