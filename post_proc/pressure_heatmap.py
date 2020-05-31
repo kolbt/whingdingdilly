@@ -248,7 +248,7 @@ with hoomd.open(name=inFile, mode='rb') as t:
                             # Add the pressure from this neighbor
                             pressure[k] += ((sigx + sigy) / 2.)
         
-        outDPI = 1500.
+        outDPI = 500.
         fig, ax = plt.subplots()
         xy = np.delete(pos, 2, 1)
         coll = matplotlib.collections.EllipseCollection(parts, parts,
