@@ -13,6 +13,7 @@ import matplotlib.patches as patches
 import matplotlib as mpl
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.colorbar import colorbar
+from collections import OrderedDict
 fsize = 9
 plt.rcParams.update({'font.size': fsize})
 params = {'legend.fontsize': fsize,
@@ -57,6 +58,20 @@ def fc(phi, pe, a):
     # This should increase with increasing lattice spacing
     den = (4.*phi*pe*(a)) - ((latToPhi(a)**-1)*(3.*(np.pi**2)*kap*phi*(sig**2.)))
     return num / den
+    
+def compPhiG(pe, a, kap=4.05, sig=1.):
+    num = 3. * (np.pi**2) * kap * sig
+    den = 4. * pe * a
+    return num / den
+    
+def clustFrac(phi, phiG, a, sig=1.):
+    phiL = latToPhi(a)
+    ApL = np.pi * (sig**2) / 4.
+    Ap = np.pi * (sig**2) / 4.
+    num = (phiL*phiG) - (phiL*phi)
+    den = ((ApL/Ap)*phi*phiG) - (phi*phiL)
+    ans = num / den
+    return ans
 
     
 
@@ -67,16 +82,16 @@ def fc(phi, pe, a):
 #    den = 4. * pe * (sig**2)
 #    return num / den
     
-def phig(phi, pe, a):
-    sig = 1.
-    kap = 4.5
-    num = kap * (np.pi**2)
-    den = 4. * pe * (a**1)
-    return num / den
+#def phig(phi, pe, a):
+#    sig = 1.
+#    kap = 4.5
+#    num = kap * (np.pi**2)
+#    den = 4. * pe * (a**1)
+#    return num / den
         
 # Let's create a mesh and evaluate this
-pes = np.arange(0., 500., 1.)
-phi = 0.6
+pes = np.arange(35., 500., 1.)
+phi = 0.65
 #aa = np.arange(0.1, 10., 0.1)
 
 eps = [0.0001, 0.001, 0.01, 0.1, 1.]
@@ -84,14 +99,31 @@ for i in eps:
     aa = []
     fcs = []
     phigs = []
+    outCF = []
     for j in pes:
         aa.append(conForRClust(j, i))
-        fcs.append(fc(phi, j, aa[-1]))
-        phigs.append(phig(0.6, j, aa[-1]))
-    plt.plot(pes, fcs, label=i, c=plt.cm.jet(eps.index(i)/float(len(eps))))
+        instPhiG = compPhiG(j, aa[-1])
+        outCF.append(clustFrac(phi, instPhiG, aa[-1]))
+#        fcs.append(fc(phi, j, aa[-1]))
+#        phigs.append(phig(0.6, j, aa[-1]))
+#    plt.plot(pes, fcs, label=i, c=plt.cm.jet(eps.index(i)/float(len(eps))), ls='--')
 #    plt.plot(pes, phigs, label=i, c=plt.cm.jet(eps.index(i)/float(len(eps))))
+    plt.plot(pes, outCF, label=i, c=plt.cm.jet(eps.index(i)/(float(len(eps))-1) ))
+    
+ax = plt.gca()
+handles, labels = ax.get_legend_handles_labels()
+for i in range(0, len(labels)):
+    for j in range(0, len(labels)):
+        if labels[j] < labels[i] and j > i:
+            labels[i], labels[j] = labels[j], labels[i]
+            handles[i], handles[j] = handles[j], handles[i]
+by_label = OrderedDict(zip(labels, handles))
+ax.legend(by_label.values(), by_label.keys(), title=r'Softness $(\epsilon)$')
+    
+plt.xlim(0, 500)
 plt.ylim(0., 1.)
 plt.xlabel('Activity')
 plt.ylabel('Cluster fraction')
 plt.legend()
-plt.show()
+plt.savefig('soft_kinetic_theory.pdf', dpi=1000)
+plt.close()
