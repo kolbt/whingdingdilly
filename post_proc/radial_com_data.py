@@ -189,6 +189,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         r_com = []
         lc_ids = []
         aligns = []
+        pswim = []
         for k in range(0, partNum):
             if ids[k] == lcID:
                 lc_pos.append(pos[k])
@@ -229,6 +230,10 @@ with hoomd.open(name=infile, mode='rb') as t:
                 r_dot_p /= mag
                 # We don't need to normalize by p, it's magnitude is 1
                 aligns.append(r_dot_p)
+                
+                # Compute the swim pressure
+                swim_dot = (lc_pos[-1][0] * px) + (lc_pos[-1][0] * py)
+                pswim.append(swim_dot)
         
         # Compute interparticle pressure
         pressure = [0. for i in range(0, len(lc_pos))]
@@ -307,6 +312,7 @@ with hoomd.open(name=infile, mode='rb') as t:
             p_sum[tmp_r] += aligns[k]
             phi_sum[tmp_r] += phi_loc[k]
             pint_sum[tmp_r] += pressure[k]
+            pswim_sum[tmp_r] += pswim[k]
             num[tmp_r] += 1
           
 ## Compute the average in each bin
@@ -315,10 +321,12 @@ with hoomd.open(name=infile, mode='rb') as t:
 #        phi_avg.append(phi_sum[k] / num[k])
 #        p_avg.append(p_sum[k] / num[k])
 #        pint_avg.append(pint_sum[k] / num[k])
+#        pswim_avg.append(pswim_sum[k] / num[k])
 #    else:
 #        phi_avg.append(0.)
 #        p_avg.append(0.)
 #        pint_avg.append(0.)
+#        pswim_avg.append(0.)
 
 # Write textfile
 outTxt = 'CoM_' + out + '.txt'
@@ -327,23 +335,25 @@ g.write('rCoM'.center(25) + ' ' +\
         'NinBin'.center(25) + ' ' +\
         'phiLoc'.center(25) + ' ' +\
         'align'.center(25) + ' ' +\
-        'pInt'.center(25) + '\n')
+        'pInt'.center(25) + ' ' +\
+        'pSwim'.center(25) + '\n')
 g.close()
 # Append data to file
 g = open(outTxt, 'a')
-for j in range(0, len(phi_avg)):
+for j in range(0, len(r_bins)):
     g.write('{0:.6f}'.format(r_bins[j]).center(25) + ' ')
     g.write('{0:.0f}'.format(num[j]).center(25) + ' ')
     g.write('{0:.6f}'.format(phi_sum[j]).center(25) + ' ')
     g.write('{0:.6f}'.format(p_sum[j]).center(25) + ' ')
-    g.write('{0:.1f}'.format(pint_sum[j]).center(25) + '\n')
+    g.write('{0:.1f}'.format(pint_sum[j]).center(25) + ' ')
+    g.write('{0:.1f}'.format(pswim_sum[j]).center(25) + '\n')
 g.close()
 
 ## Plot scatter of phi_loc vs r_com
 #outDPI = 500
-#plt.plot(r_bins, pint_avg, lw=1.5, c='r', zorder=0)
-#plt.scatter(r_bins, pint_avg, s=5, c='k', zorder=1)
+#plt.plot(r_bins, pswim_avg, lw=1.5, c='r', zorder=0)
+#plt.scatter(r_bins, pswim_avg, s=5, c='k', zorder=1)
 #plt.xlim(0,)
 #plt.tight_layout()
-#plt.savefig("alignment_" + out + ".png", dpi=outDPI)
+#plt.savefig("pswim" + out + ".png", dpi=outDPI)
 #plt.close()
