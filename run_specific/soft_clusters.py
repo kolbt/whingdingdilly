@@ -110,12 +110,6 @@ def avgCollisionForce(pe):
     
 def phiLiquid(pe, eps, angle=np.pi, sigma=1.):
     '''Compute the (average) liquid phase density'''
-#    if pe >= 50:
-#        # Shift observed in analysis
-#        pe -= 50
-#    while ljForce(r, eps, sigma) < collisionForce(pe, angle):
-#        r -= 0.0001
-#    phiLiq = latToPhi(r)
     r = 2.**(1./6.)
     skip = [0.1, 0.01, 0.001, 0.0001, 0.00001, 0.000001, 0.0000001, 0.00000001]
     for j in skip:

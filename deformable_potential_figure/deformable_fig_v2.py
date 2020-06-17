@@ -261,18 +261,20 @@ cbax.axis('off')
 cax.axis('off')
 
 # Try? To add the schematic figure underneath all of this?
-schmIm = '/Users/kolbt/Desktop/compiled/whingdingdilly/deformable_potential_figure/analytical_schematic.png'
+#schmIm = '/Users/kolbt/Desktop/compiled/whingdingdilly/deformable_potential_figure/analytical_schematic.png'
+schmIm = '/Users/kolbt/Desktop/compiled/whingdingdilly/deformable_potential_figure/analytical_w_hcp.png'
 schm = Image.open(schmIm)
     
 # Add an axes to the right of the plot for the heatmaps
-left = 0.175
-bottom, width, height = -0.85, 1., 0.9
+left = -0.025
+bottom, width, height = -1.05, 1.5, 1.5
 sch = fig.add_axes([left, bottom, width, height])
 sch.imshow(schm)
 sch.set_axis_off()
 sch.set_aspect('equal')
 sch.text(-0.01, 0.9, r'$(c)$', transform=sch.transAxes, fontsize=fsize)
+sch.text(0.4, 0.9, r'$(d)$', transform=sch.transAxes, fontsize=fsize)
     
 #plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=2000, bbox_inches='tight', pad_inches=0)
-plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=500, bbox_inches="tight")
+plt.savefig("particle_deformation_eps" + str(eps) + ".png", dpi=500, bbox_inches="tight", pad_inches=0.01)
 plt.close()
