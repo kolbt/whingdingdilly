@@ -232,7 +232,7 @@ with hoomd.open(name=infile, mode='rb') as t:
                 aligns.append(r_dot_p)
                 
                 # Compute the swim pressure
-                swim_dot = (lc_pos[-1][0] * px) + (lc_pos[-1][0] * py)
+                swim_dot = (lc_pos[-1][0] * px) + (lc_pos[-1][1] * py)
                 pswim.append(swim_dot)
         
         # Compute interparticle pressure

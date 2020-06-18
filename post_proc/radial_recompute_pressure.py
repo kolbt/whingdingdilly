@@ -62,11 +62,6 @@ try:
 except:
     dtau = 0.000001
     
-out = "final_pe" + "{:.0f}".format(peA) +\
-      "_phi" + "{:.0f}".format(intPhi) +\
-      "_eps" + "{:.5f}".format(eps) +\
-      "_fm"
-    
 # Create outfile name from infile name
 file_name = os.path.basename(infile)
 outfile, file_extension = os.path.splitext(file_name)   # get base name
@@ -79,7 +74,7 @@ start = 0
 #start = dumps - 1                       # gives first frame to read
 end = dumps                             # gives last frame to read
 #end = 20
-start = dumps - 100
+start = dumps - 2
 
 def getNBins(length, minSz=(2**(1./6.))):
     "Given box size, return number of bins"
@@ -187,6 +182,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         # Keep only positions of largest cluster (faster computations)
         lc_pos = []
         r_com = []
+        com_comps = []
         lc_ids = []
         aligns = []
         pswim = []
@@ -220,10 +216,11 @@ with hoomd.open(name=infile, mode='rb') as t:
                 rrx = -rrx
                 rry = -rry
                 mag = np.sqrt(rx**2 + ry**2)
+                com_comps.append([rrx, rry])
                 r_com.append(mag)
                 # Now let's get the x and y components of the body axis
-                px = np.sin(ang[k])
-                py = -np.cos(ang[k])
+                px = peA * np.sin(ang[k])
+                py = peA * -np.cos(ang[k])
                 # Now compute the dot product
                 r_dot_p = (rrx * px) + (rry * py)
                 # A value of 1 is perfectly aligned
@@ -232,13 +229,12 @@ with hoomd.open(name=infile, mode='rb') as t:
                 aligns.append(r_dot_p)
                 
                 # Compute the swim pressure
-                swim_dot = (lc_pos[-1][0] * px) + (lc_pos[-1][0] * py)
+                swim_dot = (-rrx * px) + (-rry * py)
                 pswim.append(swim_dot)
         
-        # Compute interparticle pressure
-#        pressure = [0. for i in range(0, len(lc_pos))]
         # FLJ with x and y components for force
         FLJs = [ [0., 0.] for i in range(0, len(lc_pos))]
+        pressure = [ 0. for i in range(0, len(lc_pos))]
         # Create the neighborlist of the system
         lc = freud.locality.AABBQuery(box=f_box, points=f_box.wrap(lc_pos))
         nlist = lc.query(lc_pos, dict(r_min=0.1, r_max=r_cut)).toNeighborList()
@@ -254,17 +250,21 @@ with hoomd.open(name=infile, mode='rb') as t:
             # Loops through each j neighbor of reference particle i
             xx, yy, rr = distComps(lc_pos[m], lc_pos[n][0], lc_pos[n][1])
             fx, fy = computeFLJ(rr, xx, yy, eps)
-            # Sum to forc for that particle
-            FLJs[m][0] += fx
-            FLJs[m][1] += fy
-            FLJs[n][0] += fx
-            FLJs[n][1] += fy
-#            # Compute the x force times x distance
-#            sigx = fx * (xx)
-#            # Likewise for y
-#            sigy = fy * (yy)
-#            pressure[m] += ((sigx + sigy) / 2.)
-#            pressure[n] += ((sigx + sigy) / 2.)
+#            # Sum to force for that particle and connected particle
+#            FLJs[m][0] += np.abs(fx)
+#            FLJs[m][1] += np.abs(fy)
+#            FLJs[n][0] += np.abs(fx)
+#            FLJs[n][1] += np.abs(fy)
+            # Compute the x force times x distance
+            sigx = fx * (xx)
+            # Likewise for y
+            sigy = fy * (yy)
+            pressure[m] += ((sigx + sigy) / 2.)
+            pressure[n] += ((sigx + sigy) / 2.)
+            
+#        # Loop through and multiply by position (just like swim pressure)
+#        for k in range(0, len(lc_pos)):
+#            pressure[k] += (FLJs[k][0] * com_comps[k][0]) + (FLJs[k][1] * com_comps[k][1])
 
         # Compute density around largest cluster points
         phi_locs = density.compute(system, query_points=lc_pos)
@@ -281,7 +281,7 @@ with hoomd.open(name=infile, mode='rb') as t:
             num[tmp_r] += 1
 
 # Write textfile
-outTxt = 'CoM_' + out + '.txt'
+outTxt = 'pv2_CoM_' + out + '.txt'
 g = open(outTxt, 'w') # write file headings
 g.write('rCoM'.center(25) + ' ' +\
         'NinBin'.center(25) + ' ' +\
