@@ -74,7 +74,7 @@ start = 0
 #start = dumps - 1                       # gives first frame to read
 end = dumps                             # gives last frame to read
 #end = 20
-start = dumps - 2
+start = dumps - 100
 
 def getNBins(length, minSz=(2**(1./6.))):
     "Given box size, return number of bins"
