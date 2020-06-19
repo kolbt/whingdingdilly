@@ -227,8 +227,14 @@ with hoomd.open(name=infile, mode='rb') as t:
                 r_dot_p /= mag
                 # We don't need to normalize by p, it's magnitude is 1
                 aligns.append(r_dot_p)
-                
                 # Compute the swim pressure
+                if typ[k] == 0:
+                    px *= peA
+                    py *= peA
+                elif typ[k] == 1:
+                    px *= peB
+                    py *= peB
+                # Dot this with position
                 swim_dot = (-rrx * px) + (-rry * py)
                 pswim.append(swim_dot)
         
