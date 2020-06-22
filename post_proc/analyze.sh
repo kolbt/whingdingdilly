@@ -98,7 +98,7 @@ dtau=${pass[7]}
 #python3 $script_path/getRDF.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/radial_com_data.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/soft_radial.py $fname $pe $pb $xa $ep $phi $dtau
-python3 $script_path/radial_recompute_pressure.py $fname $pe $pb $xa $ep $phi $dtau
+#python3 $script_path/radial_recompute_pressure.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/composition.py $fname $pe $pb $xa $ep $phi $dtau
 
 # Video for ellipse collection raw simulation
@@ -108,12 +108,12 @@ python3 $script_path/radial_recompute_pressure.py $fname $pe $pb $xa $ep $phi $d
 # -vcodec libx264 -s 960x720 -pix_fmt yuv420p -threads 1\
 # radial_${outf}.mp4
 
-## Videos for seminar
+# Videos for seminar
 #outf=${fname::-4}
-#outf=${fname%????}
-#ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
-# -vcodec libx264 -s 562562 -pix_fmt yuv420p -threads 1\
-# ${outf}.mp4
+outf=${fname%????}
+ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
+ -vcodec libx264 -s 562x562 -pix_fmt yuv420p -threads 1\
+ ${outf}.mp4
 
 ## Movie for single particle motion
 #ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
