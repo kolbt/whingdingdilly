@@ -153,6 +153,15 @@ with hoomd.open(name=infile, mode='rb') as t:
         # Create frame pad for images
         pad = str(j).zfill(4)
         
+        # Then we have a mixture
+        a_pos = []
+        b_pos = []
+        for k in range(0, partNum):
+            if typ[k] == 0:
+                a_pos.append(xy[k])
+            else:
+                b_pos.append(xy[k])
+        
 #        # Plot the figure with a scatter
 #        fig, ax = plt.subplots(1, 1)
 #        ax.scatter(pos[:,0], pos[:,1], c=slowCol, edgecolor='none', s=1.)
@@ -173,13 +182,25 @@ with hoomd.open(name=infile, mode='rb') as t:
 #        plt.close()
         
         # Let's do this as a patch collections instead (set diameter to 1.)
-        diams = [1. for i in range(partNum)]
         outDPI = 150.
         fig, ax = plt.subplots(1, 1)
+        
+        # Plot first particle collection
+        diams = [0.9 for i in range(0, len(a_pos))]
         coll = matplotlib.collections.EllipseCollection(diams, diams,
                                                         np.zeros_like(diams),
-                                                        offsets=xy, units='xy',
+                                                        offsets=a_pos, units='xy',
                                                         facecolors=slowCol,
+                                                        edgecolors='none',
+                                                        transOffset=ax.transData)
+        ax.add_collection(coll)
+        
+        # Plot first particle collection
+        diams = [0.9 for i in range(0, len(b_pos))]
+        coll = matplotlib.collections.EllipseCollection(diams, diams,
+                                                        np.zeros_like(diams),
+                                                        offsets=a_pos, units='xy',
+                                                        facecolors=fastCol,
                                                         edgecolors='none',
                                                         transOffset=ax.transData)
         ax.add_collection(coll)
