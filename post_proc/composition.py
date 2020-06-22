@@ -164,7 +164,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         # Compute the center of mass
         system = freud.AABBQuery(f_box, f_box.wrap(pos))
         # Compute neighbor list for only largest cluster
-        my_clust.compute(system, neighbors={'r_max': 1.0})
+        my_clust.compute(system, neighbors={'r_max': r_cut})
         ids = my_clust.cluster_idx              # get id of each cluster
         c_props.compute(system, ids)            # find cluster properties
         clust_size = c_props.sizes              # find cluster sizes
