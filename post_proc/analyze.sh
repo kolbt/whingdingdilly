@@ -110,9 +110,10 @@ python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
 
 ## Videos for seminar
 #outf=${fname::-4}
-#ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
-# -vcodec libx264 -s 640x480 -pix_fmt yuv420p -threads 1\
-# ${outf}.mp4
+outf=${fname%????}
+ffmpeg -start_number 0 -framerate 20 -i ${outf}_frame_%04d.png\
+ -vcodec libx264 -s 562562 -pix_fmt yuv420p -threads 1\
+ ${outf}.mp4
 
 ## Movie for single particle motion
 #ffmpeg -start_number 0 -framerate 20 -i test_fm%04d.png\
