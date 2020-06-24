@@ -219,8 +219,8 @@ with hoomd.open(name=infile, mode='rb') as t:
                 com_comps.append([rrx, rry])
                 r_com.append(mag)
                 # Now let's get the x and y components of the body axis
-                px = peA * np.sin(ang[k])
-                py = peA * -np.cos(ang[k])
+                px = np.sin(ang[k])
+                py = -np.cos(ang[k])
                 # Now compute the dot product
                 r_dot_p = (rrx * px) + (rry * py)
                 # A value of 1 is perfectly aligned
