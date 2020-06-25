@@ -98,9 +98,9 @@ dtau=${pass[7]}
 #python3 $script_path/getRDF.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/radial_com_data.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/soft_radial.py $fname $pe $pb $xa $ep $phi $dtau
-#python3 $script_path/radial_recompute_pressure.py $fname $pe $pb $xa $ep $phi $dtau
+python3 $script_path/radial_recompute_pressure.py $fname $pe $pb $xa $ep $phi $dtau
 #python3 $script_path/composition.py $fname $pe $pb $xa $ep $phi $dtau
-python3 $script_path/cdata.py $fname $pe $pb $xa $ep $phi $dtau
+#python3 $script_path/cdata.py $fname $pe $pb $xa $ep $phi $dtau
 
 # Video for ellipse collection raw simulation
 #outf=${fname::-4}
