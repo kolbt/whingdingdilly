@@ -256,21 +256,21 @@ with hoomd.open(name=infile, mode='rb') as t:
             # Loops through each j neighbor of reference particle i
             xx, yy, rr = distComps(lc_pos[m], lc_pos[n][0], lc_pos[n][1])
             fx, fy = computeFLJ(rr, xx, yy, eps)
-#            # Sum to force for that particle and connected particle
-            FLJs[m][0] += fx
-            FLJs[m][1] += fy
-            FLJs[n][0] -= fx
-            FLJs[n][1] -= fy
-#            # Compute the x force times x distance
-#            sigx = fx * (xx)
-#            # Likewise for y
-#            sigy = fy * (yy)
-#            pressure[m] += ((sigx + sigy) / 2.)
-#            pressure[n] += ((sigx + sigy) / 2.)
+##            # Sum to force for that particle and connected particle
+#            FLJs[m][0] += fx
+#            FLJs[m][1] += fy
+#            FLJs[n][0] -= fx
+#            FLJs[n][1] -= fy
+            # Compute the x force times x distance
+            sigx = fx * (xx)
+            # Likewise for y
+            sigy = fy * (yy)
+            pressure[m] += ((sigx + sigy) / 2.)
+            pressure[n] += ((sigx + sigy) / 2.)
             
-        # Loop through and multiply by position (just like swim pressure)
-        for k in range(0, len(lc_pos)):
-            pressure[k] += (FLJs[k][0] * com_comps[k][0]) + (FLJs[k][1] * com_comps[k][1])
+#        # Loop through and multiply by position (just like swim pressure)
+#        for k in range(0, len(lc_pos)):
+#            pressure[k] += (FLJs[k][0] * com_comps[k][0]) + (FLJs[k][1] * com_comps[k][1])
 
         # Compute density around largest cluster points
         phi_locs = density.compute(system, query_points=lc_pos)
@@ -287,7 +287,7 @@ with hoomd.open(name=infile, mode='rb') as t:
             num[tmp_r] += 1
 
 # Write textfile
-outTxt = 'pv3_CoM_' + out + '.txt'
+outTxt = 'pv4_CoM_' + out + '.txt'
 g = open(outTxt, 'w') # write file headings
 g.write('rCoM'.center(25) + ' ' +\
         'NinBin'.center(25) + ' ' +\
