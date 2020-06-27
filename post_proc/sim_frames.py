@@ -97,7 +97,7 @@ out = outfile + "_frame_"
 # Get dumps to output
 f = hoomd.open(name=infile, mode='rb')  # open gsd file with hoomd
 dumps = int(f.__len__())                # get number of timesteps dumped
-start = 0
+start = dumps - 2
 #start = dumps - 1                       # gives first frame to read
 end = dumps                             # gives last frame to read
 #end = 20
