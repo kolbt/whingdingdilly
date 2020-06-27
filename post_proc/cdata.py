@@ -170,19 +170,28 @@ with hoomd.open(name=infile, mode='rb') as t:
         lcID = np.where(clust_size == maxSize)
         
         lc_pos = []
+        gas_pos = []
         for k in range(0, partNum):
             if ids[k] == lcID:
                 lc_pos.append(pos[k])
+            elif clust_size[ids[k]] < 10:
+                gas_pos.append(pos[k])
 
         # Compute density around largest cluster points
         phi_locs = density.compute(system, query_points=lc_pos)
         phi_loc = phi_locs.density * np.pi * 0.25
         # Compute the average area fraction (in the largest cluster)
         avg_phi_loc = sum(phi_loc) / float(len(phi_loc))
+        # Gas phis
+        gas_phi_locs = density.compute(system, query_points=gas_pos)
+        gas_phi_loc = gas_phi_locs.density * np.pi * 0.25
+        # Compute the average area fraction (in the largest cluster)
+        avg_phi_gas = sum(gas_phi_loc) / float(len(gas_phi_loc))
         
         # Append data to file
         g = open(outTxt, 'a')
         g.write('{0:.2f}'.format(tst).center(25) + ' ')
         g.write('{0:.0f}'.format(maxSize).center(25) + ' ')
+        g.write('{0:.5f}'.format(avg_phi_gas).center(25) + ' ')
         g.write('{0:.5f}'.format(avg_phi_loc).center(25) + '\n')
         g.close()
