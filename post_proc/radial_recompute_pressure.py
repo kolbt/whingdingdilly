@@ -76,6 +76,13 @@ end = dumps                             # gives last frame to read
 #end = 20
 start = dumps - 100
 
+# Doing a specific analysis
+start = 330
+end = 331
+peA = 150.
+peB = 500.
+
+
 def getNBins(length, minSz=(2**(1./6.))):
     "Given box size, return number of bins"
     initGuess = int(length) + 1
@@ -156,6 +163,8 @@ with hoomd.open(name=infile, mode='rb') as t:
     # Loop through snapshots
     for j in range(start, end):
     
+        print(j)
+    
         # Get the current snapshot
         snap = t[j]
         # Easier accessors
@@ -178,6 +187,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         clust_size = c_props.sizes              # find cluster sizes
         com = c_props.centers[0]                # find cluster CoM
         lcID = np.where(clust_size == np.amax(clust_size))
+        com = [253, 147]
         
         # Keep only positions of largest cluster (faster computations)
         lc_pos = []
@@ -204,7 +214,7 @@ with hoomd.open(name=infile, mode='rb') as t:
                 rry = lc_pos[-1][1] - com[1]
                 ry = np.abs(rry)
                 if ry >= h_box:
-                    print("Wrapping")
+#                    print("Wrapping")
                     ry -= l_box
                     ry = np.abs(ry)
                     # How should rrx be adjusted
