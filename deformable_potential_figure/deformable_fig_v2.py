@@ -109,7 +109,7 @@ ax[0].scatter(rStrong, ljForce(rStrong, eps=eps) + (0.5 * shift), c='g', zorder=
 # Limits
 ax[0].set_xlim(rStrong - 0.05, (2.**(1./6.))*sigma)
 ax[0].set_ylim(0., 175.)
-ax[0].set_xlabel(r'Interparticle distance $(\delta_{i,j})$', fontsize=fsize)
+ax[0].set_xlabel(r'Interparticle distance $(\alpha_{i,j})$', fontsize=fsize)
 #ax[0].set_ylabel(r'Lennard-Jones potential $(U_{LJ})$', fontsize=fsize)
 ax[0].set_ylabel(r'Lennard-Jones force $(F_{LJ})$', fontsize=fsize)
 #ax[0].legend()
@@ -256,7 +256,7 @@ norm = mpl.colors.Normalize(vmin=0.6, vmax=1.0)
 sm = mpl.cm.ScalarMappable(norm=norm, cmap=cmap)
 sm.set_array([])
 cb1 = fig.colorbar(sm, ax=cax, orientation='vertical')
-cb1.set_label(r'$\delta$', fontsize=fsize)
+cb1.set_label(r'$\alpha$', fontsize=fsize)
 cbax.axis('off')
 cax.axis('off')
 
