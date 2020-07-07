@@ -161,8 +161,8 @@ with hoomd.open(name=infile, mode='rb') as t:
                         dy = np.abs(dy) - l_box
                     dist = np.sqrt((dx**2) +  (dy**2))
                 v = (dist / dtau) * 33.3
-                if v > (600000. * 33.3):
-                    v = (600000. * 33.3)
+#                if v > (600000. * 33.3):
+#                    v = (600000. * 33.3)
                 velocities.append(v)
             if max(velocities) > vmax:
                 vmax = max(velocities)
@@ -203,7 +203,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         ax.set_aspect('equal')
 #        plt.subplots_adjust(0,0,1,1)
         plt.subplots_adjust(0.02,0.02,0.98,0.98)
-        cbar = plt.colorbar(coll, ticks=[0, 33.3])
+        cbar = plt.colorbar(coll, ticks=[0, max(velocities)])
         cbar.ax.set_yticklabels([r'$0$', r'$v_{p}$'], fontsize=12)
-        plt.savefig("velocity_fm" + pad + ".png", dpi=100)
+        plt.savefig("velocity_fm" + pad + ".png", bbox_inches='tight', pad_inches=0.02, dpi=100)
         plt.close()
