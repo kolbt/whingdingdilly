@@ -180,14 +180,24 @@ with hoomd.open(name=infile, mode='rb') as t:
         
         # Plot the figure
         fig, ax = plt.subplots(1, 1)
-        sc = ax.scatter(pos[:,0], pos[:,1], c=ang, edgecolor='none', s=15., cmap='hsv')
+        # Plot first particle collection
+        diams = [1.0 for i in range(0, len(pos))]
+        coll = matplotlib.collections.EllipseCollection(diams, diams,
+                                                        np.zeros_like(diams),
+                                                        offsets=xy, units='xy',
+                                                        cmap=plt.cm.hsv,
+                                                        transOffset=ax.transData)
+        coll.set_array(np.ravel(ang))
+#        coll.set_clim([0., max(velocities)])
+        ax.add_collection(coll)
+#        sc = ax.scatter(pos[:,0], pos[:,1], c=ang, edgecolor='none', s=15., cmap='hsv')
         ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
                 horizontalalignment='right', verticalalignment='bottom',
                 transform=ax.transAxes,
                 fontsize=18,
                 bbox=dict(facecolor=(1,1,1,0.5), edgecolor=(0,0,0,1), boxstyle='round, pad=0.1'))
         # Plot the orientation colorbar
-        cbar = fig.colorbar(sc, ax=ax, pad=0.03)
+        cbar = fig.colorbar(coll, ax=ax, pad=0.03)
         cbar.set_ticks([])
         # Add arrows for colorbar
         for k in range(0, len(dx)):
@@ -201,5 +211,5 @@ with hoomd.open(name=infile, mode='rb') as t:
         ax.axes.set_yticks([])
         ax.set_aspect('equal')
         plt.subplots_adjust(0.02,0.02,0.96,0.96)
-        plt.savefig("test_fm" + pad + ".png", dpi=150)
+        plt.savefig("orientation_fm" + pad + ".png", bbox_inches='tight', pad_inches=0.02, dpi=100)
         plt.close()

@@ -87,8 +87,8 @@ dtau=${pass[7]}
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
-python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
-#python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
+#python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/soft_nearest_neighbors.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
 #python3 $script_path/delta_spatial.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
