@@ -184,7 +184,7 @@ with hoomd.open(name=infile, mode='rb') as t:
                                                         cmap=plt.cm.viridis,
                                                         transOffset=ax.transData)
         coll.set_array(np.ravel(velocities))
-        coll.set_clim([0., 33.3])
+        coll.set_clim([0., max(velocities)])
         ax.add_collection(coll)
         
         
