@@ -114,6 +114,7 @@ else:
     add = ''
     
 f = hoomd.open(name=inFile, mode='rb')
+dumps = int(f.__len__())                # get number of timesteps dumped
 # Inside and outside activity from command line
 peA = float(sys.argv[2])
 peB = float(sys.argv[3])
@@ -132,8 +133,10 @@ except:
     dtau = 0.000001
     
 #start = end - 1
-start = 260
-end = 350
+#start = 260
+#end = 350
+start = 0
+end = dumps
 peA = 150.
 peB = 500.
 

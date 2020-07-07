@@ -98,6 +98,7 @@ out = outfile + "_frame_"
 f = hoomd.open(name=infile, mode='rb')  # open gsd file with hoomd
 dumps = int(f.__len__())                # get number of timesteps dumped
 start = dumps - 2
+start = 0
 #start = dumps - 1                       # gives first frame to read
 end = dumps                             # gives last frame to read
 #end = 20
@@ -150,6 +151,21 @@ with hoomd.open(name=infile, mode='rb') as t:
         tst -= first_tstep                          # normalize by first timestep
         tst *= dtau                                 # convert to Brownian time
         
+        pos[:,-1] = 0.0
+        pos[:, 0] -= 230.
+        pos[:, 1] -= 130.
+        for k in range(0, len(pos)):
+            # Wrap x
+            if pos[k][0] < -h_box:
+                pos[k][0] += l_box
+            if pos[k][0] > h_box:
+                pos[k][0] -= l_box
+            # Wrap y
+            if pos[k][1] < -h_box:
+                pos[k][1] += l_box
+            if pos[k][1] > h_box:
+                pos[k][1] -= l_box
+        
         # Create frame pad for images
         pad = str(j).zfill(4)
         
@@ -182,7 +198,7 @@ with hoomd.open(name=infile, mode='rb') as t:
 #        plt.close()
         
         # Let's do this as a patch collections instead (set diameter to 1.)
-        outDPI = 150.
+        outDPI = 200.
         fig, ax = plt.subplots(1, 1)
         
         # Plot first particle collection
@@ -199,23 +215,23 @@ with hoomd.open(name=infile, mode='rb') as t:
         diams = [0.9 for i in range(0, len(b_pos))]
         coll = matplotlib.collections.EllipseCollection(diams, diams,
                                                         np.zeros_like(diams),
-                                                        offsets=a_pos, units='xy',
+                                                        offsets=b_pos, units='xy',
                                                         facecolors=fastCol,
                                                         edgecolors='none',
                                                         transOffset=ax.transData)
         ax.add_collection(coll)
         
         # Add time as well
-        ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
-                horizontalalignment='right', verticalalignment='bottom',
-                transform=ax.transAxes,
-                fontsize=18,
-                bbox=dict(facecolor=(1,1,1,0.5), edgecolor=(0,0,0,1), boxstyle='round, pad=0.1'))
+#        ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
+#                horizontalalignment='right', verticalalignment='bottom',
+#                transform=ax.transAxes,
+#                fontsize=18,
+#                bbox=dict(facecolor=(1,1,1,0.5), edgecolor=(0,0,0,1), boxstyle='round, pad=0.1'))
         # Adjust limits and plotting parameters
         ax.set_xlim(-h_box, h_box)
         ax.set_ylim(-h_box, h_box)
         ax.axes.set_xticks([])
         ax.axes.set_yticks([])
         ax.set_aspect('equal')
-        plt.savefig(out + pad + ".png", bbox_inches='tight', pad_inches=0., dpi=outDPI)
+        plt.savefig(out + pad + ".png", bbox_inches='tight', pad_inches=0.01, dpi=outDPI)
         plt.close()
