@@ -176,7 +176,19 @@ with hoomd.open(name=infile, mode='rb') as t:
         
         # Plot the figure
         fig, ax = plt.subplots(1, 1)
-        sc = ax.scatter(pos[:,0], pos[:,1], c=velocities, vmin=0, vmax=33.3, edgecolor='none', s=15.)
+        # Plot first particle collection
+        diams = [1.0 for i in range(0, len(pos))]
+        coll = matplotlib.collections.EllipseCollection(diams, diams,
+                                                        np.zeros_like(diams),
+                                                        offsets=xy, units='xy',
+                                                        cmap=plt.cm.viridis,
+                                                        transOffset=ax.transData)
+        coll.set_array(np.ravel(velocities))
+        coll.set_clim([0., 33.3])
+        ax.add_collection(coll)
+        
+        
+#        sc = ax.scatter(pos[:,0], pos[:,1], c=velocities, vmin=0, vmax=33.3, edgecolor='none', s=15.)
         ax.text(0.95, 0.025, s=r'$\tau_{r}=$' + '{:0.1f}'.format(tst*3.),
                 horizontalalignment='right', verticalalignment='bottom',
                 transform=ax.transAxes,
@@ -191,9 +203,7 @@ with hoomd.open(name=infile, mode='rb') as t:
         ax.set_aspect('equal')
 #        plt.subplots_adjust(0,0,1,1)
         plt.subplots_adjust(0.02,0.02,0.98,0.98)
-        cbar = plt.colorbar(sc, ticks=[0, 33.3])
+        cbar = plt.colorbar(coll, ticks=[0, 33.3])
         cbar.ax.set_yticklabels([r'$0$', r'$v_{p}$'], fontsize=12)
-        plt.savefig("test_fm" + pad + ".png", dpi=100)
+        plt.savefig("velocity_fm" + pad + ".png", dpi=100)
         plt.close()
-
-print(vmax)
