@@ -87,7 +87,7 @@ dtau=${pass[7]}
 #python3 $script_path/image_final_tstep.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/image_single_particle.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_frames.py $fname $pe $pb $xa $ep $phi $tau
-#python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
+python3 $script_path/sim_velocity.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/sim_orientation.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/plot_particles_and_edge.py $fname $pe $pb $xa $ep $phi $tau
 #python3 $script_path/soft_nearest_neighbors.py $pe $pb $xa $hoomd_path $gsd_path $ep $fname
@@ -129,9 +129,9 @@ dtau=${pass[7]}
 
 #outf=${fname%????}
 # Orientation frames
-ffmpeg -start_number 0 -framerate 20 -i orientation_fm%04d.png\
- -vcodec libx264 -s 532x478 -pix_fmt yuv420p -threads 1\
- orientation.mp4
+#ffmpeg -start_number 0 -framerate 20 -i orientation_fm%04d.png\
+# -vcodec libx264 -s 532x478 -pix_fmt yuv420p -threads 1\
+# orientation.mp4
 
 # Velocity frames
 ffmpeg -start_number 0 -framerate 20 -i velocity_fm%04d.png\
